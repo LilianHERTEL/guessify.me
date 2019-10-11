@@ -3,33 +3,42 @@ var socket = io();
 socket.emit('initConnection', "thomasxd24");
 socket.emit('joinRoom', id);
 var canvas = document.getElementsByClassName('whiteboard')[0];
-var colors = document.getElementsByClassName('color');
-var context = canvas.getContext('2d');
-
-var current = {
-  color: 'black'
-};
-var drawing = false;
-
-canvas.addEventListener('mousedown', onMouseDown, false);
-canvas.addEventListener('mouseup', onMouseUp, false);
-canvas.addEventListener('mouseout', onMouseUp, false);
-canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
-
-//Touch support for mobile devices
-canvas.addEventListener('touchstart', onMouseDown, false);
-canvas.addEventListener('touchend', onMouseUp, false);
-canvas.addEventListener('touchcancel', onMouseUp, false);
-canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
-
-for (var i = 0; i < colors.length; i++){
-  colors[i].addEventListener('click', onColorUpdate, false);
-}
-
-socket.on('drawCmd', onDrawingEvent);
-
+  var colors = document.getElementsByClassName('color');
+  var context = canvas.getContext('2d');
+  var current = {
+    color: 'black'
+  };
+  var drawing = false;
+socket.on('joinedRoom', function(room){
+  
+  
+  
+  
+  canvas.addEventListener('mousedown', onMouseDown, false);
+  canvas.addEventListener('mouseup', onMouseUp, false);
+  canvas.addEventListener('mouseout', onMouseUp, false);
+  canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+  
+  //Touch support for mobile devices
+  canvas.addEventListener('touchstart', onMouseDown, false);
+  canvas.addEventListener('touchend', onMouseUp, false);
+  canvas.addEventListener('touchcancel', onMouseUp, false);
+  canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
+  
+  for (var i = 0; i < colors.length; i++){
+    colors[i].addEventListener('click', onColorUpdate, false);
+  }
+  
+  socket.on('drawCmd', onDrawingEvent);
+  
+  
+});
 window.addEventListener('resize', onResize, false);
-onResize();
+  onResize();
+socket.on('errorUser', function(msg){
+  alert(msg)
+});
+
 
 
 function drawLine(x0, y0, x1, y1, color, emit){

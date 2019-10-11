@@ -3,19 +3,23 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var uniqid = require('uniqid');
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3001;
 app.set('view engine', 'ejs');
-app.use(express.static('public'))
+app.use(express.static('public'));
+var roomList = {};
 app.get('/room/:id', function(req, res){
   res.render('index.ejs',{id:req.params.id});
 });
 
 app.get('/createLobby', function(req, res){
-  var id = uniqid('room-');
-  roomList.set(id,{id:id,user:[]})
+  var id = uniqid().substr(9,11);
+  roomList[id] = {id:id,user:[]};
   res.send(id);
 });
-var roomList = new Map();
+app.get('/lobby', function(req, res){
+  res.render('lobby.ejs');
+});
+
 
 io.on('connection', function(socket){
   var connected = false;
@@ -24,11 +28,14 @@ io.on('connection', function(socket){
     socket.user = user;
     connected = true;
   });
+  socket.on('requestLobbyList', function(user){
+    socket.emit("list",roomList)
+  });
   socket.on('joinRoom', function(room){
-    var room = roomList.get(room);
-    if(!room)
+    var room = roomList[room];
+    if(!room) 
     {
-      // socket.emit('error','Room not found');
+      socket.emit("errorUser","Room not found")
       return;
     }
     curretRoom = room.id;

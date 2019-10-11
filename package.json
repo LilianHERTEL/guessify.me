@@ -6,9 +6,33 @@
     "ejs": "^2.7.1",
     "express": "^4.15.2",
     "socket.io": "^1.7.3",
-    "uniqid": "^5.0.3"
+    "uniqid": "^5.0.3",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "react-scripts": "3.2.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "server": "node index.js",
+    "start": "concurrently 'npm run server' 'npm run react'",
+    "react": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "proxy": "http://localhost:3001/api/",
+  "devDependencies": {
+    "concurrently": "^5.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
