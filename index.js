@@ -28,6 +28,9 @@ io.on('connection', function(socket){
     socket.user = user;
     connected = true;
   });
+  socket.on('sendChat', function(msg){
+    io.to(curretRoom).emit("receiveChat",msg)
+  });
   socket.on('requestLobbyList', function(user){
     socket.emit("list",roomList)
   });

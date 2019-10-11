@@ -30,6 +30,14 @@ socket.on('joinedRoom', function(room){
   }
   
   socket.on('drawCmd', onDrawingEvent);
+  $('form').submit(function(){
+    socket.emit('sendChat', $('#m').val());
+    $('#m').val('');
+    return false;
+  });
+  socket.on('receiveChat', function(msg){
+    $('#messages').append($('<li>').text(msg));
+  });
   
   
 });

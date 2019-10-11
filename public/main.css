@@ -27,6 +27,21 @@
     top: 0;
   }
   
+  #messages { list-style-type: none; margin: 0; padding: 0; }
+
+.chatbox{
+  display: inline-block;
+  position: fixed;
+  margin: 10px;
+  bottom:0;
+  right:0;
+}
+
+li
+{                 
+   list-style-position: none;
+}
+
   .colors {
     position: fixed;
   }
