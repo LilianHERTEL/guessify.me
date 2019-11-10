@@ -8,7 +8,7 @@ router.get('/lobby/create', function(req, res){
     res.send(id);
   });
 
-router.get('/lobby/list', function(req, res){
+router.get('/lobby/listhi' , function(req, res){
 res.json(global.roomList);
 });
 
