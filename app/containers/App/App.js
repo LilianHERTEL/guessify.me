@@ -40,7 +40,6 @@ const App = () => (
       </AppBar>
     
     <div className="app-content">
-    <Header />
     <Switch>
       <Route exact path="/" component={HomePage} />
       <Route path="/features" component={FeaturePage} />

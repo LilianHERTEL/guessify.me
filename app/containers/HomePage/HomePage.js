@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
 import { Helmet } from 'react-helmet';
 import ReposList from 'components/ReposList';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import { createMuiTheme } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -21,6 +26,8 @@ import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import './style.scss';
+import Header from 'components/Header';
+import { Divider, Hidden } from '@material-ui/core';
 const theme = createMuiTheme();
 const classes = {
   appBar: {
@@ -30,21 +37,11 @@ const classes = {
     width: 'auto',
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
-      marginLeft: 'auto',
-      marginRight: 'auto',
-    },
   },
   paper: {
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
   },
   stepper: {
     padding: theme.spacing(3, 0, 5),
@@ -59,7 +56,7 @@ const classes = {
   },
 };
 
-export default class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   /**
    * when initial state username is not null, submit the form to load repos
    */
@@ -73,63 +70,81 @@ export default class HomePage extends React.PureComponent { // eslint-disable-li
 
   render() {
     const {
-      loading, error, repos, username, onChangeUsername, onSubmitForm
+      loading, error, repos, username, onChangeUsername, onSubmitForm 
     } = this.props;
     const reposListProps = {
       loading,
       error,
       repos
     };
+    
 
     return (
-      <CssBaseline />
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            Checkout
-          </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map(label => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
+      <React.Fragment>
+        <Header></Header>
+      <main className="maindiv">
+        <Paper className="paper">
+          
           <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order confirmation, and will
-                  send you an update when your order has shipped.
-                </Typography>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      Back
-                    </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
+      
+      <Grid container spacing={1} justify="center"
+  alignItems="center">
+        <Grid item xs={12} sm={5}>
+        <Typography  variant="h5" align="center">
+            Quick Play
+          </Typography>
+          <TextField
+          
+            id="firstName"
+            name="username"
+            label="Username"
+            fullWidth
+            autoComplete="fname"
+          />
+          <div className="butt">
+          <Button variant="contained" size="medium" color="primary" fullWidth>
+          Play
+        </Button>
+          </div>
+          
+
+        </Grid>
+        <Grid item xs={12} sm={2}>
+        <Typography  variant="h6" align="center">
+            OR
+          </Typography>
+        </Grid>
+        
+        <Grid item xs={12} sm={5}>
+        <Typography variant="h5" align="center">
+            Log in
+          </Typography>
+         <Box my="10px">
+         <Button variant="contained" size="medium" color="primary" fullWidth>
+          Play
+        </Button>
+         </Box>
+         <Box my="10px">
+         <Button variant="contained" size="medium" color="primary" fullWidth>
+          Play
+        </Button>
+         </Box>
+         <Box my="10px">
+         <Button variant="contained" size="medium" color="primary" fullWidth>
+          Play
+        </Button>
+         </Box>
+
+
+         
+        </Grid>
+        
+      </Grid>
+    </React.Fragment>
+          
         </Paper>
-        <Copyright />
       </main>
+    </React.Fragment>
     );
   }
 }
@@ -142,3 +157,5 @@ HomePage.propTypes = {
   username: PropTypes.string,
   onChangeUsername: PropTypes.func
 };
+
+export default HomePage
