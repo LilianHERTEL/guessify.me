@@ -1,13 +1,13 @@
 .app-wrapper {
+  display:flex;
+  flex-flow: column;
+    height: 100%;
   
-  display: flex;
-  min-height: 100%;
-  
-  flex-direction: column;
 }
 
 .app-content {
-  // max-width: calc(1000px + 16px * 2);
-  width: 100%;
-  padding: 0 16px;
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

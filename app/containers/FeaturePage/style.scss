@@ -1,19 +1,33 @@
-.feature-page {
-  h1 {
-    font-size: 2em;
-    margin-bottom: 0.25em;
-  }
-  
-  ul {
-    font-family: Georgia, Times, 'Times New Roman', serif;
-    padding-left: 1.75em;
+.page {
+  flex:1;
+}
 
-    li {
-      margin: 1em 0;
+.canvas {
+  width: 100%;
+    height: calc(width * 0.5625);
+    // border:1px solid #000000;
+}
 
-      p.title {
-        font-weight: bold;
-      }
-    }
-  }
+
+.fullHeight{
+  height:100%
+}
+
+.blackco {
+
+  background-color: black;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.rightPanel{  
+  display:flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat {
+  flex:1;
 }

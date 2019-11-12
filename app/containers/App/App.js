@@ -30,25 +30,26 @@ import Header from 'components/Header';
 import Footer from 'components/Footer';
 import './style.scss';
 const App = () => (
-  <div className="app-wrapper">
-    <AppBar position="relative">
+  <React.Fragment>
+    <div className="app-wrapper">
+    <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
             Guessify.me
           </Typography>
         </Toolbar>
       </AppBar>
-    
     <div className="app-content">
     <Switch>
-      <Route exact path="/" component={HomePage} />
-      <Route path="/features" component={FeaturePage} />
+      <Route exact path="/" component={FeaturePage} />
+      <Route path="/features" component={HomePage} />
       <Route path="" component={NotFoundPage} />
     </Switch>
     </div>
     
-    <Footer />
-  </div>
+    </div>
+ 
+  </React.Fragment>
 );
 
 export default App;
