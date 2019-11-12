@@ -21,7 +21,7 @@ export default class FeaturePage extends React.Component {
     return (
       <Box my={2} className="page">
         <Container maxWidth="lg" className="fullHeight">
-          <Grid container direction="row" justify="space-evenly" alignItems="stretch" spacing={1} className="fullHeight">
+          <Grid container direction="row" justify="center" alignItems="stretch" spacing={1} className="fullHeight">
             <Grid item xs={12} md={9}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
@@ -59,8 +59,8 @@ export default class FeaturePage extends React.Component {
 
                   </Box>
                 </Paper>
-                <div className="chat">
-                  <Paper>
+                <div className="chat ">
+                  <Paper  className="fullHeight">
                     hi
                   </Paper>
                 </div>
