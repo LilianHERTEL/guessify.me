@@ -87,8 +87,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
           
           <React.Fragment>
       
-      <Grid container spacing={1} justify="center"
-  alignItems="center">
+      <Grid container spacing={3} justify="center" alignItems="center">
         <Grid item xs={12} sm={5}>
         <Typography  variant="h5" align="center">
             Quick Play
