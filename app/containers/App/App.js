@@ -32,13 +32,6 @@ import './style.scss';
 const App = () => (
   <React.Fragment>
     <div className="app-wrapper">
-    <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Guessify.me
-          </Typography>
-        </Toolbar>
-      </AppBar>
     <div className="app-content">
     <Switch>
       <Route exact path="/" component={FeaturePage} />

@@ -6,7 +6,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import './style.scss';
-import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, TextField,ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider,Switch, TextField,ListItemSecondaryAction } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -24,6 +24,25 @@ function a11yProps(index) {
   };
 }
 
+
+function ListItemSample(props){
+  return(
+    <React.Fragment>
+<ListItem button>
+    <ListItemAvatar>
+    <Avatar>
+    <AccountCircleIcon />
+    </Avatar>
+    </ListItemAvatar>
+    <ListItemText primary="thomasxd24" secondary="231 points" />
+    <ListItemSecondaryAction>
+     #2
+    </ListItemSecondaryAction>
+    </ListItem>
+    <Divider variant="inset" component="li" />
+    </React.Fragment>
+    );
+}
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -49,7 +68,7 @@ export default class FeaturePage extends React.Component {
         <Container maxWidth="lg" className="fullHeight">
           <Grid container direction="row" justify="center" alignItems="stretch" spacing={3} className="fullHeight">
             <Grid item xs={12} md={8}>
-              <Box display="flex" flexDirection="column" height={1}>
+              <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
                 <Box my={1}>
                   <Typography variant="h4" align="center">thomasxd24 is drawing...</Typography>
                 </Box>
@@ -60,61 +79,44 @@ export default class FeaturePage extends React.Component {
                   <Paper><canvas className="canvas">
                     </canvas></Paper>
                 </Box>
-                <Box my={1} flex="1">
-                <Grid container spacing={3} className="fullHeight">
-                    <Grid item xs={12} md={6}>
-
-                    <Paper className="fullHeight"  style={{overflow: 'auto'}} >
-                      <Box display="flex" flexDirection="column" justifyContent="flex-end" height={1} p={2}>
-                      <Box>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                      </Box>
-            <TextField
-            fullWidth
-            margin="dense"
+                <Paper className="chat" >
+                  <Box display="flex" width={1}>
+                  <Box my={1} flex={1}  display="flex" flexDirection="column"  minHeight={0}>
+                  <Box flex={1} overflow="auto">
+                  hi<br></br>hi<br></br>hi<br></br>hi<br></br>hi<br></br>
+                  hi<br></br>hi<br></br>hi<br></br>hi<br></br>hi<br></br>
+                  hi
+                  </Box>
+                  <TextField
+          id="standard-basic"
+          label="Standard"
           margin="normal"
-          placeholder="Chat..."
         />
-                      </Box>
-                    
-                   </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                    <Paper className="fullHeight"  style={{overflow: 'auto'}} >
-                      <Box display="flex" flexDirection="column" justifyContent="flex-end" height={1} p={2}>
-                      <Box>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-                        <strong>thomasxd24:</strong> test my pute<br></br>
-
-                      </Box>
-            <TextField
-            fullWidth
-            margin="dense"
-          margin="normal"
-          placeholder="Chat..."
-        />
-                      </Box>
-                    
-                   </Paper>
-                    </Grid>
-                  
-                  </Grid>
                 </Box>
+                  <Box my={1} flex={1}  display="flex" flexDirection="column"  minHeight={0}>
+                  <Box flex={1} overflow="auto">
+                  hi<br></br>hi<br></br>hi<br></br>hi<br></br>hi<br></br>
+                  hi<br></br>hi<br></br>hi<br></br>hi<br></br>hi<br></br>
+                  hi
+                  </Box>
+                  <TextField
+          id="standard-basic"
+          label="Standard"
+          margin="normal"
+        />
+                </Box>
+                  </Box>
+               
+                </Paper>
+                
+                
                 
               </Box>
 
 
             </Grid>
             <Grid item xs={12} md={4}>
-              <Box display="flex" flexDirection="column" height={1}>
+              <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
                 <Paper>
                   <Box p={2} width={1} >
                     <Typography variant="button" display="block" gutterBottom>
@@ -134,60 +136,42 @@ export default class FeaturePage extends React.Component {
 
                 </Paper>
                 {/* <Typography variant="h6" align="center">Leaderboard</Typography> */}
-                <Box flex="1" my={4}>
+                <Box flex="1" mt={3} maxHeight="500px">
                   <Paper className="fullHeight">
-                  <List >
+                  <Grid container alignItems="center" justify="center" spacing={1} align="center">
+          <Grid item>LeaderBoard</Grid>
+          <Grid item>
+            <Switch
+              // checked={state.checkedC}
+              // onChange={handleChange('checkedC')}
+              value="checkedC"
+            />
+          </Grid>
+          <Grid item>Draw Order</Grid>
+        </Grid>
+                    <Box minHeight="200px"  height={0.9} overflow="auto">
+                    <List >
      
-                  <ListItem button>
-        <ListItemAvatar>
-          <Avatar>
-            <AccountCircleIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="thomasxd24" secondary="361 points" />
-        <ListItemSecondaryAction>
-              #1
-            </ListItemSecondaryAction>
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem button>
-        <ListItemAvatar>
-          <Avatar>
-            <AccountCircleIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="thomasxd24" secondary="231 points" />
-        <ListItemSecondaryAction>
-              #2
-            </ListItemSecondaryAction>
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem button>
-        <ListItemAvatar>
-          <Avatar>
-            <AccountCircleIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="thomasxd24" secondary="102 points" />
-        <ListItemSecondaryAction>
-              #3
-            </ListItemSecondaryAction>
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem button>
-        <ListItemAvatar>
-          <Avatar>
-            <AccountCircleIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="thomasxd24" secondary="61 points" />
-        <ListItemSecondaryAction>
-              #4
-            </ListItemSecondaryAction>
-      </ListItem>
-      
-      
-    </List>
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+     <ListItemSample />
+
+
+</List>
+                    </Box>
+                  
                   </Paper>
                
                   
