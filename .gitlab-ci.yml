@@ -4,8 +4,7 @@ stages:
   - deploy
 
 before_script:
-  # - apt-get update -qq
-  # - apt-get install -qq git
+  - apt-get update -qq
   # Setup SSH deploy keys
   - 'which ssh-agent || ( apt-get install -qq openssh-client )'
   - eval $(ssh-agent -s)
@@ -18,4 +17,4 @@ job:
   type: deploy
   script:
     - echo "Deploying to production environment"
-    - ssh trucky@ssd.bdeascii.fr -t "cd /home/trucky/apps/trucky-discord-bot && echo hi"
+    - ssh trucky@ssd.bdeascii.fr -t "echo hi"
