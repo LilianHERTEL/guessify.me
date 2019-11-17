@@ -32,9 +32,16 @@ import './style.scss';
 const App = () => (
   <React.Fragment>
     <div className="app-wrapper">
+    {/* <AppBar position="static">
+  <Toolbar variant="dense">
+    <Typography variant="h6" color="inherit">
+      Photos
+    </Typography>
+  </Toolbar>
+</AppBar> */}
     <div className="app-content">
     <Switch>
-      <Route exact path="/" component={FeaturePage} />
+      <Route exact path="/" component={HomePage} />
       <Route path="/features" component={HomePage} />
       <Route path="" component={NotFoundPage} />
     </Switch>

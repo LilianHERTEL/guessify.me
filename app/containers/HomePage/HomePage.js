@@ -119,19 +119,29 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
             Log in
           </Typography>
          <Box my="10px">
-         <Button variant="contained" size="medium" color="primary" fullWidth>
+         <TextField
+          
+          id="firstName"
+          name="username"
+          label="Username"
+          fullWidth
+          autoComplete="fname"
+        />
+        <TextField
+          
+          id="firstName"
+          name="username"
+          label="Username"
+          fullWidth
+          autoComplete="fname"
+        />
+        <Button variant="contained" size="medium" color="primary" fullWidth>
           Play
         </Button>
-         </Box>
-         <Box my="10px">
-         <Button variant="contained" size="medium" color="primary" fullWidth>
+        <Button variant="contained" size="medium" color="primary" fullWidth>
           Play
         </Button>
-         </Box>
-         <Box my="10px">
-         <Button variant="contained" size="medium" color="primary" fullWidth>
-          Play
-        </Button>
+        
          </Box>
 
 
