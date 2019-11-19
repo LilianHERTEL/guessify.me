@@ -9,7 +9,12 @@ router.get('/lobby/create', function(req, res){
   });
 
 router.get('/lobby/listhi' , function(req, res){
-res.json(global.roomList);
+  console.log(req.session)
+  if(!req.session.count) req.session.count=0;
+  
+  req.session.count++
+  console.log(req.session)
+res.json({hi:"hi"});
 });
 
 module.exports = router;
