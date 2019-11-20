@@ -12,6 +12,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import HomePage from '../../containers/HomePage';
+import SignUpPage from '../../containers/SignUpPage';
 import GamePage from '../../containers/GamePage';
 import NotFoundPage from '../../containers/NotFoundPage';
 import './style.css';
@@ -25,7 +26,9 @@ const App = () => (
     <Switch>
       <Route exact path="/" component={HomePage} />
       <Route path="/game" component={GamePage} />
+      <Route path="/signup" component={SignUpPage} />
       <Route path="" component={NotFoundPage} />
+
     </Switch>
     </BrowserRouter>
     

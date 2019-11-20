@@ -6,7 +6,7 @@ const MongoStore = require('connect-mongo')(session);
 
 function launchDataBase(app){
     const mongoose = require('mongoose');
-    mongoose.connect('mongodb://guessify:pAI5v2#NQk#W@kimsufi.thomasxd24.com/guessify', {useNewUrlParser: true,useUnifiedTopology: true});
+    mongoose.connect('mongodb://guessify:pAI5v2#NQk#W@10.8.0.1/guessify', {useNewUrlParser: true,useUnifiedTopology: true});
 
     var db = mongoose.connection;
 			app.use(session({
@@ -19,7 +19,6 @@ function launchDataBase(app){
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function() {
     initDatabase();
-    var User = mongoose.model('User');
     });
 }
 
