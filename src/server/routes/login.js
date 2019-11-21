@@ -6,7 +6,7 @@ var passport = require('passport')
 
 router.post('/login',passport.authenticate('local'), function(req, res){
     
-  
+  console.log(req.user)
 res.json({success:true,msg:req.user});
   });
 

@@ -50,8 +50,9 @@ passport.use(new LocalStrategy(
       }
       user.comparePassword(password,(err,isMatch) => {
         if(err) done(null, false, { message: err })
-        if(!isMatch) done(null, false, { message: 'Incorrect password.' })
-        done(null, user);
+        if(!isMatch)  return done(null, false, { message: 'Incorrect password.' })
+         
+        return done(null, user);
     })
     });
   }
