@@ -49,7 +49,7 @@ passport.use(new LocalStrategy(
         return done(null, false, { message: 'Incorrect username.' });
       }
       user.comparePassword(password,(err,isMatch) => {
-        if(err) done(null, false, { message: err })
+        if(err) return done(null, false, { message: err })
         if(!isMatch)  return done(null, false, { message: 'Incorrect password.' })
          
         return done(null, user);
