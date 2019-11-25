@@ -14,9 +14,7 @@ router.post('/register' , function(req, res){
     var data = req.body;
   var User = mongoose.model('User');
   var newUser = new User({
-      username: data.username,
-      password: data.password,
-      email: data.email
+      ...data
   })
   newUser.save(function (err){
     if (err) return console.error(err);

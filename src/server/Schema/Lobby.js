@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var uniqid = require('uniqid')
   var Schema = mongoose.Schema;
 
   var PlayerSchema = Schema({
@@ -16,6 +17,26 @@ var mongoose = require('mongoose');
     inGame: Boolean,
     listPlayer: [PlayerSchema]
   });
+
+  LobbySchema.statics.createLobby = async function () {
+    var Lobby = this.model("Lobby");
+    var lobbyID  = uniqid.time();
+    var l = new Lobby({
+        codeLobby: lobbyID
+    })
+    var result = await l.save()
+    return result;
+  }
+
+  LobbySchema.methods.join = async function (sessionID) {
+    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
+      console.log(data)
+    })
+    // l.listPlayer.push({
+    //   session
+    // })
+
+  }
 
 
   
