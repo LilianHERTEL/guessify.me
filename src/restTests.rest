@@ -1,0 +1,20 @@
+POST http://localhost:8080/auth/login HTTP/1.1
+content-Type: application/json
+
+{
+    "username":"toto",
+    "password":"mdp",
+    "email":"toto@toto.com"
+}
+
+POST http://localhost:8080/auth/register HTTP/1.1
+content-Type: application/json
+
+{
+    "username":"toto2",
+    "password":"mdp",
+    "email":"toto2@toto.com"
+}
+
+
+
