@@ -25,6 +25,12 @@ res.json({success:true,msg:"You have successfully registered!"});
 
 });
 
+router.get('/logout', function(req,res){
+  req.logout();
+  req.session.userID=null;
+  console.log('test')
+  res.json({success:true,msg:"Logout sucessfull!"});
+});
 
 
 module.exports = router;

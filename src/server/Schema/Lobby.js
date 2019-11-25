@@ -39,5 +39,16 @@ var uniqid = require('uniqid')
   }
 
 
+  LobbySchema.methods.join = async function (sessionID) {
+    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
+      console.log(data)
+    })
+    // l.listPlayer.push({
+    //   session
+    // })
+
+  }
+
+  
   
   module.exports =  LobbySchema
