@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 var passport = require('passport')
 
 router.post('/login',passport.authenticate('local'), function(req, res){
-    
-  console.log(req.user)
-res.json({success:true,msg:req.user});
-  });
+  //assigne l'utilisateur à sa session
+  req.session.userID = req.user._id;
+  req.session.username = req.user.username;
+  res.json({success:true,msg:req.user});
+});
 
 router.post('/register' , function(req, res){
     var data = req.body;
