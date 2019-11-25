@@ -28,20 +28,24 @@ router.post('/unregister',passport.authenticate('local',function(req,res){
 */
 router.post('/register' , function(req, res){
     var data = req.body;
-    var User = mongoose.model('User');
-    var newUser = new User({
-      username: data.username,
-      password: data.password,
-      email: data.email
+  var User = mongoose.model('User');
+  var newUser = new User({
+      ...data
   })
   newUser.save(function (err){
-    if (err) return console.error(err);
-    console.log("User saved")
+    if (err) return res.json({success:false,msg:err.errmsg});
+    return res.json({success:true,msg:"You have successfully registered!"});
   })
-res.json({success:true,msg:"You have successfully registered!"});
+
 
 });
 
+router.get('/logout', function(req,res){
+  req.logout();
+  req.session.userID=null;
+  console.log('test')
+  res.json({success:true,msg:"Logout sucessfull!"});
+});
 
 
 module.exports = router;
