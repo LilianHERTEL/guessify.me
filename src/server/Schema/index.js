@@ -1,8 +1,22 @@
 const mongoose = require('mongoose')
 var UserSchema = require('./User')
+var LobbySchema = require('./Lobby')
+var uniqid = require('uniqid');
 function initModel(){
-    var User = mongoose.model('User', UserSchema);
-    
+    mongoose.model('User', UserSchema);
+    mongoose.model('Lobby', LobbySchema);
 }
 
-module.exports  =  initModel;
+async function createLobby(){
+    var Lobby = mongoose.model("Lobby")
+    var lobbyID  = uniqid.time();
+    var l = new Lobby({
+        codeLobby: lobbyID
+    })
+    var result = await l.save()
+    return result;
+}
+
+module.exports  =  {
+    initModel,
+createLobby};

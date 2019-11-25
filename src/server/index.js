@@ -15,12 +15,12 @@ var io = require('socket.io')(http);
 var apiRoute = require('./routes/lobby.js');
 var loginRoute = require('./routes/login.js');
 
+
+
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
 var launchDataBase = require('./database.js');
-
-global.roomList = {};
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 
 app.set('trust proxy', 1) // trust first proxy (autorise l'utilisation d'un proxy)

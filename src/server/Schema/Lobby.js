@@ -1,23 +1,22 @@
 var mongoose = require('mongoose');
   var Schema = mongoose.Schema;
 
-var PlayerSchema = new Schema({
-    typeConnexion:String,
-    tokemTMP: String
-})
+  var PlayerSchema = Schema({
+    session : { type: Schema.Types.ObjectId, ref: 'Session' },
+    pointsTotal    : Number,
+  });
 
-  var UserSchema = new Schema({
-    userID:  Number,
-    username: String,
-    passwordHash:   String,
-    profileImageURL:   String,
-    isAdmin: Boolean,
-    email: String,
+  var LobbySchema = new Schema({
+    codeLobby:  String,
+    theme: String,
+    isPrivate:   Boolean,
+    isActive:   Boolean,
+    status: String,
+    joinable: Boolean,
     inGame: Boolean,
-    pointTotal: Number,
-    listCo: [MoyenConnexionSchema]
+    listPlayer: [PlayerSchema]
   });
 
 
   
-  module.exports =  UserSchema
+  module.exports =  LobbySchema
