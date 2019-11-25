@@ -13,11 +13,9 @@ router.post('/login',passport.authenticate('local'), function(req, res){
 
 router.post('/register' , function(req, res){
     var data = req.body;
-    var User = mongoose.model('User');
-    var newUser = new User({
-      username: data.username,
-      password: data.password,
-      email: data.email
+  var User = mongoose.model('User');
+  var newUser = new User({
+      ...data
   })
   newUser.save(function (err){
     if (err) return console.error(err);

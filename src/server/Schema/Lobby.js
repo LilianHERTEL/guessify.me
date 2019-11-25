@@ -1,21 +1,21 @@
 var mongoose = require('mongoose');
+var uniqid = require('uniqid')
   var Schema = mongoose.Schema;
 
-var PlayerSchema = new Schema({
-    typeConnexion:String,
-    tokemTMP: String
-})
+  var PlayerSchema = Schema({
+    session : { type: Schema.Types.ObjectId, ref: 'Session' },
+    pointsTotal    : Number,
+  });
 
-  var UserSchema = new Schema({
-    userID:  Number,
-    username: String,
-    passwordHash:   String,
-    profileImageURL:   String,
-    isAdmin: Boolean,
-    email: String,
+  var LobbySchema = new Schema({
+    codeLobby:  String,
+    theme: String,
+    isPrivate:   Boolean,
+    isActive:   Boolean,
+    status: String,
+    joinable: Boolean,
     inGame: Boolean,
-    pointTotal: Number,
-    listCo: [MoyenConnexionSchema]
+    listPlayer: [PlayerSchema]
   });
 
   LobbySchema.statics.createLobby = async function () {
@@ -38,6 +38,17 @@ var PlayerSchema = new Schema({
 
   }
 
+
+  LobbySchema.methods.join = async function (sessionID) {
+    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
+      console.log(data)
+    })
+    // l.listPlayer.push({
+    //   session
+    // })
+
+  }
+
   
   
-  module.exports =  UserSchema
+  module.exports =  LobbySchema
