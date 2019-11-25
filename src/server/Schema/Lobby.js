@@ -3,7 +3,8 @@ var uniqid = require('uniqid')
   var Schema = mongoose.Schema;
 
   var PlayerSchema = Schema({
-    session : { type: Schema.Types.ObjectId, ref: 'Session' },
+    session : String,
+    username : String,
     pointsTotal    : Number,
   });
 
@@ -28,13 +29,13 @@ var uniqid = require('uniqid')
     return result;
   }
 
-  LobbySchema.methods.join = async function (sessionID) {
-    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
-      console.log(data)
+  LobbySchema.methods.join = async function (sessionID,username) {
+    this.listPlayer.push({
+      session:sessionID,
+      username,
+      pointsTotal : 0
     })
-    // l.listPlayer.push({
-    //   session
-    // })
+    await this.save();
 
   }
 

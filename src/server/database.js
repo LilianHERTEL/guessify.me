@@ -21,11 +21,6 @@ function launchDataBase(app){
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', async function() {
     model.initModel();
-    var Lobby = mongoose.model("Lobby");
-    var lobby = await Lobby.createLobby();
-    await lobby.join("do4DIEV-3JNSH4mImClMtoj16V2Jb6LI")
-    console.log(Lobby)
-
 
     });
 }
