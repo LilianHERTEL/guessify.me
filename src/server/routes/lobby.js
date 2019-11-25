@@ -14,7 +14,11 @@ router.get('/list' , function(req, res){
 res.json({hi:"hi"});
 
 });
-
-
+/*
+router.get('/leave', function(req,res){
+  req.
+  res.redirect('/home')
+})
+*/
 
 module.exports = router;

@@ -29,6 +29,7 @@ res.json({success:true,msg:"You have successfully registered!"});
 
 router.get('/logout', function(req,res){
   req.logout();
+  //req.session.destroy();
   res.redirect('/');
 });
 
