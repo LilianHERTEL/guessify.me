@@ -18,6 +18,26 @@ var PlayerSchema = new Schema({
     listCo: [MoyenConnexionSchema]
   });
 
+  LobbySchema.statics.createLobby = async function () {
+    var Lobby = this.model("Lobby");
+    var lobbyID  = uniqid.time();
+    var l = new Lobby({
+        codeLobby: lobbyID
+    })
+    var result = await l.save()
+    return result;
+  }
 
+  LobbySchema.methods.join = async function (sessionID) {
+    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
+      console.log(data)
+    })
+    // l.listPlayer.push({
+    //   session
+    // })
+
+  }
+
+  
   
   module.exports =  UserSchema
