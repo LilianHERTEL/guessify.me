@@ -12,7 +12,6 @@ const mongoose = require('mongoose') //Pris
 const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var apiRoute = require('./routes/lobby.js');
 var loginRoute = require('./routes/login.js');
 
 
@@ -59,8 +58,7 @@ passport.use(new LocalStrategy(
 ));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/api', apiRoute);
-app.use('/auth', loginRoute);
+app.use('/api/auth', loginRoute);
 
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = argv.host || process.env.HOST;

@@ -11,6 +11,7 @@ var uniqid = require('uniqid')
   var LobbySchema = new Schema({
     codeLobby:  String,
     theme: String,
+    maxPlayer: {type: Number, default:10},
     isPrivate:   Boolean,
     isActive:   Boolean,
     status: String,

@@ -14,14 +14,14 @@ router.post('/login',passport.authenticate('local'), function(req, res){
 /*
   Permet de supprimer son compte. Cette fonction va seulement supprimer le user dans la base de donnée qui correspond au membre. Les dessins sont conservés.
 */
-router.post('/unregister',passport.authenticate('local',function(req,res){
+router.post('/unregister',passport.authenticate('local'),function(req,res){
   var data = req.body;
   var User = mongoose.model('User');
-  var query = User.findByIdAndRemove(req.session.userID,function(err,user){
+  var query = User.findByIdAndRemove(req.user._id,function(err,user){
     
   });
 
-}));
+});
 
 /*
   Permet de s'inscrire en tant que membre sur le site. Cette fonction va enregistrer le nouvel utilisateur dans la base de données.
@@ -43,7 +43,6 @@ router.post('/register' , function(req, res){
 router.get('/logout', function(req,res){
   req.logout();
   req.session.userID=null;
-  console.log('test')
   res.json({success:true,msg:"Logout sucessfull!"});
 });
 

@@ -1,11 +1,25 @@
 var mongoose = require('mongoose')
 function start(io) {
-
+  console.log("bitchstart")
     io.on('connection', function(socket){
       socket.isInGame = false;
+      console.log("bitch")
       socket.on('findGame', async function(sessionID,username){
         var Lobby = mongoose.model("Lobby");
-        var lobby = await Lobby.createLobby();
+        
+        var lobbyResult = await Lobby.aggregate([{$project: {
+          cmp_value: {$cmp: ['$maxPlayer', { $size: '$listPlayer' }]}
+      }},
+      {$match: {cmp_value: {$gt: 0}}}]).exec();
+      var lobby;
+      if(lobbyResult.length == 0)
+      {
+        lobby = await Lobby.createLobby();
+      }
+      else{
+        lobby = await Lobby.findOne({_id:lobbyResult[0]}).exec()
+      }
+      console.log(lobby)
         socket.username = sessionID;
         socket.sessionID = username;
         socket.lobby = lobby
@@ -27,6 +41,7 @@ function start(io) {
           io.to(socket.lobby._id).emit('drawCmd', msg);
         });
       });
+      console.log("inited")
 }
 
 module.exports.start = start;
