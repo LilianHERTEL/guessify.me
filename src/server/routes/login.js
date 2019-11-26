@@ -21,7 +21,6 @@ router.post('/unregister',passport.authenticate('local'),function(req,res){
     if(!err) res.json({success:true,msg:"Unregistered !"});
     else res.json({success:false,msg:"Error while unregistering !"});
   });
-
 });
 
 /*
