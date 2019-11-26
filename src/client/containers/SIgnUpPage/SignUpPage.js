@@ -59,7 +59,8 @@ class SignUpPage extends React.Component {
       password:   '',
       confirmPassword: '',
       email: '',
-      tosAgreement: ''
+      tosAgreement: '',
+      error: ''
     }
     this.onAnyInputChange = this.onAnyInputChange.bind(this);
     this.onSignUpButtonClick = this.onSignUpButtonClick.bind(this);
@@ -69,6 +70,17 @@ class SignUpPage extends React.Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
+  async sendRequest(user) {
+    return await fetch('http://localhost:8080/auth/register', {
+      method: 'POST',
+      mode: "no-cors",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    });
+  }
+
   onSignUpButtonClick(event) {
     event.preventDefault();
     const user = {
@@ -76,7 +88,18 @@ class SignUpPage extends React.Component {
       password: this.state.password,
       email: this.state.email
     }
+    console.log('Avant : ' + this.state.error);
     
+    this.sendRequest(user)
+    .then(res => {
+      if (res.success) {
+        this.setState({
+          error: JSON.parse(res)
+        });
+        console.log(res);
+      }
+    });
+    console.log('Après : ' + this.state.error);
   }
 
   render() {
