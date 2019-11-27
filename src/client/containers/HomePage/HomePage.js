@@ -79,12 +79,16 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
       isValid: isValid 
     });
   }
-
-  videChamps(){
-    PasswordM.value="";
+/*
+  videChamps(totale){
+    if(totale){
+      this.state.passwordM="";
+      PasswordM.value="";
+    }
+    this.state.usernameM="";
     UsernameM.value="";
   }
-
+*/
   onPasswordMChange(event){
     const value=event.target.value;
     const isValid=this.state.isValid;
@@ -93,13 +97,6 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
       isValid: isValid 
     });
   }
-
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-      usernameM_Valid: response.ok,
-    });
-  };
 
   async tryConnect(){
 
@@ -113,12 +110,13 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
     if(response.ok)
     {
       console.log("Connexion réussie !");
+      //this.videChamps(true);
     }
     else
     {
       console.log("Échec de la connexion !");
+      //this.videChamps(false);
     }
-    this.videChamps();
     this.state.isValid=response.ok;
   }
   
