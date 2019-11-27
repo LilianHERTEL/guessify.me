@@ -12,6 +12,8 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { IconButton } from '@material-ui/core';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
 import './style.css';
 import { Divider, Hidden, CardMedia } from '@material-ui/core';
@@ -50,7 +52,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
    * when initial state username is not null, submit the form to load repos
    */
 
-/*
+
   state={
     usernameM: "",
     passwordM: "",
@@ -72,19 +74,8 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
   };
 
   async tryConnect(){
-    /*const preFlight = await fetch('http://localhost:8080/auth/login',{
-      method: 'OPTIONS',
-      headers:{
-        'Access-Control-Request-Method':'POST',
-        'Access-Control-Request-Headers': 'Content-Type'
 
-      }
-    })
-    console.log("Envoi preFlight !");
-    console.log(await preFlight.json());
-*/
-/*
-    const response = await fetch('http://localhost:3000/auth/login', {
+    const response = await fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json'
@@ -96,7 +87,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
     return response;
   }
   
-*/
+
   render() {
     
 
@@ -117,12 +108,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
             Quick Play
           </Typography>
           <TextField
-<<<<<<< Updated upstream
-          
-            id="firstName"
-=======
             id="usernameGuest"
->>>>>>> Stashed changes
             name="username"
             label="Username"
             fullWidth
@@ -149,12 +135,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
 
          <Box my="10px">
          <TextField
-<<<<<<< Updated upstream
-          
-          id="firstName"
-=======
           id="UsernameM"
->>>>>>> Stashed changes
           name="username"
           label="Username"
           fullWidth
@@ -164,13 +145,8 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
         />
         <TextField
           
-<<<<<<< Updated upstream
-          id="firstName"
-          name="username"
-=======
           id="PasswordM"
           name="password"
->>>>>>> Stashed changes
           label="Password"
           type="password"
           fullWidth
@@ -181,13 +157,6 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
         <Button onClick={this.tryConnect.bind(this)} id="logInButton" variant="contained" size="medium" color="primary" fullWidth>
           Log in
         </Button>
-<<<<<<< Updated upstream
-        <Button id="otherMethodsButton"variant="contained" size="medium" color="primary" fullWidth>
-          Other methods
-        </Button>
-        <Button id="signInButton" variant="contained" size="medium" color="primary" fullWidth>
-          Sign in
-=======
         
         <Typography  variant="h5" align="center">
             - or -
@@ -227,7 +196,6 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
 
         <Button id="signInButton" variant="contained" size="medium" color="primary" fullWidth href="/signup">
           Sign in !
->>>>>>> Stashed changes
         </Button>
         
          </Box>
