@@ -134,7 +134,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
       
       <Grid container spacing={3} justify="center" alignItems="center">
         <Grid item>
-          <img id="banner" title="This is our awesome banner ! Cool huh ?" src="/src/client/images/bannière.png" />
+          <img id="banner" title="This is our awesome banner ! Cool huh ?" src="/src/client/images/banner.png" width="800"/>
         </Grid>
         <Grid item xs={12} sm={5}>
         <Typography  variant="h5" align="center">
