@@ -53,9 +53,15 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
    */
 
 
-  state={
-    usernameM: "",
-    passwordM: "",
+  constructor(props){
+    super(props);
+    this.state = {
+      usernameM: '',
+      passwordM: '',
+      isValid: true
+    }
+    this.onUsernameMChange = this.onUsernameMChange.bind(this);
+    this.onPasswordMChange = this.onPasswordMChange.bind(this);
   }
 
   componentDidMount() {
@@ -65,12 +71,34 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
     }
   }
   
+  onUsernameMChange(event){
+    const value=event.target.value;
+    const isValid=this.state.isValid;
+    this.setState({
+      usernameM: value,
+      isValid: isValid 
+    });
+  }
+
+  videChamps(){
+    PasswordM.value="";
+    UsernameM.value="";
+  }
+
+  onPasswordMChange(event){
+    const value=event.target.value;
+    const isValid=this.state.isValid;
+    this.setState({
+      passwordM: value,
+      isValid: isValid 
+    });
+  }
 
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
+      usernameM_Valid: response.ok,
     });
-    console.log([name]);
   };
 
   async tryConnect(){
@@ -82,9 +110,16 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
       },
       body: JSON.stringify({ username: UsernameM.value, password: PasswordM.value }),
     })
-    console.log("YEET");
-    console.log(await response.json());
-    return response;
+    if(response.ok)
+    {
+      console.log("Connexion réussie !");
+    }
+    else
+    {
+      console.log("Échec de la connexion !");
+    }
+    this.videChamps();
+    this.state.isValid=response.ok;
   }
   
 
@@ -135,16 +170,17 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
 
          <Box my="10px">
          <TextField
+          error={!this.state.isValid}
           id="UsernameM"
           name="username"
           label="Username"
           fullWidth
           autoComplete="fname"
           value={this.state.usernameM}
-          onChange={this.handleChange('usernameM')}
+          onChange={this.onUsernameMChange}
         />
         <TextField
-          
+          error={!this.state.isValid}
           id="PasswordM"
           name="password"
           label="Password"
@@ -152,7 +188,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
           fullWidth
           autoComplete="fname"
           value={this.state.passwordM}
-          onChange={this.handleChange('passwordM')}
+          onChange={this.onPasswordMChange}
         />
         <Button onClick={this.tryConnect.bind(this)} id="logInButton" variant="contained" size="medium" color="primary" fullWidth>
           Log in
