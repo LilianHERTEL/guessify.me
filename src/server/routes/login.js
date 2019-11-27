@@ -18,8 +18,10 @@ router.post('/unregister',passport.authenticate('local'),function(req,res){
   var data = req.body;
   var User = mongoose.model('User');
   var query = User.findByIdAndRemove(req.user._id,function(err,user){
-    if(!err) res.json({success:true,msg:"Unregistered !"});
-    else res.json({success:false,msg:"Error while unregistering !"});
+    if(!err) {
+      res.json({success:true,msg:"Unregistered !"});
+    }
+      else res.status(401).json({success:false,msg:"Error while unregistering !"});
   });
 });
 
@@ -33,7 +35,7 @@ router.post('/register' , function(req, res){
       ...data
   })
   newUser.save(function (err){
-    if (err) return res.json({success:false,msg:err.errmsg});
+    if (err) return res.status(401).json({success:false,msg:err.errmsg});
     return res.json({success:true,msg:"You have successfully registered!"});
   })
 
