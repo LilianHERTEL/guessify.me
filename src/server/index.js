@@ -45,11 +45,11 @@ passport.use(new LocalStrategy(
     User.findOne({ username: username }, function(err, user) {
       if (err) { return done(err); }
       if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+        return done(null, false, { message: 'Incorrect username/password.' });
       }
       user.comparePassword(password,(err,isMatch) => {
         if(err) return done(null, false, { message: err })
-        if(!isMatch)  return done(null, false, { message: 'Incorrect password.' })
+        if(!isMatch)  return done(null, false, { message: 'Incorrect username/password.' })
          
         return done(null, user);
     })
