@@ -71,7 +71,7 @@ class SignUpPage extends React.Component {
   }
 
   async sendRequest(user) {
-    return await fetch('http://localhost:8080/auth/register', {
+    return await fetch('http://localhost:3000/api/auth/register', {
       method: 'POST',
       mode: "no-cors",
       headers: {
