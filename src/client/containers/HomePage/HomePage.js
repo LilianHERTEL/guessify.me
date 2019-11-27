@@ -14,7 +14,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import './style.css';
-import { Divider, Hidden } from '@material-ui/core';
+import { Divider, Hidden, CardMedia } from '@material-ui/core';
 const theme = createMuiTheme();
 const classes = {
   appBar: {
@@ -64,8 +64,12 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
         <Paper className="paper">
           
           <React.Fragment>
+            
       
       <Grid container spacing={3} justify="center" alignItems="center">
+        <Grid item>
+          <img id="banner" title="This is our awesome banner ! Cool huh ?" src="/src/client/images/bannière.png" />
+        </Grid>
         <Grid item xs={12} sm={5}>
         <Typography  variant="h5" align="center">
             Quick Play
@@ -109,15 +113,19 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
           
           id="firstName"
           name="username"
-          label="Username"
+          label="Password"
+          type="password"
           fullWidth
           autoComplete="fname"
         />
-        <Button variant="contained" size="medium" color="primary" fullWidth>
-          Play
+        <Button id="logInButton" variant="contained" size="medium" color="primary" fullWidth>
+          Log in
         </Button>
-        <Button variant="contained" size="medium" color="primary" fullWidth>
-          Play
+        <Button id="otherMethodsButton"variant="contained" size="medium" color="primary" fullWidth>
+          Other methods
+        </Button>
+        <Button id="signInButton" variant="contained" size="medium" color="primary" fullWidth>
+          Sign in
         </Button>
         
          </Box>

@@ -1,23 +1,56 @@
 var mongoose = require('mongoose');
+var uniqid = require('uniqid')
   var Schema = mongoose.Schema;
 
-var PlayerSchema = new Schema({
-    typeConnexion:String,
-    tokemTMP: String
-})
-
-  var UserSchema = new Schema({
-    userID:  Number,
-    username: String,
-    passwordHash:   String,
-    profileImageURL:   String,
-    isAdmin: Boolean,
-    email: String,
-    inGame: Boolean,
-    pointTotal: Number,
-    listCo: [MoyenConnexionSchema]
+  var PlayerSchema = Schema({
+    session : String,
+    username : String,
+    pointsTotal    : Number,
   });
 
+  var LobbySchema = new Schema({
+    codeLobby:  String,
+    theme: String,
+    maxPlayer: {type: Number, default:10},
+    isPrivate:   Boolean,
+    isActive:   Boolean,
+    status: String,
+    joinable: Boolean,
+    inGame: Boolean,
+    listPlayer: [PlayerSchema]
+  });
+
+  LobbySchema.statics.createLobby = async function () {
+    var Lobby = this.model("Lobby");
+    var lobbyID  = uniqid.time();
+    var l = new Lobby({
+        codeLobby: lobbyID
+    })
+    var result = await l.save()
+    return result;
+  }
+
+  LobbySchema.methods.join = async function (sessionID,username) {
+    this.listPlayer.push({
+      session:sessionID,
+      username,
+      pointsTotal : 0
+    })
+    await this.save();
+
+  }
+
+
+  LobbySchema.methods.join = async function (sessionID) {
+    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
+      console.log(data)
+    })
+    // l.listPlayer.push({
+    //   session
+    // })
+
+  }
 
   
-  module.exports =  UserSchema
+  
+  module.exports =  LobbySchema

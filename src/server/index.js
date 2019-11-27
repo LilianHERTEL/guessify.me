@@ -12,15 +12,14 @@ const mongoose = require('mongoose') //Pris
 const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var apiRoute = require('./routes/lobby.js');
 var loginRoute = require('./routes/login.js');
+
+
 
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
 var launchDataBase = require('./database.js');
-
-global.roomList = {};
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 
 app.set('trust proxy', 1) // trust first proxy (autorise l'utilisation d'un proxy)
@@ -46,11 +45,11 @@ passport.use(new LocalStrategy(
     User.findOne({ username: username }, function(err, user) {
       if (err) { return done(err); }
       if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+        return done(null, false, { message: 'Incorrect username/password.' });
       }
       user.comparePassword(password,(err,isMatch) => {
-        if(err) done(null, false, { message: err })
-        if(!isMatch)  return done(null, false, { message: 'Incorrect password.' })
+        if(err) return done(null, false, { message: err })
+        if(!isMatch)  return done(null, false, { message: 'Incorrect username/password.' })
          
         return done(null, user);
     })
@@ -59,8 +58,7 @@ passport.use(new LocalStrategy(
 ));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/api', apiRoute);
-app.use('/auth', loginRoute);
+app.use('/api/auth', loginRoute);
 
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = argv.host || process.env.HOST;

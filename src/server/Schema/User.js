@@ -13,7 +13,11 @@ var MoyenConnexionSchema = new Schema({
     password:   String,
     profileImageURL:   String,
     isAdmin: Boolean,
-    email: String,
+    email: 
+    {
+      type:String,
+      unique: true,
+    },
     inGame: Boolean,
     pointTotal: Number,
     listCo: [MoyenConnexionSchema]
