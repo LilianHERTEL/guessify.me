@@ -56,21 +56,58 @@ class SignUpPage extends React.Component {
     super(props);
     this.state = {
       username: '',
-      password:   '',
+      password: '',
       confirmPassword: '',
       email: '',
-      tosAgreement: '',
-      error: ''
+      tosAgreement: false,
+      isValidEmail: false,
+      isValidConfirmPassword: false
     }
     this.onAnyInputChange = this.onAnyInputChange.bind(this);
+    this.onEmailInputChange = this.onEmailInputChange.bind(this);
+    this.onPasswordsInputChange = this.onPasswordsInputChange.bind(this);
     this.onSignUpButtonClick = this.onSignUpButtonClick.bind(this);
+    this.onTosAgreementChange = this.onTosAgreementChange.bind(this);
+  }
+
+  validateEmail(email) {
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+  }
+  onEmailInputChange(event){
+    const val = event.target.value;
+    const isValid = this.validateEmail(val);
+    this.setState({
+      email: val,
+      isValidEmail: isValid
+    });
+  }
+
+  validatePasswords(passwd1, passwd2) {
+    return passwd1 === passwd2;
+  }
+  onPasswordsInputChange(event){
+    const name = event.target.name;
+    const val = event.target.value;
+    let isValid;
+    const unchangedInput = name === password ? 'confirmPassword' : 'password';
+    isValid = this.validatePasswords(val, this.state[unchangedInput]);
+    this.setState({
+      [name]: val,
+      isValidConfirmPassword: isValid
+    });
+  }
+
+  onTosAgreementChange(event) {
+    this.setState({
+      tosAgreement: event.target.checked
+    });
   }
 
   onAnyInputChange(event){
     this.setState({[event.target.name]: event.target.value});
   }
 
-  async sendRequest(user) {
+  async sendRequest(user){
     return await fetch('http://localhost:3000/api/auth/register', {
       method: 'POST',
       headers: {
@@ -87,18 +124,11 @@ class SignUpPage extends React.Component {
       password: this.state.password,
       email: this.state.email
     }
-    console.log('Avant : ' + this.state.error);
-    
-    this.sendRequest(user)
-    .then(res => {
-      if (res.success) {
-        this.setState({
-          error: JSON.parse(res)
-        });
-        console.log(res);
-      }
-    });
-    console.log('Après : ' + this.state.error);
+    if(!this.state.isValidEmail || !this.state.isValidConfirmPassword || !this.state.tosAgreement) {
+      alert("Please fill in all the fields");
+      return;
+    }
+    this.sendRequest(user);
   }
 
   render() {
@@ -138,7 +168,8 @@ class SignUpPage extends React.Component {
                       label="Email"
                       name="email"
                       autoComplete="email"
-                      onChange={this.onAnyInputChange}
+                      onChange={this.onEmailInputChange}
+                      error={!this.state.isValidEmail}
                   />
                   </Grid>
                   <Grid item xs={12}>
@@ -152,7 +183,7 @@ class SignUpPage extends React.Component {
                       type="password"
                       id="password"
                       autoComplete="current-password"
-                      onChange={this.onAnyInputChange}
+                      onChange={this.onPasswordsInputChange}
                   />
                   </Grid>
                   <Grid item xs={12}>
@@ -166,13 +197,13 @@ class SignUpPage extends React.Component {
                       type="password"
                       id="confirm-password"
                       autoComplete="current-password"
-                      onChange={this.onAnyInputChange}
+                      onChange={this.onPasswordsInputChange}
+                      error={!this.state.isValidConfirmPassword}
                   />
                   </Grid>
                   <Grid item xs={12}>
                   <FormControlLabel
-                      name="tosAgreement" 
-                      control={<Checkbox value="agreementToS" color="primary" />}
+                      control={<Checkbox name="tosAgreement" checked={this.state.tosAgreement} color="primary" />}
                       label={
                           <React.Fragment>
                               <span>I agree with </span>
@@ -181,7 +212,7 @@ class SignUpPage extends React.Component {
                               </Link>
                           </React.Fragment>
                       }
-                      onChange={this.onAnyInputChange}
+                      onChange={this.onTosAgreementChange}
                   />
                   </Grid>
               </Grid>
