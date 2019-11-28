@@ -137,7 +137,7 @@ class SignUpPage extends React.Component {
       <Container component="main" maxWidth="xs">
         <div className={classes.paper}>
           <Grid item>
-            <img id="banner" title="This is our awesome banner ! Cool huh ?" src="/src/client/images/bannière.png" />
+            <img id="banner" title="This is our awesome banner ! Cool huh ?" src="/src/client/images/banner.png" />
           </Grid>
           <Box border={1} borderColor="primary.main" borderRadius={20} className={classes.box}>
               <Typography component="h1" variant="h5" align="center" color="primary">

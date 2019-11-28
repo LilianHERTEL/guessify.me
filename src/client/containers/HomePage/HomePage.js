@@ -45,8 +45,6 @@ const classes = {
   },
 };
 
-async function kek(){}
-
 class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   /**
    * when initial state username is not null, submit the form to load repos
@@ -79,6 +77,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
       isValid: isValid 
     });
   }
+
 /*
   videChamps(totale){
     if(totale){
@@ -231,7 +230,6 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
         <Button id="signInButton" variant="contained" size="medium" color="primary" fullWidth href="/signup">
           Sign in !
         </Button>
-        
          </Box>
 
 
