@@ -51,6 +51,14 @@ var uniqid = require('uniqid')
 
   }
 
-  
+  LobbySchema.methods.leave = async function (sessionID,username) {
+    this.listPlayer.push({
+      session:sessionID,
+      username,
+      pointsTotal : 0
+    })
+    await this.save();
+
+  }
   
   module.exports =  LobbySchema
