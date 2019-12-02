@@ -20,8 +20,8 @@ function start(io) {
         lobby = await Lobby.findOne({_id:lobbyResult[0]}).exec()
       }
       console.log(lobby)
-        socket.username = sessionID;
-        socket.sessionID = username;
+        socket.username = username;
+        socket.sessionID = sessionID;
         socket.lobby = lobby
         await lobby.join(sessionID,username);
         socket.join(lobby._id.toString());
