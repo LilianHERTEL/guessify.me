@@ -13,6 +13,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Chat from './Chat'
+import openSocket from 'socket.io-client';
 
 
 function a11yProps(index) {
@@ -60,7 +61,60 @@ function TabPanel(props) {
 }
 export default class GamePage extends React.Component {
 
+
+  state = {
+    loading:true,
+    lobby :null,
+    chat:[]
+  }
+
+  socket = null;
+  async connect(username){
+  console.log(username,this.state)
+var that = this;
+this.socket = openSocket('http://localhost:8080');
+var socket = this.socket;
+this.socket.on('connect', function(){
+  socket.emit("findGame","thomasxd24")
+});
+this.socket.on('Unauthorized', function(data){
+  console.error(data)
+});
+this.socket.on('joinedGame', function(data){
+  console.log(data)
+  that.setState((state) => {
+    state.chat.push("Join Lobby "+data.lobby.codeLobby)
+    return {chat: state.chat};
+  });
+  console.log(that.state.chat)
+});
+this.socket.on('receiveChat', function(data){
+  that.setState((state) => {
+    state.chat.push(data)
+    return {chat: state.chat};
+  });
+});
+this.socket.on('disconnect', function(){});
+  
+  }
+
+  componentDidMount(){
+    if(!this.props.location.state) return;
+    const data = this.props.location.state;
+    this.connect(data.username)
+  }
+
+  _handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      if(e.target.value == "") return
+      this.socket.emit("sendChat",e.target.value)
+      e.target.value = ""
+    }
+  }
+
   render() {
+    if(!this.props.location.state)
+    return(<h3>Not authorised</h3>)
     return (
       <Container maxWidth="xl" className="fullHeight">
         <Box my={2} className="page" height={0.9}>
@@ -123,8 +177,7 @@ export default class GamePage extends React.Component {
                 <Box flex="1" mt={3}>
                   <Paper className="fullHeight">
 
-                    <Chat />
-
+                 <Chat chat={this.state.chat} enterKey={this._handleKeyDown} />
                   </Paper>
 
 
