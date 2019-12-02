@@ -30,10 +30,10 @@ var uniqid = require('uniqid')
     return result;
   }
 
-  LobbySchema.methods.join = async function (sessionID,username) {
+  LobbySchema.methods.join = async function (session,username) {
     this.listPlayer.push({
-      session:sessionID,
-      username,
+      session:session,
+      username:username,
       pointsTotal : 0
     })
     await this.save();
@@ -51,14 +51,11 @@ var uniqid = require('uniqid')
 
   }
 
-  LobbySchema.methods.leave = async function (sessionID,username) {
-    this.listPlayer.push({
-      session:sessionID,
-      username,
-      pointsTotal : 0
-    })
+  LobbySchema.methods.leave = async function (session) {
+    
+    var pos = this.listPlayer.findIndex(element => element.session === session);
+    this.listPlayer.splice(pos,1);
     await this.save();
-
   }
   
   module.exports =  LobbySchema
