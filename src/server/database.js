@@ -3,19 +3,23 @@
 var model = require('./Schema');
 var session = require('express-session')
 const MongoStore = require('connect-mongo')(session);
-function launchDataBase(app){
+function launchDataBase(app,io){
     const mongoose = require('mongoose');
     mongoose.connect('mongodb://guessify:pAI5v2#NQk#W@kimsufi.thomasxd24.com/guessify', {useNewUrlParser: true,useUnifiedTopology: true});
     
     var db = mongoose.connection;
     global.MongoStore = new MongoStore({ mongooseConnection: db });
-			app.use(session({
-			secret: 'je reflechis je prends mon temps',
-			resave: false,
-			saveUninitialized: true,
-			store: global.MongoStore,
-			cookie: { secure: false }
-    }))
+    const sessionMiddleware = session({
+        secret: 'je reflechis je prends mon temps',
+        resave: false,
+        saveUninitialized: true,
+        store: global.MongoStore,
+        cookie: { secure: false }
+        })
+    app.use(sessionMiddleware)
+    io.use(function(socket, next) {
+        sessionMiddleware(socket.request, socket.request.res, next);
+    });
 
 
     db.on('error', console.error.bind(console, 'connection error:'));

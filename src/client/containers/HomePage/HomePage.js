@@ -190,9 +190,8 @@ handleOpen(text){
             autoComplete="fname"
           />
           <div className="butt">
-          <Button variant="contained" size="medium" color="primary" fullWidth>
-          Play
-        </Button>
+          
+          <Link to={{ pathname: '/game', state: { username: 'thomasxd24',sessionID:"bitch",user:{hi:"bitch"}} }}><Button variant="contained" size="medium" color="primary" fullWidth>Play</Button></Link>
           </div>
           
 

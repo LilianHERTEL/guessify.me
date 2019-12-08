@@ -15,7 +15,6 @@ var io = require('socket.io')(http);
 var loginRoute = require('./routes/login.js');
 
 
-
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
@@ -27,7 +26,7 @@ app.use(express.json());
 
 // In production we need to pass these values in instead of relying on webpack
 //Pris 
-launchDataBase(app);
+launchDataBase(app,io);
 
 passport.serializeUser(function(user, done) {
   user.password = null

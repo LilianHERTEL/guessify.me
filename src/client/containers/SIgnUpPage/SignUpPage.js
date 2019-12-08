@@ -5,22 +5,17 @@
  * This component contains the form that allows visitors to sign up for a Guessify account
  */
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-import {Link as RouterLink} from 'react-router-dom';
-import color from '@material-ui/core/colors/purple';
+import {Link as RouterLink} from 'react-router-dom'; //aliased to avoid confusion with Mateeriel-UI Link component
 
 const styles = theme => ({
   '@global': {
@@ -206,10 +201,7 @@ class SignUpPage extends React.Component {
                       control={<Checkbox name="tosAgreement" checked={this.state.tosAgreement} color="primary" />}
                       label={
                           <React.Fragment>
-                              <span>I agree with </span>
-                              <Link href="#" variant="body1">
-                                  Terms and Conditions
-                              </Link>
+                            I agree with <RouterLink to="#">Terms and Conditions</RouterLink>
                           </React.Fragment>
                       }
                       onChange={this.onTosAgreementChange}
@@ -223,15 +215,13 @@ class SignUpPage extends React.Component {
                   color="primary"
                   className={classes.submit}
                   onClick={this.onSignUpButtonClick}
-              >
+                  >
                   Sign Up
               </Button>
               <Grid container justify="flex-end">
-                  <Grid item>
-                  <Link href="/" variant="body2">
-                      You already have an account ? Log in
-                  </Link>
-                  </Grid>
+                <Grid item>
+                  You already have an account? <RouterLink to="/">Log in</RouterLink>
+                </Grid>
               </Grid>
               </form>
           </Box>
