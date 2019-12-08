@@ -60,42 +60,49 @@ function TabPanel(props) {
   );
 }
 export default class GamePage extends React.Component {
-
-
-  state = {
-    loading:true,
-    lobby :null,
-    chat:[]
-  }
-
-  socket = null;
-  async connect(username){
-  console.log(username,this.state)
-var that = this;
-this.socket = openSocket('http://localhost:8080');
-var socket = this.socket;
-this.socket.on('connect', function(){
-  socket.emit("findGame","thomasxd24")
-});
-this.socket.on('Unauthorized', function(data){
-  console.error(data)
-});
-this.socket.on('joinedGame', function(data){
-  console.log(data)
-  that.setState((state) => {
-    state.chat.push("Join Lobby "+data.lobby.codeLobby)
-    return {chat: state.chat};
-  });
-  console.log(that.state.chat)
-});
-this.socket.on('receiveChat', function(data){
-  that.setState((state) => {
-    state.chat.push(data)
-    return {chat: state.chat};
-  });
-});
-this.socket.on('disconnect', function(){});
   
+  constructor(props){
+    super(props);
+    this.state = {
+      loading:true,
+      lobby :null,
+      chat:[]
+    }
+    this.socket = null;
+    this.MyEmitDrawing = this.MyEmitDrawing.bind(this);
+  }
+  
+  async connect(username){
+      console.log(username,this.state)
+      var that = this;
+      this.socket = openSocket('http://localhost:8080');
+      var socket = this.socket;
+      this.socket.on('connect', function(){
+        socket.emit("findGame","thomasxd24");
+      });
+      this.socket.on('Unauthorized', function(data){
+        console.error(data);
+      });
+      this.socket.on('joinedGame', function(data){
+        console.log(data);
+        that.setState((state) => {
+        state.chat.push("Join Lobby "+data.lobby.codeLobby)
+        return {chat: state.chat};
+      });
+      console.log(that.state.chat)
+    });
+    this.socket.on('receiveChat', function(data){
+      that.setState((state) => {
+        state.chat.push(data)
+        return {chat: state.chat};
+      });
+    });
+    this.socket.on('disconnect', function(){});
+      
+  }
+  MyEmitDrawing(val){
+    console.log("////////////////////////////  : " + !!this);
+    this.socket.emit('draw',val);
   }
 
   componentDidMount(){
@@ -106,11 +113,13 @@ this.socket.on('disconnect', function(){});
 
   _handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      if(e.target.value == "") return
-      this.socket.emit("sendChat",e.target.value)
-      e.target.value = ""
+      if(e.target.value == "") return;
+      this.socket.emit("sendChat",e.target.value);
+      e.target.value = "";
     }
   }
+
+  
 
   render() {
     if(!this.props.location.state)
@@ -127,8 +136,8 @@ this.socket.on('disconnect', function(){});
                 <Box my={1}>
                   <LinearProgress />
                 </Box>
-                <Box my={1}>
-                  <DrawingArea/>
+                <Box my={1} className="fullHeight">
+                  <DrawingArea className="fullHeight" socket={this.MyEmitDrawing}/>
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
