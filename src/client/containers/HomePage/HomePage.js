@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import {useState} from 'react';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
@@ -19,6 +20,8 @@ import AvatarIcon from '@material-ui/icons/AccountBox'
 import {Link} from 'react-router-dom';
 import './style.css';
 import { Divider, Hidden, CardMedia,Avatar,Snackbar } from '@material-ui/core';
+import banner from '../../images/banner.png';
+
 const theme = createMuiTheme();
 const classes = {
   appBar: {
@@ -47,130 +50,55 @@ const classes = {
   },
 };
 
-class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  /**
-   * when initial state username is not null, submit the form to load repos
-   */
+async function tryConnect(usernameM,passwordM){
 
-
-  constructor(props){
-    super(props);
-
-    this.state = {
-      usernameM: '',
-      passwordM: '',
-      usernameAnonymous: '',
-      isValid: true,
-      user:null,
-      statusText:false
-    }
-    this.onUsernameMChange = this.onUsernameMChange.bind(this);
-    this.onPasswordMChange = this.onPasswordMChange.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-  }
-
-  componentDidMount() {
-    const { username, onSubmitForm } = this.props;
-    if (username && username.trim().length > 0) {
-      onSubmitForm();
-    }
-  }
-  
-  onUsernameMChange(event){
-    const value=event.target.value;
-    const isValid=this.state.isValid;
-    this.setState({
-      usernameM: value,
-      isValid: isValid 
-    });
-  }
-
-/*
-  videChamps(totale){
-    if(totale){
-      this.state.passwordM="";
-      PasswordM.value="";
-    }
-    this.state.usernameM="";
-    UsernameM.value="";
-  }
-*/
-  onPasswordMChange(event){
-    const value=event.target.value;
-    const isValid=this.state.isValid;
-    this.setState({
-      passwordM: value,
-      isValid: isValid 
-    });
-  }
-
-  async tryConnect(){
-
-    const response = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username: UsernameM.value, password: PasswordM.value }),
-    })
-    
-    if(response.ok)
-    {
-      var data = await response.json();
-      this.handleOpen("Connexion réussie !");
-      this.setState({
-        user:data.msg
-      })
-      //this.videChamps(true);
-    }
-    else
-    {
-      this.handleOpen("Username/Password Incorrect");
-      //this.videChamps(false);
-    }
-    this.state.isValid=response.ok;
-  }
-
-  async disconnect(){
-
-    const response = await fetch('http://localhost:3000/api/auth/logout')
-    
-    if(response.ok)
-    {
-      var data = await response.json();
-      this.handleOpen("Déconnexion réussie !");
-      this.setState({
-        user:null
-      })
-      //this.videChamps(true);
-    }
-    else
-    {
-      this.handleOpen("Erreur lors de la deconnexion");
-      //this.videChamps(false);
-    }
-    this.state.isValid=response.ok;
-  }
-  
-handleClose(){
-  this.setState({
-    statusText:null
+  const response = await fetch('http://localhost:3000/api/auth/login', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username: usernameM, password: passwordM }),
   })
-}
-handleOpen(text){
-  this.setState({
-   statusText:text
-  })
+  
+  if(response.ok)
+  {
+    var data = await response.json();
+    console.log(data);
+  }
+  else
+  {
+  }
 }
 
-  render() {
+async function disconnect(){
+
+  const response = await fetch('http://localhost:3000/api/auth/logout')
+  
+  if(response.ok)
+  {
+    var data = await response.json();
+
+
+  }
+  else
+  {
+  }
+}
+
+const HomePage = (props) => { 
+  const [usernameM, setUsernameM] = useState('');
+  const [passwordM, setPasswordM] = useState('');
+  const [usernameAnonymous, setUsernameAnonymous] = useState('');
+  const [isValid, setIsValid] = useState(true);
+  const [user, setUser] = useState(null);
+  const [statusText, setStatusText] = useState('');
     
 
     return (
       <React.Fragment>
       <main className="maindiv">
         <div>
-        <img id="banner"  title="This is our awesome banner ! Cool huh ?" src="/src/client/images/banner.png" style={{marginLeft:125}}/>
+        <img id="banner"  title="This is our awesome banner ! Cool huh ?" src={banner} style={{marginLeft:125}}/>
         </div>
       
         <Paper className="paper">
@@ -202,24 +130,14 @@ handleOpen(text){
             OR
           </Typography>
         </Grid>
-        <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={this.state.statusText == null}
-        autoHideDuration={3000}
-        onClose={this.handleClose}
-        message={this.state.statusText}
-      />
         <Grid item xs={12} sm={5}>
-          {this.state.user ?
+          {user ?
           (
             <React.Fragment>
 <Typography variant="h4" align="center">
-            Connected as {this.state.user.username}
+            Connected as {user.username}
           </Typography>
-          <Button onClick={this.disconnect.bind(this)}>Deconnexion</Button>
+          <Button onClick={disconnect}>Deconnexion</Button>
             </React.Fragment>
             
           ):
@@ -258,28 +176,26 @@ handleOpen(text){
          <Box mb="10px">
          <TextField
          style={{marginTop:5,marginBottom:5}}
-          error={!this.state.isValid}
           id="UsernameM"
           name="username"
           label="Username"
           fullWidth
           autoComplete="fname"
-          value={this.state.usernameM}
-          onChange={this.onUsernameMChange}
+          value={usernameM}
+          onChange={e => setUsernameM(e.target.value)}
         />
         <TextField
           style={{marginTop:10,marginBottom:10}}
-          error={!this.state.isValid}
           id="PasswordM"
           name="password"
           label="Password"
           type="password"
           fullWidth
           autoComplete="fname"
-          value={this.state.passwordM}
-          onChange={this.onPasswordMChange}
+          value={passwordM}
+          onChange={e => setPasswordM(e.target.value)}
         />
-        <Button onClick={this.tryConnect.bind(this)} id="logInButton" variant="contained" size="medium" color="primary" fullWidth>
+        <Button onClick={tryConnect} id="logInButton" variant="contained" size="medium" color="primary" fullWidth>
           Sign in
         </Button>
         
@@ -307,12 +223,7 @@ handleOpen(text){
       </main>
     </React.Fragment>
     );
-  }
 }
 
-HomePage.propTypes = {
-  username: PropTypes.string,
-  onChangeUsername: PropTypes.func
-};
 
 export default HomePage
