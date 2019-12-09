@@ -17,14 +17,12 @@ import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
 import DrawingRenderArea from './DrawingRenderArea';
 
-
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
-
 
 function ListItemSample(props) {
   return (
@@ -47,7 +45,6 @@ function ListItemSample(props) {
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <Typography
       component="div"
@@ -72,7 +69,6 @@ export default class GamePage extends React.Component {
     this.socket = null;
     this.MyEmitDrawing = this.MyEmitDrawing.bind(this);
   }
-  
   async connect(username){
       console.log(username,this.state)
       var that = this; //à enlever, utiliser this directement
@@ -124,8 +120,6 @@ export default class GamePage extends React.Component {
     }
   }
 
-  
-
   render() {
     if(!this.props.location.state)
     return(<h3>Not authorised</h3>)
@@ -148,13 +142,7 @@ export default class GamePage extends React.Component {
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
                 </Box>
-
-
-
-
               </Box>
-
-
             </Grid>
             <Grid item xs={12} md={3}>
               <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
@@ -165,17 +153,10 @@ export default class GamePage extends React.Component {
                       <Tab label="Statistic" />
                     </Tabs>
                   </AppBar>
-                  
                   <Box minHeight="300px" height={0.75} overflow="auto">
                     <List >
-
                       <ListItemSample />
                       <ListItemSample />
-
-
-
-
-
                     </List>
                   </Box>
                   <Grid container alignItems="center" justify="center" spacing={1} align="center">
@@ -190,23 +171,14 @@ export default class GamePage extends React.Component {
                 </Paper>
                 <Box flex="1" mt={3}>
                   <Paper className="fullHeight">
-
                  <Chat chat={this.state.chat} enterKey={this._handleKeyDown} />
                   </Paper>
-
-
                 </Box>
               </Box>
-
             </Grid>
           </Grid>
-
-
-
         </Box>
       </Container>
-
-
     );
   }
 }
