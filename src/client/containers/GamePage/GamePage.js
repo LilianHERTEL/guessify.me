@@ -3,7 +3,7 @@
  *
  * List all the features
  */
-import React from 'react';
+import React, {useState, useRef} from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -15,6 +15,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
+import {BrowserView, MobileView, isMobile} from 'react-device-detect';
+import { array } from 'prop-types';
 
 function a11yProps(index) {
   return {
@@ -59,62 +61,59 @@ function TabPanel(props) {
     </Typography>
   );
 }
-export default class GamePage extends React.Component {
 
+const GamePage = (props) => {
 
-  state = {
-    loading:true,
-    lobby :null,
-    chat:[]
-  }
+  const [loading, setLoading] = useState(true);
+  const [lobby, setLobby] = useState(null);
+  const [chat, setChat] = useState([]);
 
-  socket = null;
-  async connect(username){
-  console.log(username,this.state)
-var that = this;
-this.socket = openSocket('http://localhost:8080');
-var socket = this.socket;
-this.socket.on('connect', function(){
-  socket.emit("findGame","thomasxd24")
-});
-this.socket.on('Unauthorized', function(data){
-  console.error(data)
-});
-this.socket.on('joinedGame', function(data){
-  console.log(data)
-  that.setState((state) => {
-    state.chat.push("Join Lobby "+data.lobby.codeLobby)
-    return {chat: state.chat};
-  });
-  console.log(that.state.chat)
-});
-this.socket.on('receiveChat', function(data){
-  that.setState((state) => {
-    state.chat.push(data)
-    return {chat: state.chat};
-  });
-});
-this.socket.on('disconnect', function(){});
+  const socket = useRef(null);
+  const connect = async (username) => {
+    console.log(username,state)
+    var that = this;
+    socket.current = openSocket('http://localhost:8080');
+    var socket = socket.current;
+    socket.current.on('connect', function(){
+      socket.emit("findGame","thomasxd24")
+    });
+    socket.current.on('Unauthorized', function(data){
+      console.error(data)
+    });
+    socket.current.on('joinedGame', function(data){
+      console.log(data)
+      that.setState((state) => {
+        chat.push("Join Lobby "+data.lobby.codeLobby)
+        return {chat: chat};
+      });
+      console.log(that.chat)
+    });
+    socket.current.on('receiveChat', function(data){
+      that.setState((state) => {
+        chat.push(data)
+        return {chat: chat};
+      });
+    });
+    socket.current.on('disconnect', function(){});
   
   }
 
-  componentDidMount(){
-    if(!this.props.location.state) return;
-    const data = this.props.location.state;
-    this.connect(data.username)
+  const componentDidMount = () =>{
+    if(!props.location.state) return;
+    const data = props.location.state;
+    connect(data.username)
   }
 
-  _handleKeyDown = (e) => {
+  const _handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       if(e.target.value == "") return
-      this.socket.emit("sendChat",e.target.value)
+      socket.current.emit("sendChat",e.target.value)
       e.target.value = ""
     }
   }
 
-  render() {
-    if(!this.props.location.state)
-    return(<h3>Not authorised</h3>)
+
+  const mobileContent = ()=>{
     return (
       <Container maxWidth="xl" className="fullHeight">
         <Box my={2} className="page" height={0.9}>
@@ -122,7 +121,40 @@ this.socket.on('disconnect', function(){});
             <Grid item xs={12} md={9}>
               <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
                 <Box my={1}>
-                  <Typography variant="h5" align="center">thomasxd24 is drawing...</Typography>
+                  <Typography variant="h5" align="center"> is drawing...</Typography>
+                </Box>
+                <Box my={1}>
+                  <LinearProgress />
+                </Box>
+                <Box my={1}>
+                  <DrawingArea/>
+                </Box>
+                
+              </Box>
+
+            </Grid>
+          </Grid>
+            
+
+
+
+        </Box>
+      </Container>
+    );
+  }
+
+    if(!props.location.state)
+    return(<h3>Not authorised</h3>)
+    if(isMobile)
+    return mobileContent();
+    return (
+      <Container maxWidth="xl" className="fullHeight">
+        <Box my={2} className="page" height={0.9}>
+          <Grid container direction="row" justify="center" spacing={3} className="fullHeight">
+            <Grid item xs={12} md={9}>
+              <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
+                <Box my={1}>
+                  <Typography variant="h5" align="center"> is drawing...</Typography>
                 </Box>
                 <Box my={1}>
                   <LinearProgress />
@@ -176,7 +208,7 @@ this.socket.on('disconnect', function(){});
                 <Box flex="1" mt={3}>
                   <Paper className="fullHeight">
 
-                 <Chat chat={this.state.chat} enterKey={this._handleKeyDown} />
+                 <Chat chat={chat} enterKey={_handleKeyDown} />
                   </Paper>
 
 
@@ -194,4 +226,5 @@ this.socket.on('disconnect', function(){});
 
     );
   }
-}
+
+export default GamePage;
