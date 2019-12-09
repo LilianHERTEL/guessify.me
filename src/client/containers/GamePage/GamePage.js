@@ -27,6 +27,8 @@ function a11yProps(index) {
 
 
 function ListItemSample(props) {
+  if(!isMobile)
+  return (<Typography>AAAAAYAAAAAAAAAAAA</Typography>)
   return (
     <React.Fragment>
       <ListItem button>
@@ -43,6 +45,17 @@ function ListItemSample(props) {
       <Divider variant="inset" component="li" />
     </React.Fragment>
   );
+}
+
+function leChat(props){
+  if(isMobile)
+  {
+return(<Typography>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</Typography>)
+  }
+  else{
+    return (
+    <Chat chat={chat} enterKey={_handleKeyDown} />);
+  }
 }
 
 function TabPanel(props) {
@@ -143,6 +156,10 @@ const GamePage = (props) => {
     );
   }
 
+  const kek =()=>{
+    return(<Typography>KEK</Typography>);
+  }
+
     if(!props.location.state)
     return(<h3>Not authorised</h3>)
     if(isMobile)
@@ -206,9 +223,8 @@ const GamePage = (props) => {
                   </Grid>
                 </Paper>
                 <Box flex="1" mt={3}>
-                  <Paper className="fullHeight">
-
-                 <Chat chat={chat} enterKey={_handleKeyDown} />
+                <Paper className="fullHeight">
+                  <leChat/>
                   </Paper>
 
 
