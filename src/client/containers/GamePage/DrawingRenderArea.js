@@ -26,6 +26,8 @@ export default function DrawingArea(){
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
+    
+    const [offset, setOffset] = React.useState(0.0);
 
     var distanceMiniAvantCreation = 5;
     var distanceMaxAvantCreation = 20;
@@ -156,15 +158,26 @@ export default function DrawingArea(){
 
 
     return (
-        <Paper height="100%" className="canvas"
-        onMouseDown={(e) => onMouseDown(e)}
-        onMouseDrag={(e) => onMouseDrag(e)}
-        onMouseUp={(e) => onMouseUp(e)}
-        onMouseMove={e => onMouseMove(e)}>
-            <svg className="fullHeight" width="100%">
-                {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)}  fill="none" stroke="black" ></path>)}
-            </svg>        
-        </Paper>
+        <React.Fragment>
+            <Box display="flex" className="fullHeight">
+                <Paper className="canvas fullHeight"
+                onMouseDown={(e) => onMouseDown(e)}
+                onMouseDrag={(e) => onMouseDrag(e)}
+                onMouseUp={(e) => onMouseUp(e)}
+                onMouseMove={e => onMouseMove(e)}>
+                    <svg className="fullHeight" width="100%">
+                        {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)}  fill="none" stroke="black" ></path>)}
+                    </svg>        
+                </Paper>
+                <Paper className="canvas fullHeight">
+                    <svg className="fullHeight" width="100%">
+                        {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)} fill="none" stroke="black" strokeDasharray={offset}></path>)}
+                    </svg>        
+                </Paper>
+            </Box>
+            
+        </React.Fragment>
+        
 
 
     );

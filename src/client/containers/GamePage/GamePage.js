@@ -15,6 +15,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
+import DrawingRenderArea from './DrawingRenderArea';
+
 
 function a11yProps(index) {
   return {
@@ -127,8 +129,8 @@ this.socket.on('disconnect', function(){});
                 <Box my={1}>
                   <LinearProgress />
                 </Box>
-                <Box my={1}>
-                  <DrawingArea/>
+                <Box my={1} className="fullHeight">
+                  <DrawingRenderArea className="fullHeight" />
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
