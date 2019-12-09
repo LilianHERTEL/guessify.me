@@ -36,6 +36,8 @@ function start(io) {
 
         socket.on('draw', function(msg){
           if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
+          //test pour voir ce qui transit 
+          console.log(msg);
           io.to(socket.lobby._id).emit('drawCmd', msg);
         });
       });
