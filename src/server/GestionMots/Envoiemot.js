@@ -1,16 +1,5 @@
-var fs = require('fs');
-var dictionnaire;
-var tabmot;
-
-fs.readFile('src/server/Dictionnaires/ENdic.txt',function(err,data){
-    if(err) throw err;
-    var dictionnaire = data.toString().split("\n");
-    for (i in tab){
-        console.log(dictionnaire[i]);
-    }
-});
-
 function tirerMots(dictionnaire){
+    var dictionnaire = global.dictionnaire;
     var tabmot=[];
     var indexs=[];
     for (let i=0; i<3;i++){
@@ -24,4 +13,3 @@ function tirerMots(dictionnaire){
     }
     return tabmot;
 }
-console.log(tabmot);

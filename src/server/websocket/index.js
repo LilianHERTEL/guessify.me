@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var dictionnary = require('../GestionMots/Envoiemot')
 function start(io) {
   console.log("bitchstart")
     io.on('connection', function(socket){
@@ -31,6 +32,7 @@ function start(io) {
           lobby: lobby
         })
       });
+
         socket.on('sendChat', function(msg){
           if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
           io.to(socket.lobby._id).emit("receiveChat",msg)
@@ -39,6 +41,12 @@ function start(io) {
         socket.on('draw', function(msg){
           if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
           io.to(socket.lobby._id).emit('drawCmd', msg);
+        });
+
+        socket.on('sendWordList',function(wordlist){
+          if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
+          
+          io.to(socket.lobby._id).emit('receiveWordList',wordlist);
         });
       });
       console.log("inited")
