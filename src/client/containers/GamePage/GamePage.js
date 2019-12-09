@@ -62,7 +62,6 @@ function TabPanel(props) {
   );
 }
 export default class GamePage extends React.Component {
-  
   constructor(props){
     super(props);
     this.state = {

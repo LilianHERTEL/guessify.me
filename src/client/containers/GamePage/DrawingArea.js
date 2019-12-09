@@ -1,21 +1,13 @@
 import React from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import MyPath from './MyPath';
 
 var path;
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
-class MyPath{
-    points = [];
-    color = "black";
-    thickness = 1;
-    constructor(points,couleur,thickness){
-        this.points = points;
-        this.color = this.color;
-        this.thickness = thickness;
-    }
-}
+
 
 
 const DrawingArea = ({socket}) => {
@@ -27,14 +19,8 @@ const DrawingArea = ({socket}) => {
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
     
-    //nouveau system ci dessous :
-    const [workingPath2,setWorkingPath] = React.useState();
-
     const workingPath = React.useRef(new MyPath([],'black',3));
     const isDrawing = React.useRef(false);
-
-    const leSocket = React.useRef();
-    
 
     var distanceMiniAvantCreation = 2;
     var distanceMaxAvantCreation = 20;
@@ -65,7 +51,7 @@ const DrawingArea = ({socket}) => {
         console.log("ENVOIES EN MODE DESSIN : " + isDrawing.current + "  ///  " + (workingPath.current.points));
         
         if(workingPath.current === null || workingPath.current.points.length === 0 ) return;
-        socket(workingPath.current.points);
+        socket(workingPath.current);
         workingPath.current = new MyPath([],'black',3);
         console.log("EMIITTTTTTT");
     }
