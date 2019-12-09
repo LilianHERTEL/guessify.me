@@ -59,6 +59,7 @@ class HomePage extends React.PureComponent { // eslint-disable-line react/prefer
     this.state = {
       usernameM: '',
       passwordM: '',
+      usernameAnonymous: '',
       isValid: true,
       user:null,
       statusText:false
@@ -191,7 +192,7 @@ handleOpen(text){
           />
           <div className="butt">
           
-          <Link to={{ pathname: '/game', state: { username: 'thomasxd24',sessionID:"bitch",user:{hi:"bitch"}} }}><Button variant="contained" size="medium" color="primary" fullWidth>Play</Button></Link>
+          <Link to={{ pathname: '/game', state: { username: 'thomasxd24'}}}><Button variant="contained" size="medium" color="primary" fullWidth>Play</Button></Link>
           </div>
           
 

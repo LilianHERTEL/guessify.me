@@ -14,12 +14,9 @@ function launchDataBase(app,io){
         resave: false,
         saveUninitialized: true,
         store: global.MongoStore,
-        cookie: { secure: false }
+        cookie: { secure: false}
         })
     app.use(sessionMiddleware)
-    io.use(function(socket, next) {
-        sessionMiddleware(socket.request, socket.request.res, next);
-    });
 
 
     db.on('error', console.error.bind(console, 'connection error:'));

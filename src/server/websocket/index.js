@@ -3,10 +3,8 @@ function start(io) {
   console.log("bitchstart")
     io.on('connection', function(socket){
       socket.isInGame = false;
-      console.log(socket.request.session.id)
       socket.on('findGame', async function(username){
         var Lobby = mongoose.model("Lobby");
-        
         var lobbyResult = await Lobby.aggregate([{$project: {
           cmp_value: {$cmp: ['$maxPlayer', { $size: '$listPlayer' }]}
       }},
@@ -20,8 +18,8 @@ function start(io) {
         lobby = await Lobby.findOne({_id:lobbyResult[0]}).exec()
       }
         socket.username = username;
-        socket.lobby = lobby;
-        await lobby.join(socket.request.session.id,username);
+        socket.lobby = lobby
+        await lobby.join(socket.id,username);
         socket.join(lobby._id.toString());
         socket.isInGame = true;
         socket.emit("joinedGame",
@@ -39,6 +37,10 @@ function start(io) {
           //test pour voir ce qui transit 
           console.log(msg.points[0].x + "  color : " + msg.color);
           io.to(socket.lobby._id).emit('drawCmd', msg);
+        });
+        socket.on('requestListPlayer', function(msg){
+          if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
+          io.to(socket.lobby._id).emit('listPlayer', socket.lobby);
         });
       });
       console.log("inited")
