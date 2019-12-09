@@ -40,7 +40,15 @@ function start(io) {
           if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
           io.to(socket.lobby._id).emit('drawCmd', msg);
         });
+
+        socket.on('drawer',function(listeMot){
+          if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
+          io.to(socket.lobby._id).emit('receiveWordList',listeMot);
+        });
       });
+
+     
+
       console.log("inited")
 }
 
