@@ -20,7 +20,7 @@ function start(io) {
         lobby = await Lobby.findOne({_id:lobbyResult[0]}).exec()
       }
         socket.username = username;
-        socket.lobby = lobby
+        socket.lobby = lobby;
         await lobby.join(socket.request.session.id,username);
         socket.join(lobby._id.toString());
         socket.isInGame = true;
@@ -31,13 +31,13 @@ function start(io) {
       });
         socket.on('sendChat', function(msg){
           if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
-          io.to(socket.lobby._id).emit("receiveChat",msg)
+          io.to(socket.lobby._id).emit("receiveChat",msg);
         });
 
         socket.on('draw', function(msg){
           if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
           //test pour voir ce qui transit 
-          console.log(msg);
+          console.log(msg.points[0].x + "  color : " + msg.color);
           io.to(socket.lobby._id).emit('drawCmd', msg);
         });
       });
