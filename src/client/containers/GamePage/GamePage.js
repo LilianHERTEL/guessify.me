@@ -76,7 +76,7 @@ export default class GamePage extends React.Component {
   
   async connect(username){
       console.log(username,this.state)
-      var that = this;
+      var that = this; //à enlever, utiliser this directement
       this.socket = openSocket('http://localhost:8080');
       var socket = this.socket;
       this.socket.on('connect', function(){
@@ -101,6 +101,10 @@ export default class GamePage extends React.Component {
     });
     this.socket.on('disconnect', function(){});
       
+    //Listener for drawings 
+    this.socket.on('drawCmd', function(data){
+
+    });
   }
   MyEmitDrawing(val){
     console.log("////////////////////////////  : " + !!this);
@@ -138,8 +142,9 @@ export default class GamePage extends React.Component {
                 <Box my={1}>
                   <LinearProgress />
                 </Box>
-                <Box my={1} className="fullHeight">
+                <Box my={1} className="fullHeight" display="flex">
                   <DrawingArea className="fullHeight" socket={this.MyEmitDrawing}/>
+                  <DrawingRenderArea/>
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>

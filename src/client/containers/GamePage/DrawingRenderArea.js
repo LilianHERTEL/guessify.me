@@ -17,17 +17,13 @@ class MyPath{
     }
 }
 
-
 export default function DrawingArea(){
-
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
-    
-    const [offset, setOffset] = React.useState(0.0);
 
     var distanceMiniAvantCreation = 5;
     var distanceMaxAvantCreation = 20;
@@ -42,45 +38,6 @@ export default function DrawingArea(){
         return Math.sqrt(Math.pow((pointA.x - pointB.x), 2) + Math.pow(pointA.y - pointB.y, 2));
     }
 
-    function onMouseMove(event) {
-
-        setMouse({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-        //console.log("MOUSE MOVE " + event.nativeEvent.offsetX + " " + event.nativeEvent.offsetY);
-        //console.log("ON MOUSE DOWN " + ancienPoint.x);
-        if (estPointAZero(ancienPoint)) {
-            setAncienPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-        }
-        setActuelPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-        setDistance(distanceBtw(ancienPoint, actuelPoint));
-        //|| distance > distanceMaxAvantCreation
-        if (((((Date.now() - ancienTemps) > ecartTemps) && distance > distanceMiniAvantCreation) ) && dessine) {
-            ancienTemps = Date.now();
-            setAncienPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-            console.log("CREATION POINT + date : " + (Date.now()-ancienTemps));
-
-            console.log(listPath[listPath.length-1].points.push({x:actuelPoint.x,y:actuelPoint.y}));
-
-            setListPath(listPath);
-        }
-    }
-
-    
-
-    function onMouseDown(event) {
-        console.log("ON MOUSE DOWN");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2)])
-        setDessine(true);
-    }
-
-    function onMouseDrag(event) {
-        console.log("ON MOUSE DRAG");
-    }
-
-    function onMouseUp(event) {
-        console.log("ON MOUSE UP");
-        setDessine(false);
-    }
-
     // The smoothing ratio
     const smoothing = 0.2
 
@@ -89,12 +46,12 @@ export default function DrawingArea(){
     //     - pointB (array) [x,y]: coordinates
     // O:  - (object) { length: l, angle: a }: properties of the line
     const line = (pointA, pointB) => {
-    const lengthX = pointB.x - pointA.x
-    const lengthY = pointB.y - pointA.y
-    return {
-        length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
-        angle: Math.atan2(lengthY, lengthX)
-    }
+        const lengthX = pointB.x - pointA.x
+        const lengthY = pointB.y - pointA.y
+        return {
+            length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+            angle: Math.atan2(lengthY, lengthX)
+        }
     }
 
     // Position of a control point 
@@ -104,23 +61,23 @@ export default function DrawingArea(){
     //     - reverse (boolean, optional): sets the direction
     // O:  - (array) [x,y]: a tuple of coordinates
     const controlPoint = (current, previous, next, reverse) => {
-    // When 'current' is the first or last point of the array
-    // 'previous' or 'next' don't exist.
-    // Replace with 'current'
-    const p = previous || current
-    const n = next || current
+        // When 'current' is the first or last point of the array
+        // 'previous' or 'next' don't exist.
+        // Replace with 'current'
+        const p = previous || current
+        const n = next || current
 
-    // Properties of the opposed-line
-    const o = line(p, n)
+        // Properties of the opposed-line
+        const o = line(p, n)
 
-    // If is end-control-point, add PI to the angle to go backward
-    const angle = o.angle + (reverse ? Math.PI : 0)
-    const length = o.length * smoothing
+        // If is end-control-point, add PI to the angle to go backward
+        const angle = o.angle + (reverse ? Math.PI : 0)
+        const length = o.length * smoothing
 
-    // The control point position is relative to the current point
-    const x = current.x + Math.cos(angle) * length
-    const y = current.y + Math.sin(angle) * length
-    return [x, y]
+        // The control point position is relative to the current point
+        const x = current.x + Math.cos(angle) * length
+        const y = current.y + Math.sin(angle) * length
+        return [x, y]
     }
 
     // Create the bezier curve command 
@@ -155,34 +112,11 @@ export default function DrawingArea(){
         return `${d}`
     }
 
-
-
     return (
-        <React.Fragment>
-            <Box display="flex" className="fullHeight">
-                <Paper className="canvas fullHeight"
-                onMouseDown={(e) => onMouseDown(e)}
-                onMouseDrag={(e) => onMouseDrag(e)}
-                onMouseUp={(e) => onMouseUp(e)}
-                onMouseMove={e => onMouseMove(e)}>
-                    <svg className="fullHeight" width="100%">
-                        {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)}  fill="none" stroke="black" ></path>)}
-                    </svg>        
-                </Paper>
-                <Paper className="canvas fullHeight">
-                    <svg className="fullHeight" width="100%">
-                        {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)} fill="none" stroke="black" strokeDasharray={offset}></path>)}
-                    </svg>        
-                </Paper>
-            </Box>
-            
-        </React.Fragment>
-        
-
-
+        <Paper className="canvas fullHeight">
+            <svg className="fullHeight" width="100%">
+                {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)} fill="none" stroke="black" strokeDasharray={offset}></path>)}
+            </svg>        
+        </Paper>
     );
-    //
-    
-
-
 }
