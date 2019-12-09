@@ -21,6 +21,7 @@ const DrawingArea = ({socket}) => {
     
     const workingPath = React.useRef(new MyPath([],'black',3));
     const isDrawing = React.useRef(false);
+    const timePassed = React.useRef(0.0);
 
     var distanceMiniAvantCreation = 2;
     var distanceMaxAvantCreation = 20;
@@ -28,6 +29,7 @@ const DrawingArea = ({socket}) => {
     var ecartTemps = 50;    
 
     React.useEffect(() => {
+        timePassed.current;
         const interval = setInterval(() => {
             secondCheck();
         }, 1000);
@@ -39,6 +41,7 @@ const DrawingArea = ({socket}) => {
      * secondCheck est une fonction appelée toutes les secondes, c'est ce qui est appelé
      */
     function secondCheck(){
+        
         console.log('This will run every second!');
         if(!isDrawing.current) return;
         emitPathToServ();
@@ -53,7 +56,7 @@ const DrawingArea = ({socket}) => {
         if(workingPath.current === null || workingPath.current.points.length === 0 ) return;
         socket(workingPath.current);
         workingPath.current = new MyPath([],'black',3);
-        console.log("EMIITTTTTTT");
+        console.log("[INFO] : Em");
     }
 
 
