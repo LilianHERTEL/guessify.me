@@ -3,9 +3,10 @@ export default class MyPath{
     color = "black";
     thickness = 1;
     time = 1; //default 1sec
-    constructor(points,couleur,thickness){
+    constructor(points, color, thickness, time){
         this.points = points;
-        this.color = this.color;
+        this.color = color;
         this.thickness = thickness;
+        this.time = time;
     }
 }

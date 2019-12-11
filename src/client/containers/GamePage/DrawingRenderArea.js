@@ -1,42 +1,29 @@
 import React from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import {MyPath} from './MyPath';
 
 var path;
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
-class MyPath{
-    points = [];
-    color = "black";
-    thickness = 1;
-    constructor(points,couleur,thickness){
-        this.points = points;
-        this.color = this.color;
-        this.thickness = thickness;
-    }
-}
 
-export default function DrawingArea(){
-    const [ancienPoint, setAncienPoint] = React.useState(new Point());
-    const [actuelPoint, setActuelPoint] = React.useState(new Point());
-    const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
-    const [dessine, setDessine] = React.useState(false);
-    const [distance, setDistance] = React.useState(0.0);
+export default function DrawingAreaRenderArea({socket}){
     const [listPath,setListPath] = React.useState([]);
+    const [pathsArray, setPathsArray] = useState([]);
 
-    var distanceMiniAvantCreation = 5;
-    var distanceMaxAvantCreation = 20;
-    let mouse = { x: 0, y: 0 };
-    var ecartTemps = 50;
+    React.useEffect(() => {
+        socket.current.on('drawCmd', function(data){
+            setPathsArray(pathsArray.push(data));
+            setListPath(new MyPath([], data.color, data.thickness, data.time));
+        });
+      }, [socket]);
 
-    function estPointAZero(point) {
-        return (point.x === 0 && point.y === 0) ? true : false;
+    const sleep = (milliseconds) => {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
-    function distanceBtw(pointA, pointB) {
-        return Math.sqrt(Math.pow((pointA.x - pointB.x), 2) + Math.pow(pointA.y - pointB.y, 2));
-    }
+
 
     // The smoothing ratio
     const smoothing = 0.2
@@ -64,20 +51,20 @@ export default function DrawingArea(){
         // When 'current' is the first or last point of the array
         // 'previous' or 'next' don't exist.
         // Replace with 'current'
-        const p = previous || current
-        const n = next || current
+        const p = previous || current;
+        const n = next || current;
 
         // Properties of the opposed-line
-        const o = line(p, n)
+        const o = line(p, n);
 
         // If is end-control-point, add PI to the angle to go backward
-        const angle = o.angle + (reverse ? Math.PI : 0)
-        const length = o.length * smoothing
+        const angle = o.angle + (reverse ? Math.PI : 0);
+        const length = o.length * smoothing;
 
         // The control point position is relative to the current point
-        const x = current.x + Math.cos(angle) * length
-        const y = current.y + Math.sin(angle) * length
-        return [x, y]
+        const x = current.x + Math.cos(angle) * length;
+        const y = current.y + Math.sin(angle) * length;
+        return [x, y];
     }
 
     // Create the bezier curve command 

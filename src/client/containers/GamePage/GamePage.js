@@ -67,7 +67,6 @@ const GamePage = (props) => {
   const [chatArray, setChat] = useState([]);
   const socket = useRef(null);
   
-  
   const connect =  (username) => {
     console.log("hi");
     
@@ -84,8 +83,7 @@ const GamePage = (props) => {
     socket.current.on('receiveChat', function(data){
       setChat([...chatArray,data])
     });
-    socket.current.on('disconnect', function(){});
-  
+    socket.current.on('disconnect', function(){});s
   }
 
   useEffect(() => {
@@ -153,7 +151,7 @@ const GamePage = (props) => {
                 </Box>
                 <Box my={1} className="fullHeight" display="flex">
                   <DrawingArea className="fullHeight" socket={socket.current}/>
-                  <DrawingRenderArea/>
+                  <DrawingRenderArea socket={socket.current}/>
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
