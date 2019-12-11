@@ -83,7 +83,7 @@ const GamePage = (props) => {
     socket.current.on('receiveChat', function(data){
       setChat([...chatArray,data])
     });
-    socket.current.on('disconnect', function(){});s
+    socket.current.on('disconnect', function(){});
   }
 
   useEffect(() => {
