@@ -151,7 +151,7 @@ const GamePage = (props) => {
                 </Box>
                 <Box my={1} className="fullHeight" display="flex">
                   <DrawingArea className="fullHeight" socket={socket.current}/>
-                  <DrawingRenderArea socket={socket.current}/>
+                  <DrawingRenderArea className="fullHeight" socket={socket.current}/>
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>

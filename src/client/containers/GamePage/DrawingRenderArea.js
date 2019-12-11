@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
-import {MyPath} from './MyPath';
+import MyPath from './MyPath';
 
 var path;
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
 
-export default function DrawingAreaRenderArea({socket}){
+const DrawingRenderArea = ({socket}) => {
     const [listPath,setListPath] = React.useState([]);
-    const [pathsArray, setPathsArray] = useState([]);
+    //const [pathsArray, setPathsArray] = useState([]);
 
-    React.useEffect(() => {
+
+
+    const pathsArray = useRef([]);
+
+    useEffect(() => {
+        console.log("LISTPATH = " + listPath);
+        if (socket == null) return;
         socket.current.on('drawCmd', function(data){
             setPathsArray(pathsArray.push(data));
-            setListPath(new MyPath([], data.color, data.thickness, data.time));
+            displayPathsArray(data);
         });
       }, [socket]);
 
@@ -23,7 +29,22 @@ export default function DrawingAreaRenderArea({socket}){
         return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
+    const fctQuiAjouteUnParUn = (myPath) => {
+        [x, y] = myPath.points.shift();
+        setListPath(listPath[listPath.length-1].points.push([x, y]));
+    }
 
+    const displayPathsArray = (myPath) => {
+        setListPath(listPath.push(new MyPath([], data.color, data.thickness, data.time)));
+        while(pathsArray.length > 0) {
+            time = data.time;
+            nbPoints = myPath.points.length;
+            while(myPath.points.length) {
+                fctQuiAjouteUnParUn(myPath);
+                sleep(time/nbPoints);
+            }
+        }
+    }
 
     // The smoothing ratio
     const smoothing = 0.2
@@ -107,3 +128,5 @@ export default function DrawingAreaRenderArea({socket}){
         </Paper>
     );
 }
+
+export default DrawingRenderArea;
