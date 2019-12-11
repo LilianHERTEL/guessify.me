@@ -11,14 +11,12 @@ class Point { x = 0; y = 0; }
 
 
 const DrawingArea = ({socket}) => {
-
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
-    
     const workingPath = React.useRef(new MyPath([],'black',3));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
@@ -31,30 +29,35 @@ const DrawingArea = ({socket}) => {
     React.useEffect(() => {
         timePassed.current;
         const interval = setInterval(() => {
-            secondCheck();
+            secondCheck(socket);
         }, 1000);
         return () => clearInterval(interval);
-      }, []);
+      }, [socket]);
     
     
     /**
      * secondCheck est une fonction appelée toutes les secondes, c'est ce qui est appelé
      */
-    function secondCheck(){
+    function secondCheck(socket){
         
         console.log('This will run every second!');
         if(!isDrawing.current) return;
-        emitPathToServ();
+        emitPathToServ(socket);
     }
 
     /**
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
-    function emitPathToServ(){
+    function emitPathToServ(socket){
+        console.log(socket)
         console.log("ENVOIES EN MODE DESSIN : " + isDrawing.current + "  ///  " + (workingPath.current.points));
         
         if(workingPath.current === null || workingPath.current.points.length === 0 ) return;
-        socket(workingPath.current);
+        var tmp = new Date(Date.now() - timePassed.current);
+        workingPath.current.time = tmp.getTime()/1000;
+        
+        timePassed.current = Date.now();
+        socket.emit('draw',workingPath.current);
         workingPath.current = new MyPath([],'black',3);
         console.log("[INFO] : Em");
     }
@@ -92,6 +95,7 @@ const DrawingArea = ({socket}) => {
 
     function onMouseDown(event) {
         isDrawing.current = true;
+        timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
         setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2)]);
@@ -107,7 +111,7 @@ const DrawingArea = ({socket}) => {
     function onMouseUp(event) {
         isDrawing.current = false;
         console.log("ON MOUSE UP");
-        emitPathToServ();
+        emitPathToServ(socket);
         setDessine(false);
     }
 

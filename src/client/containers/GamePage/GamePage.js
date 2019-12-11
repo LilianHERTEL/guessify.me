@@ -3,7 +3,7 @@
  *
  * List all the features
  */
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef,useEffect} from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -62,51 +62,44 @@ function TabPanel(props) {
 }
 
 const GamePage = (props) => {
-
   const [loading, setLoading] = useState(true);
   const [lobby, setLobby] = useState(null);
-  const [chat, setChat] = useState([]);
-
+  const [chatArray, setChat] = useState([]);
   const socket = useRef(null);
-  const connect = async (username) => {
-    console.log(username,state)
-    var that = this;
-    socket.current = openSocket('http://localhost:8080');
-    var socket = socket.current;
+  
+  
+  const connect =  (username) => {
+    console.log("hi");
+    
     socket.current.on('connect', function(){
-      socket.emit("findGame","thomasxd24")
+      socket.current.emit("findGame","thomasxd24")
     });
     socket.current.on('Unauthorized', function(data){
       console.error(data)
     });
     socket.current.on('joinedGame', function(data){
       console.log(data)
-      that.setState((state) => {
-        chat.push("Join Lobby "+data.lobby.codeLobby)
-        return {chat: chat};
-      });
-      console.log(that.chat)
+      setChat([...chatArray,"Join Lobby "+data.lobby.codeLobby])
     });
     socket.current.on('receiveChat', function(data){
-      that.setState((state) => {
-        chat.push(data)
-        return {chat: chat};
-      });
+      setChat([...chatArray,data])
     });
     socket.current.on('disconnect', function(){});
   
   }
 
-  const componentDidMount = () =>{
-    if(!props.location.state) return;
-    const data = props.location.state;
-    connect(data.username)
-  }
+  useEffect(() => {
+    socket.current = openSocket('http://localhost:8080');
+    connect(props.location.state.username);
+    
+  }, []);
+
+  
 
   const _handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       if(e.target.value == "") return
-      socket.current.emit("sendChat",e.target.value)
+      socket.emit("sendChat",e.target.value)
       e.target.value = ""
     }
   }
@@ -159,7 +152,7 @@ const GamePage = (props) => {
                   <LinearProgress />
                 </Box>
                 <Box my={1} className="fullHeight" display="flex">
-                  <DrawingArea className="fullHeight" socket={this.MyEmitDrawing}/>
+                  <DrawingArea className="fullHeight" socket={socket.current}/>
                   <DrawingRenderArea/>
                 </Box>
                 <Box my={1}>
@@ -195,7 +188,7 @@ const GamePage = (props) => {
                 <Box flex="1" mt={3}>
                   <Paper className="fullHeight">
 
-                 <Chat chat={chat} enterKey={_handleKeyDown} />
+                 <Chat chat={chatArray} enterKey={_handleKeyDown} />
                   </Paper>
                 </Box>
               </Box>
