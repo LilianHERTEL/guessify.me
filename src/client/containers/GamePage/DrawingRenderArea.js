@@ -19,11 +19,11 @@ const DrawingRenderArea = ({socket}) => {
     useEffect(() => {
         console.log("LISTPATH = " + listPath);
         if (socket == null) return;
-        socket.current.on('drawCmd', function(data){
+        socket.on('drawCmd', function(data){
             setPathsArray(pathsArray.push(data));
             displayPathsArray(data);
         });
-      }, [socket]);
+      }, []);
 
     const sleep = (milliseconds) => {
         return new Promise(resolve => setTimeout(resolve, milliseconds));

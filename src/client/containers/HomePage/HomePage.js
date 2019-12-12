@@ -50,25 +50,7 @@ const classes = {
   },
 };
 
-async function tryConnect(usernameM,passwordM){
 
-  const response = await fetch('http://localhost:3000/api/auth/login', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ username: usernameM, password: passwordM }),
-  })
-  
-  if(response.ok)
-  {
-    var data = await response.json();
-    console.log(data);
-  }
-  else
-  {
-  }
-}
 
 async function disconnect(){
 
@@ -92,6 +74,25 @@ const HomePage = (props) => {
   const [isValid, setIsValid] = useState(true);
   const [user, setUser] = useState(null);
   const [statusText, setStatusText] = useState('');
+  const tryConnect = async ()=>{
+    console.log(usernameM,passwordM)
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: usernameM, password: passwordM }),
+      })
+      
+      if(response.ok)
+      {
+        var data = await response.json();
+        console.log(data);
+      }
+      else
+      {
+      }
+    }
     
 
     return (
@@ -102,8 +103,9 @@ const HomePage = (props) => {
         </div>
       
         <Paper className="paper">
-          
+        
           <React.Fragment>
+
             
       
       <Grid container spacing={3} justify="center" alignItems="center">
@@ -202,10 +204,6 @@ const HomePage = (props) => {
         <Typography variant="subtitle1" style={{marginTop:10,marginBottom:10}} align="center">
           Not a member? <Link to="/signup">Register</Link>
         </Typography>
-
-        <Button id="signInButton" variant="contained" size="medium" color="primary" fullWidth href="/signup">
-          Sign in !
-        </Button>
          </Box>
           </React.Fragment>)
            

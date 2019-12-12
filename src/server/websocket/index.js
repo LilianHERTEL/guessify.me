@@ -32,20 +32,18 @@ sockets.start = function (io) {
     socket.on('findGame', async function (username) {
       var lobby = await findLobby(username,socket);
       socket.username = username;
-      socket.lobby = lobby
+      socket.lobbyID = lobby._id;
       socket.join(lobby._id.toString());
       socket.isInGame = true;
-     
-      socket.emit("joinedGame",
-        lobby)
-        if(!lobby.started && lobby.listPlayer.length > 4)
+      socket.emit("joinedGame", lobby)
+        if(!lobby.started && lobby.listPlayer.length > 1)
         {
           lobby.started = true;
           lobby.drawer = lobby.listPlayer[0];
-          io.to(socket.lobby._id).emit("announcement",
+          io.to(socket.lobbyID).emit("announcement",
           "La partie va commencer!")
           await sleep(5000);
-          io.to(socket.lobby._id).emit("drawer",
+          io.to(socket.lobbyID).emit("drawer",
           lobby.drawer);
 
           
@@ -53,7 +51,7 @@ sockets.start = function (io) {
     });
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
-      io.to(socket.lobby._id).emit("receiveChat", msg)
+      io.to(socket.lobbyID).emit("receiveChat", msg)
       if(msg == "guess")
       {
         io.to(socket.lobby._id).emit("announcement",
@@ -68,16 +66,21 @@ sockets.start = function (io) {
 
     socket.on('draw', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
-      io.to(socket.lobby._id).emit('drawCmd', msg);
+      io.to(socket.lobbyID).emit('drawCmd', msg);
     });
     socket.on('requestListPlayer', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
-      io.to(socket.lobby._id).emit('listPlayer', socket.lobby);
+      io.to(socket.lobbyID).emit('listPlayer', socket.lobby);
     });
 
     socket.on('requestListPlayer', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
-      io.to(socket.lobby._id).emit('listPlayer', socket.lobby);
+      io.to(socket.lobbyID).emit('listPlayer', socket.lobby);
+    });
+
+    socket.on('disconnect', function () {
+      io.to(socket.lobbyID).emit("announcement",
+      "SOmeone left")
     });
   });
 }

@@ -5,8 +5,9 @@ function Chat(prop) {
     return (
         <Box display="flex" flexDirection="column" height={1} overflow="auto" maxHeight="700px">
         <Box flex={1} overflow="auto" minHeight="-webkit-min-content" marginX={1}>
-        {prop.chat.map((value) => (
-       <React.Fragment>{value}<br></br></React.Fragment>
+        {
+        prop.chat.map((value,key) => (
+       <p key={key} >{value}</p>
     ))}
         </Box>
         <Box margin={1}>
