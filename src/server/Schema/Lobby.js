@@ -3,7 +3,7 @@ var uniqid = require('uniqid')
   var Schema = mongoose.Schema;
 
   var PlayerSchema = Schema({
-    session : String,
+    socketID : String,
     username : String,
     pointsTotal    : Number,
   });
@@ -20,37 +20,30 @@ var uniqid = require('uniqid')
     listPlayer: [PlayerSchema]
   });
 
-  LobbySchema.statics.createLobby = async function () {
+class Lobby {
+
+
+  async join(socketID,username){
+    this.listPlayer.push({
+      socketID,
+      username,
+      pointsTotal : 0
+    })
+    await this.save();
+  }
+
+  static async createLobby(socket){
     var Lobby = this.model("Lobby");
     var lobbyID  = uniqid.time();
     var l = new Lobby({
         codeLobby: lobbyID
     })
     var result = await l.save()
+    this.socket = socket;
     return result;
   }
+}
 
-  LobbySchema.methods.join = async function (sessionID,username) {
-    this.listPlayer.push({
-      session:sessionID,
-      username,
-      pointsTotal : 0
-    })
-    await this.save();
-
-  }
-
-
-  LobbySchema.methods.join = async function (sessionID) {
-    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
-      console.log(data)
-    })
-    // l.listPlayer.push({
-    //   session
-    // })
-
-  }
-
-  
+  LobbySchema.loadClass(Lobby)
   
   module.exports =  LobbySchema

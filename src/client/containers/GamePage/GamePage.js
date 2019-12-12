@@ -3,7 +3,7 @@
  *
  * List all the features
  */
-import React, {useState, useRef} from 'react';
+import React, {useState,useEffect, useRef} from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -68,46 +68,45 @@ const GamePage = (props) => {
   const [lobby, setLobby] = useState(null);
   const [chat, setChat] = useState([]);
 
-  const socket = useRef(null);
+  const socketRef = useRef(null);
   const connect = async (username) => {
-    console.log(username,state)
-    var that = this;
-    socket.current = openSocket('http://localhost:8080');
-    var socket = socket.current;
-    socket.current.on('connect', function(){
+    console.log("test")
+    socketRef.current = openSocket('http://localhost:8080');
+    var socket = socketRef.current;
+    socket.on('connect', function(){
       socket.emit("findGame","thomasxd24")
     });
-    socket.current.on('Unauthorized', function(data){
+    socket.on('Unauthorized', function(data){
       console.error(data)
     });
-    socket.current.on('joinedGame', function(data){
+    socket.on('joinedGame', function(data){
       console.log(data)
-      that.setState((state) => {
-        chat.push("Join Lobby "+data.lobby.codeLobby)
-        return {chat: chat};
-      });
-      console.log(that.chat)
+      setChat(oldChat => [...oldChat,"Joined Lobby"+data.codeLobby])
     });
-    socket.current.on('receiveChat', function(data){
-      that.setState((state) => {
-        chat.push(data)
-        return {chat: chat};
-      });
+    socket.on('announcement', function(data){
+      setChat(oldChat => [...oldChat,data])
+      
     });
-    socket.current.on('disconnect', function(){});
+    socket.on('drawer', function(data){
+      setChat(oldChat => [...oldChat,username+ " is the one drawing!"])
+      
+    });
+    socket.on('receiveChat', function(data){
+      setChat(oldChat => [...oldChat,data])
+      
+    });
+    socket.on('disconnect', function(){});
   
   }
 
-  const componentDidMount = () =>{
-    if(!props.location.state) return;
-    const data = props.location.state;
-    connect(data.username)
-  }
+useEffect(() => {
+  connect(props.location.state.username)
+}, [props.location.state.username]);
 
   const _handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       if(e.target.value == "") return
-      socket.current.emit("sendChat",e.target.value)
+      socketRef.current.emit("sendChat",e.target.value)
       e.target.value = ""
     }
   }
