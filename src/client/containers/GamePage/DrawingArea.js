@@ -194,12 +194,11 @@ const DrawingArea = ({socket}) => {
     return (
         <Paper height="100%" className="canvas"
         onMouseDown={(e) => onMouseDown(e)}
-        onMouseDrag={(e) => onMouseDrag(e)}
         onMouseUp={(e) => onMouseUp(e)}
         onMouseMove={(e) => onMouseMove(e)}
         >
             <svg height="100%" width="100%">
-                {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)}  fill="none" stroke="black" ></path>)}
+                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)}
             </svg>
         </Paper>
 

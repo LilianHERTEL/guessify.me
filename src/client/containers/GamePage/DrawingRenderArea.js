@@ -10,20 +10,16 @@ class Point { x = 0; y = 0; }
 
 const DrawingRenderArea = ({socket}) => {
     const [listPath,setListPath] = React.useState([]);
-    //const [pathsArray, setPathsArray] = useState([]);
-
-
-
-    const pathsArray = useRef([]);
+    const [pathsArray, setPathsArray] = React.useState([]);
 
     useEffect(() => {
-        console.log("LISTPATH = " + listPath);
         if (socket == null) return;
         socket.on('drawCmd', function(data){
-            setPathsArray(pathsArray.push(data));
+            console.log(data)
+            setPathsArray(array=> [...array,data]);
             displayPathsArray(data);
         });
-      }, []);
+      }, [socket]);
 
     const sleep = (milliseconds) => {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -35,9 +31,9 @@ const DrawingRenderArea = ({socket}) => {
     }
 
     const displayPathsArray = (myPath) => {
-        setListPath(listPath.push(new MyPath([], data.color, data.thickness, data.time)));
+        setListPath(path=>[...path,new MyPath([], myPath.color, myPath.thickness, myPath.time)]);
         while(pathsArray.length > 0) {
-            time = data.time;
+            time = myPath.time;
             nbPoints = myPath.points.length;
             while(myPath.points.length) {
                 fctQuiAjouteUnParUn(myPath);
@@ -122,9 +118,15 @@ const DrawingRenderArea = ({socket}) => {
 
     return (
         <Paper className="canvas fullHeight">
+            {/* <svg className="fullHeight" width="100%">
+                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" strokeDasharray={offset}></path>)}
+            </svg>    
+            C'etait comme sa
+            */}
+            
             <svg className="fullHeight" width="100%">
-                {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)} fill="none" stroke="black" strokeDasharray={offset}></path>)}
-            </svg>        
+                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black"></path>)}
+            </svg>         
         </Paper>
     );
 }
