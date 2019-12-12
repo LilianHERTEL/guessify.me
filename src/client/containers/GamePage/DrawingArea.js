@@ -1,36 +1,67 @@
 import React from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import MyPath from './MyPath';
 
 var path;
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
-class MyPath{
-    points = [];
-    color = "black";
-    thickness = 1;
-    constructor(points,couleur,thickness){
-        this.points = points;
-        this.color = this.color;
-        this.thickness = thickness;
-    }
-}
 
 
-export default function DrawingArea(){
 
+const DrawingArea = ({socket}) => {
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
+    const workingPath = React.useRef(new MyPath([],'black',3));
+    const isDrawing = React.useRef(false);
+    const timePassed = React.useRef(0.0);
 
-    var distanceMiniAvantCreation = 5;
+    var distanceMiniAvantCreation = 2;
     var distanceMaxAvantCreation = 20;
     let mouse = { x: 0, y: 0 };
-    var ecartTemps = 50;
+    var ecartTemps = 50;    
+
+    React.useEffect(() => {
+        timePassed.current;
+        const interval = setInterval(() => {
+            secondCheck(socket);
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [socket]);
+    
+    
+    /**
+     * secondCheck est une fonction appelée toutes les secondes, c'est ce qui est appelé
+     */
+    function secondCheck(socket){
+        
+        console.log('This will run every second!');
+        if(!isDrawing.current) return;
+        emitPathToServ(socket);
+    }
+
+    /**
+     * Permet d'emettre ce que l'on a dessiner au serveur
+     */
+    function emitPathToServ(socket){
+        console.log(socket)
+        console.log("ENVOIES EN MODE DESSIN : " + isDrawing.current + "  ///  " + (workingPath.current.points));
+        
+        if(workingPath.current === null || workingPath.current.points.length === 0 ) return;
+        var tmp = new Date(Date.now() - timePassed.current);
+        workingPath.current.time = tmp.getTime()/1000;
+        
+        timePassed.current = Date.now();
+        socket.emit('draw',workingPath.current);
+        workingPath.current = new MyPath([],'black',3);
+        console.log("[INFO] : Em");
+    }
+
 
     function estPointAZero(point) {
         return (point.x === 0 && point.y === 0) ? true : false;
@@ -41,33 +72,36 @@ export default function DrawingArea(){
     }
 
     function onMouseMove(event) {
-
         setMouse({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-        //console.log("MOUSE MOVE " + event.nativeEvent.offsetX + " " + event.nativeEvent.offsetY);
-        //console.log("ON MOUSE DOWN " + ancienPoint.x);
+
         if (estPointAZero(ancienPoint)) {
             setAncienPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
         }
         setActuelPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
         setDistance(distanceBtw(ancienPoint, actuelPoint));
-        //|| distance > distanceMaxAvantCreation
+
         if (((((Date.now() - ancienTemps) > ecartTemps) && distance > distanceMiniAvantCreation) ) && dessine) {
             ancienTemps = Date.now();
             setAncienPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-            console.log("CREATION POINT + date : " + (Date.now()-ancienTemps));
 
-            console.log(listPath[listPath.length-1].points.push({x:actuelPoint.x,y:actuelPoint.y}));
-
+            listPath[listPath.length -1].points.push({x:actuelPoint.x,y:actuelPoint.y});
             setListPath(listPath);
+            workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+            
         }
     }
 
     
 
     function onMouseDown(event) {
-        console.log("ON MOUSE DOWN");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2)])
+        isDrawing.current = true;
+        timePassed.current = Date.now();
         setDessine(true);
+        console.log("ON MOUSE DOWN = ");
+        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2)]);
+        workingPath.current = new MyPath([],"black",3);
+        
+        
     }
 
     function onMouseDrag(event) {
@@ -75,7 +109,9 @@ export default function DrawingArea(){
     }
 
     function onMouseUp(event) {
+        isDrawing.current = false;
         console.log("ON MOUSE UP");
+        emitPathToServ(socket);
         setDessine(false);
     }
 
@@ -105,20 +141,20 @@ export default function DrawingArea(){
     // When 'current' is the first or last point of the array
     // 'previous' or 'next' don't exist.
     // Replace with 'current'
-    const p = previous || current
-    const n = next || current
+    const p = previous || current;
+    const n = next || current;
 
     // Properties of the opposed-line
-    const o = line(p, n)
-
+    const o = line(p, n);
+    
     // If is end-control-point, add PI to the angle to go backward
-    const angle = o.angle + (reverse ? Math.PI : 0)
-    const length = o.length * smoothing
+    const angle = o.angle + (reverse ? Math.PI : 0);
+    const length = o.length * smoothing;
 
     // The control point position is relative to the current point
-    const x = current.x + Math.cos(angle) * length
-    const y = current.y + Math.sin(angle) * length
-    return [x, y]
+    const x = current.x + Math.cos(angle) * length;
+    const y = current.y + Math.sin(angle) * length;
+    return [x, y];
     }
 
     // Create the bezier curve command 
@@ -156,14 +192,15 @@ export default function DrawingArea(){
 
 
     return (
-        <Paper className="canvas"
+        <Paper height="100%" className="canvas"
         onMouseDown={(e) => onMouseDown(e)}
         onMouseDrag={(e) => onMouseDrag(e)}
         onMouseUp={(e) => onMouseUp(e)}
-        onMouseMove={e => onMouseMove(e)}>
+        onMouseMove={(e) => onMouseMove(e)}
+        >
             <svg height="100%" width="100%">
                 {listPath.map(MyPath => <path d={svgPath(MyPath.points,bezierCommand)}  fill="none" stroke="black" ></path>)}
-            </svg>        
+            </svg>
         </Paper>
 
 
@@ -173,3 +210,5 @@ export default function DrawingArea(){
 
 
 }
+
+export default DrawingArea;
