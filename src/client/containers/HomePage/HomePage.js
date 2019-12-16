@@ -125,7 +125,7 @@ const HomePage = (props) => {
           <Link to={{ pathname: '/game', state: { username: 'thomasxd24'}}}><Button variant="contained" size="medium" color="primary" fullWidth>Play</Button></Link>
           </div>
           
-
+        
         </Grid>
         <Grid item xs={12} sm={2}>
         <Typography  variant="h6" align="center">

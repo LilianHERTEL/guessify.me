@@ -82,6 +82,10 @@ sockets.start = function (io) {
       io.to(socket.lobbyID).emit("announcement",
       "SOmeone left")
     });
+    socket.on('sendWordList',function(wordlist){
+      if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
+      io.to(socket.lobby._id).emit('receiveWordList',wordlist);
+    });
   });
 }
 

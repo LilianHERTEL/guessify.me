@@ -45,5 +45,11 @@ class Lobby {
 }
 
   LobbySchema.loadClass(Lobby)
+  LobbySchema.methods.leave = async function (session) {
+    
+    var pos = this.listPlayer.findIndex(element => element.session === session);
+    this.listPlayer.splice(pos,1);
+    await this.save();
+  }
   
   module.exports =  LobbySchema
