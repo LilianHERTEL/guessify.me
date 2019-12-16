@@ -1,23 +1,35 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect,useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import MyPath from './MyPath';
 
 var path;
 var ancienTemps = Date.now();
-
+var pathsArray = [];
 class Point { x = 0; y = 0; }
+var isRendering = false;
 
 const DrawingRenderArea = ({socket}) => {
+    //liste de paths qui sont actuellement affichés à l'écran 
     const [listPath,setListPath] = React.useState([]);
-    const [pathsArray, setPathsArray] = React.useState([]);
+    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+    
+    //liste de paths en attente d'affichage
+
 
     useEffect(() => {
         if (socket == null) return;
-        socket.on('drawCmd', function(data){
-            console.log(data)
-            setPathsArray(array=> [...array,data]);
-            displayPathsArray(data);
+        socket.on('drawCmd', async function(data){
+            console.log(data);
+            
+            pathsArray = [...pathsArray,data];
+            setListPath(path=>[...path,new MyPath([], data.color, data.thickness, data.time)]);
+            if(!isRendering)
+                await displayPathsArray();
+            else
+                console.log("IS RENDERING : TRUE");
+            
         });
       }, [socket]);
 
@@ -26,20 +38,35 @@ const DrawingRenderArea = ({socket}) => {
     }
 
     const fctQuiAjouteUnParUn = (myPath) => {
-        [x, y] = myPath.points.shift();
-        setListPath(listPath[listPath.length-1].points.push([x, y]));
+
+        var {x,y} = myPath.points.shift();
+        setListPath(listpath => 
+            {
+                //console.log("#################" + listpath);
+                if(listpath.length === 0) return [];
+                listpath[listpath.length -1].points.push({x,y});
+                return listpath;
+            });
+        forceUpdate();
+        console.log("MISE A JOUR LE PUTAIN D'AFFICHAGE");
+
     }
 
-    const displayPathsArray = (myPath) => {
-        setListPath(path=>[...path,new MyPath([], myPath.color, myPath.thickness, myPath.time)]);
+    const displayPathsArray = async () => {
+        isRendering = true;
+        //console.log("LENGHTTTTTTTTT  : " + pathsArray.length);
         while(pathsArray.length > 0) {
-            time = myPath.time;
-            nbPoints = myPath.points.length;
-            while(myPath.points.length) {
-                fctQuiAjouteUnParUn(myPath);
-                sleep(time/nbPoints);
+            let time = pathsArray[0].time;
+            let nbPoints = pathsArray[0].points.length;
+            for(var i=0;i<nbPoints;i++){
+                fctQuiAjouteUnParUn(pathsArray[0]);
+                //console.log((time*1000)/nbPoints)
+                await sleep((time*1000)/nbPoints);
+                //console.log("stop waitt")
             }
+            pathsArray.shift();
         }
+        isRendering = false;
     }
 
     // The smoothing ratio
@@ -118,11 +145,7 @@ const DrawingRenderArea = ({socket}) => {
 
     return (
         <Paper className="canvas fullHeight">
-            {/* <svg className="fullHeight" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" strokeDasharray={offset}></path>)}
-            </svg>    
-            C'etait comme sa
-            */}
+         
             
             <svg className="fullHeight" width="100%">
                 {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black"></path>)}

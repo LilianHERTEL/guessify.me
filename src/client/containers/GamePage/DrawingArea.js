@@ -154,6 +154,11 @@ const DrawingArea = ({socket}) => {
     // The control point position is relative to the current point
     const x = current.x + Math.cos(angle) * length;
     const y = current.y + Math.sin(angle) * length;
+
+    if (x < 20 && y < 20) {
+        console.log("x = " + x + " y = " + y);
+    }
+
     return [x, y];
     }
 
