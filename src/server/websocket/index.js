@@ -44,8 +44,7 @@ function start(io) {
         });
 
         socket.on('sendWordList',function(wordlist){
-          if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");
-          
+          if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
           io.to(socket.lobby._id).emit('receiveWordList',wordlist);
         });
       });

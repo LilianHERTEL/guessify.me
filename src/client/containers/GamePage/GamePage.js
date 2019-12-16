@@ -13,6 +13,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Chat from './Chat'
+import WordList from './WordList.js';
 
 
 function a11yProps(index) {
