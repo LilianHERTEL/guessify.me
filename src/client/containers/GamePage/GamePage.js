@@ -201,9 +201,12 @@ const GamePage = (props) => {
     });
     socket.on('joinedGame', function(data){
       console.log(data)
-      setChat(chat=>[...chat,"Join Lobby "+data.codeLobby])
+      setChat(chat=>[...chat,"Join Lobby "+data.id])
     });
     socket.on('receiveChat', function(data){
+      setChat(chat=>[...chat,data])
+    });
+    socket.on('announcement', function(data){
       setChat(chat=>[...chat,data])
     });
     socket.on('disconnect', function(){});
