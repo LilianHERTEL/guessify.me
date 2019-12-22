@@ -21,10 +21,21 @@ const DrawingRenderArea = ({socket}) => {
     useEffect(() => {
         if (socket == null) return;
         socket.on('drawCmd', async function(data){
-            console.log(data);
-            
             pathsArray = [...pathsArray,data];
-            setListPath(path=>[...path,new MyPath([], data.color, data.thickness, data.time)]);
+            console.log("//////// DATA : " + JSON.stringify(data));
+            setListPath(path=>{
+                if(path.length == 0 || path[path.length-1].id != data.id){
+                    if(path.length != 0) console.log("adding new Path : " + path[path.length-1].id + " : " + data.id);
+                    return [...path,new MyPath([], data.color, data.thickness, data.time,data.id)];
+                    
+                }
+                else{
+                    console.log("NOT adding new Path : " + path[path.length-1].id + " : " + data.id);
+                    return [...path];
+                    
+                }
+            });
+                
             if(!isRendering)
                 await displayPathsArray();
             else
@@ -42,27 +53,24 @@ const DrawingRenderArea = ({socket}) => {
         var {x,y} = myPath.points.shift();
         setListPath(listpath => 
             {
-                //console.log("#################" + listpath);
                 if(listpath.length === 0) return [];
                 listpath[listpath.length -1].points.push({x,y});
                 return listpath;
             });
         forceUpdate();
-        console.log("MISE A JOUR LE PUTAIN D'AFFICHAGE");
 
     }
 
     const displayPathsArray = async () => {
         isRendering = true;
-        //console.log("LENGHTTTTTTTTT  : " + pathsArray.length);
         while(pathsArray.length > 0) {
             let time = pathsArray[0].time;
             let nbPoints = pathsArray[0].points.length;
             for(var i=0;i<nbPoints;i++){
                 fctQuiAjouteUnParUn(pathsArray[0]);
-                //console.log((time*1000)/nbPoints)
+                
                 await sleep((time*1000)/nbPoints);
-                //console.log("stop waitt")
+                
             }
             pathsArray.shift();
         }
