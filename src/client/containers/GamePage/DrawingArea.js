@@ -58,7 +58,7 @@ const DrawingArea = ({socket}) => {
         
         timePassed.current = Date.now();
         socket.emit('draw',workingPath.current);
-        workingPath.current = new MyPath([],'black',3);
+        workingPath.current = new MyPath([],'black',3,workingPath.current.id);
         console.log("[INFO] : Em");
     }
 
@@ -98,7 +98,7 @@ const DrawingArea = ({socket}) => {
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2)]);
+        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,/* ? : */)]);
         workingPath.current = new MyPath([],"black",3);
         
         
