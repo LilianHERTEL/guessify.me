@@ -10,7 +10,7 @@ class Point { x = 0; y = 0; }
 
 
 
-const DrawingArea = ({socket}) => {
+const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
@@ -20,6 +20,35 @@ const DrawingArea = ({socket}) => {
     const workingPath = React.useRef(new MyPath([],'black',3));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
+
+    /************************************
+     * (Hook version of "componentDidMount" lifecycle method)
+     * **
+     * This effect is executed only once : after the component has mounted
+     */
+    const [componentIsMounted, setComponentIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setComponentIsMounted(true);
+        console.log("DrawingArea MOUNTED");
+    }, []);
+    /************************************/
+
+    /************************************
+     * Handles the drawing clear effect
+     * **
+     * Sets listPath empty
+     * Sets clearer in gamePage to false (via handleAfterClear)
+     */
+    React.useEffect(() => {
+        console.log("CLEARING DrawingArea");
+        if (!componentIsMounted) {
+            return;
+        }
+        setListPath([]);
+        handleAfterClear();
+    }, [clearer]);
+    /************************************/
 
     var distanceMiniAvantCreation = 2;
     var distanceMaxAvantCreation = 20;
@@ -33,8 +62,7 @@ const DrawingArea = ({socket}) => {
         }, 1000);
         return () => clearInterval(interval);
       }, [socket]);
-    
-    
+
     /**
      * secondCheck est une fonction appelée toutes les secondes, c'est ce qui est appelé
      */
@@ -203,7 +231,9 @@ const DrawingArea = ({socket}) => {
         onMouseMove={(e) => onMouseMove(e)}
         >
             <svg height="100%" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)}
+                {
+                    listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)
+                }
             </svg>
         </Paper>
 

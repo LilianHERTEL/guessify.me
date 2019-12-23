@@ -9,10 +9,40 @@ var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
 
-const DrawingRenderArea = ({socket}) => {
+const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
     //liste de paths qui sont actuellement affichés à l'écran 
     const [listPath,setListPath] = React.useState([]);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+    /************************************
+     * (Hook version of "componentDidMount" lifecycle method)
+     * **
+     * This effect is executed only once : after the component has mounted
+     */
+    const [componentIsMounted, setComponentIsMounted] = React.useState(false);
+    
+    React.useEffect(() => {
+        setComponentIsMounted(true);
+        console.log("DrawingRenderArea MOUNTED");
+    }, []);
+    /************************************/
+    
+    /************************************
+     * Handles the drawing clear effect
+     * **
+     * Sets listPath empty
+     * Sets clearer in gamePage to false (via handleAfterClear)
+     */
+    React.useEffect(() => {
+        console.log("CLEARING DrawingRenderArea");
+        if (!componentIsMounted) {
+            return;
+        }
+        setListPath([]);
+        handleAfterClear();
+    }, [clearer]);
+    /************************************/
+
 
     
     //liste de paths en attente d'affichage
