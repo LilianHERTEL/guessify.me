@@ -1,4 +1,4 @@
-import React, { useRef, useEffect,useReducer } from 'react';
+import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import MyPath from './MyPath';
@@ -9,40 +9,70 @@ var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
 
-const DrawingRenderArea = ({socket}) => {
+const DrawingRenderArea = ({ socket }) => {
     //liste de paths qui sont actuellement affichés à l'écran 
-    const [listPath,setListPath] = React.useState([]);
+    const [listPath, setListPath] = React.useState([]);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-    
+    /************************************
+     * (Hook version of "componentDidMount" lifecycle method)
+     * **
+     * This effect is executed only once : after the component has mounted
+     */
+    const [componentIsMounted, setComponentIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setComponentIsMounted(true);
+        console.log("DrawingRenderArea MOUNTED");
+    }, []);
+    /************************************/
+
+    /************************************
+     * Handles the drawing clear effect
+     * **
+     * Sets listPath empty
+     * Sets clearer in gamePage to false (via handleAfterClear)
+     */
+    React.useEffect(() => {
+        if (socket == null) return;
+        socket.on('clearDrawing', () => {
+            //console.log("CLEARING DrawingRenderArea");
+            if (!componentIsMounted) return;
+            setListPath([]);
+        });
+    }, [socket]);
+    /************************************/
+
+
+
     //liste de paths en attente d'affichage
 
 
     useEffect(() => {
         if (socket == null) return;
-        socket.on('drawCmd', async function(data){
-            pathsArray = [...pathsArray,data];
+        socket.on('drawCmd', async function (data) {
+            pathsArray = [...pathsArray, data];
             console.log("//////// VIEWER DATA : " + JSON.stringify(data));
-            setListPath(path=>{
-                if(path.length == 0 || path[path.length-1].id != data.id){
-                    if(path.length != 0) console.log("adding new Path : " + path[path.length-1].id + " : " + data.id);
-                    return [...path,new MyPath([], data.color, data.thickness, data.time,data.id)];
-                    
+            setListPath(path => {
+                if (path.length == 0 || path[path.length - 1].id != data.id) {
+                    if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
+                    return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
+
                 }
-                else{
-                    console.log("NOT adding new Path : " + path[path.length-1].id + " : " + data.id);
+                else {
+                    console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
                     return [...path];
-                    
+
                 }
             });
-                
-            if(!isRendering)
+
+            if (!isRendering)
                 await displayPathsArray();
             else
                 console.log("IS RENDERING : TRUE");
-            
+
         });
-      }, [socket]);
+    }, [socket]);
 
     const sleep = (milliseconds) => {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -50,27 +80,26 @@ const DrawingRenderArea = ({socket}) => {
 
     const fctQuiAjouteUnParUn = (myPath) => {
 
-        var {x,y} = myPath.points.shift();
-        setListPath(listpath => 
-            {
-                if(listpath.length === 0) return [];
-                listpath[listpath.length -1].points.push({x,y});
-                return listpath;
-            });
+        var { x, y } = myPath.points.shift();
+        setListPath(listpath => {
+            if (listpath.length === 0) return [];
+            listpath[listpath.length - 1].points.push({ x, y });
+            return listpath;
+        });
         forceUpdate();
 
     }
 
     const displayPathsArray = async () => {
         isRendering = true;
-        while(pathsArray.length > 0) {
+        while (pathsArray.length > 0) {
             let time = pathsArray[0].time;
             let nbPoints = pathsArray[0].points.length;
-            for(var i=0;i<nbPoints;i++){
+            for (var i = 0; i < nbPoints; i++) {
                 fctQuiAjouteUnParUn(pathsArray[0]);
-                
-                await sleep((time*1000)/nbPoints);
-                
+
+                await sleep((time * 1000) / nbPoints);
+
             }
             pathsArray.shift();
         }
@@ -126,12 +155,12 @@ const DrawingRenderArea = ({socket}) => {
     // O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
     const bezierCommand = (point, i, a) => {
 
-    // start control point
-    const cps = controlPoint(a[i - 1], a[i - 2], point)
+        // start control point
+        const cps = controlPoint(a[i - 1], a[i - 2], point)
 
-    // end control point
-    const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
-    return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
+        // end control point
+        const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
+        return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
     }
 
     // Render the svg <path> element 
@@ -143,21 +172,21 @@ const DrawingRenderArea = ({socket}) => {
     //       O:  - (string) a svg path command
     // O:  - (string): a Svg <path> element
     const svgPath = (points, command) => {
-    // build the d attributes by looping over the points
-    const d = points.reduce((acc, point, i, a) => i === 0
-        ? `M ${point.x},${point.y}`
-        : `${acc} ${command(point, i, a)}`
-        , '')
+        // build the d attributes by looping over the points
+        const d = points.reduce((acc, point, i, a) => i === 0
+            ? `M ${point.x},${point.y}`
+            : `${acc} ${command(point, i, a)}`
+            , '')
         return `${d}`
     }
 
     return (
         <Paper className="canvas fullHeight">
-         
-            
+
+
             <svg className="fullHeight" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} stroke-width={MyPath.thickness}></path>)}
-            </svg>         
+                {listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)}
+            </svg>
         </Paper>
     );
 }

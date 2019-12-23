@@ -13,6 +13,8 @@
   "author": "Thomas TSE , Hector PITEAU",
   "license": "ISC",
   "dependencies": {
+    "@iconify/icons-mdi": "^1.0.41",
+    "@iconify/react": "^1.1.1",
     "@material-ui/core": "^4.7.0",
     "@material-ui/icons": "^4.5.1",
     "babel-polyfill": "^6.26.0",

@@ -74,6 +74,12 @@ sockets.start = function (io) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit('drawCmd', msg);
     });
+
+    socket.on('clearDrawing', function (msg) {
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      io.to(socket.lobby.id).emit('clearDrawing', msg);
+    });
+
     socket.on('requestListPlayer', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit('listPlayer', socket.lobby);
