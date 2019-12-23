@@ -14,6 +14,9 @@ const DrawingRenderArea = ({ socket }) => {
     const [listPath, setListPath] = React.useState([]);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
+    const [thickness, setThickness] = React.useState(30);
+
+
     /************************************
      * (Hook version of "componentDidMount" lifecycle method)
      * **
@@ -23,7 +26,7 @@ const DrawingRenderArea = ({ socket }) => {
 
     React.useEffect(() => {
         setComponentIsMounted(true);
-        console.log("DrawingRenderArea MOUNTED");
+        //console.log("DrawingRenderArea MOUNTED");
     }, []);
     /************************************/
 

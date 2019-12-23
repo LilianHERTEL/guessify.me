@@ -65,8 +65,8 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }, [socket]);
     /************************************/
 
-    var distanceMiniAvantCreation = 2;
-    var distanceMaxAvantCreation = 20;
+    var distanceMiniAvantCreation = 0;
+    var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
     var ecartTemps = 50;
 
@@ -158,6 +158,17 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         console.log("ON MOUSE UP");
         emitPathToServ(socket);
         setDessine(false);
+        
+        var x = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x;
+        var y = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y;
+        
+        var thepath =new MyPath([{x:x,y:y}],"black",2,/* ? : */);
+        //To draw a simple point when user doesn't move mouse
+        thepath.isCircle = true;
+        //console.log("isCircle = " + thepath.isCircle);
+        //setListPath([...listPath,thepath]);
+        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
+        workingPath.current.points.push({x:x,y:y});
     }
 
     // The smoothing ratio
@@ -213,7 +224,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     //     - a (array): complete array of points coordinates
     // O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
     const bezierCommand = (point, i, a) => {
-
         // start control point
         const cps = controlPoint(a[i - 1], a[i - 2], point)
 
