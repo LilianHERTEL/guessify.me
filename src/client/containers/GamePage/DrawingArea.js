@@ -20,6 +20,9 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     const workingPath = React.useRef(new MyPath([],'black',3));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
+    const [thickness, setThickness] = React.useState(30);
+
+    const [hasDrawn, setHasDrawn] = React.useState(false);
 
     /************************************
      * (Hook version of "componentDidMount" lifecycle method)
@@ -50,10 +53,10 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     }, [clearer]);
     /************************************/
 
-    var distanceMiniAvantCreation = 2;
-    var distanceMaxAvantCreation = 20;
+    var distanceMiniAvantCreation = 0;
+    var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
-    var ecartTemps = 50;    
+    var ecartTemps = 0;    
 
     React.useEffect(() => {
         timePassed.current;
@@ -122,14 +125,14 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     
 
     function onMouseDown(event) {
+        if (!hasDrawn) setHasDrawn(true);
         isDrawing.current = true;
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,/* ? : */)]);
+        var thepath =new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,/* ? : */);
+        setListPath([...listPath,thepath]);
         workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
-        
-        
     }
 
     function onMouseDrag(event) {
@@ -141,6 +144,17 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
         console.log("ON MOUSE UP");
         emitPathToServ(socket);
         setDessine(false);
+        
+        var x = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x;
+        var y = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y;
+        
+        var thepath =new MyPath([{x:x,y:y}],"black",2,/* ? : */);
+        //To draw a simple point when user doesn't move mouse
+        thepath.isCircle = true;
+        //console.log("isCircle = " + thepath.isCircle);
+        //setListPath([...listPath,thepath]);
+        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
+        workingPath.current.points.push({x:x,y:y});
     }
 
     // The smoothing ratio
@@ -196,13 +210,18 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     //     - a (array): complete array of points coordinates
     // O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
     const bezierCommand = (point, i, a) => {
+        // start control point
+        const cps = controlPoint(a[i - 1], a[i - 2], point)
+        // end control point
+        const cpe = controlPoint(point, a[i - 1], a[i + 1], true);
+        return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`;
+    }
 
-    // start control point
-    const cps = controlPoint(a[i - 1], a[i - 2], point)
-
-    // end control point
-    const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
-    return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
+    const circleCommand = (point) => {
+        return `M ${point.x} ${point.y}
+            m ${-radius/3}, 0
+            a ${radius/8},${radius/8} 0 1,0 ${radius/2},0
+            a ${radius/8},${radius/8} 0 1,0 ${-radius/2},0`;
     }
 
     // Render the svg <path> element 
@@ -214,15 +233,14 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     //       O:  - (string) a svg path command
     // O:  - (string): a Svg <path> element
     const svgPath = (points, command) => {
-    // build the d attributes by looping over the points
-    const d = points.reduce((acc, point, i, a) => i === 0
-        ? `M ${point.x},${point.y}`
-        : `${acc} ${command(point, i, a)}`
-        , '')
+        // build the d attributes by looping over the points
+        const d = points.reduce((acc, point, i, a) => i === 0
+            ? `M ${point.x},${point.y}`
+            : `${acc} ${command(point, i, a)}`
+            , ''
+        );
         return `${d}`
     }
-
-
 
     return (
         <Paper height="100%" className="canvas"
@@ -231,8 +249,18 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
         onMouseMove={(e) => onMouseMove(e)}
         >
             <svg height="100%" width="100%">
+                {/*hasDrawn?<circle cx={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x} cy={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y} r={thickness/2}></circle>:<div></div>*/}
                 {
-                    listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)
+                    listPath.map((MyPath,index) => {
+                            if (MyPath.isCircle===false) {
+                                return <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness}></path>
+                            }
+                            else {
+                                console.log("JE DESSINE UN CERCLE !");
+                                return <circle cx={MyPath.points[0].x} cy={MyPath.points[0].y} r={thickness/2} fill="red"></circle>
+                            }
+                        }
+                    )
                 }
             </svg>
         </Paper>

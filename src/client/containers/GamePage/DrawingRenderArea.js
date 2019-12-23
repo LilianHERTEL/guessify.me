@@ -14,6 +14,9 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
     const [listPath,setListPath] = React.useState([]);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
+    const [thickness, setThickness] = React.useState(30);
+
+
     /************************************
      * (Hook version of "componentDidMount" lifecycle method)
      * **
@@ -23,7 +26,7 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
     
     React.useEffect(() => {
         setComponentIsMounted(true);
-        console.log("DrawingRenderArea MOUNTED");
+        //console.log("DrawingRenderArea MOUNTED");
     }, []);
     /************************************/
     
@@ -34,7 +37,7 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
      * Sets clearer in gamePage to false (via handleAfterClear)
      */
     React.useEffect(() => {
-        console.log("CLEARING DrawingRenderArea");
+        //console.log("CLEARING DrawingRenderArea");
         if (!componentIsMounted) {
             return;
         }
@@ -52,15 +55,15 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
         if (socket == null) return;
         socket.on('drawCmd', async function(data){
             pathsArray = [...pathsArray,data];
-            console.log("//////// DATA : " + JSON.stringify(data));
+            //console.log("//////// DATA : " + JSON.stringify(data));
             setListPath(path=>{
                 if(path.length == 0 || path[path.length-1].id != data.id){
-                    if(path.length != 0) console.log("adding new Path : " + path[path.length-1].id + " : " + data.id);
+                    //if(path.length != 0) console.log("adding new Path : " + path[path.length-1].id + " : " + data.id);
                     return [...path,new MyPath([], data.color, data.thickness, data.time,data.id)];
                     
                 }
                 else{
-                    console.log("NOT adding new Path : " + path[path.length-1].id + " : " + data.id);
+                    //console.log("NOT adding new Path : " + path[path.length-1].id + " : " + data.id);
                     return [...path];
                     
                 }
@@ -68,8 +71,10 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
                 
             if(!isRendering)
                 await displayPathsArray();
-            else
-                console.log("IS RENDERING : TRUE");
+            else {
+                //console.log("IS RENDERING : TRUE");
+            }
+                
             
         });
       }, [socket]);
@@ -186,8 +191,18 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
          
             
             <svg className="fullHeight" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black"></path>)}
-            </svg>         
+            {
+                    listPath.map((MyPath,index) => {
+                            if (MyPath.isCircle===false) {
+                                return <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness}></path>
+                            }
+                            else {
+                                return <circle cx={MyPath.points[0].x} cy={MyPath.points[0].y} r={thickness/2} fill="red"></circle>
+                            }
+                        }
+                    )
+                }
+                </svg>         
         </Paper>
     );
 }

@@ -1,4 +1,5 @@
 export default class MyPath{
+    isCircle = false;
     id=0;
     points = [];
     color = "black";
@@ -10,5 +11,6 @@ export default class MyPath{
         this.thickness = thickness;
         this.time = time;
         this.id = id;
+        this.isCircle = false;
     }
 }
