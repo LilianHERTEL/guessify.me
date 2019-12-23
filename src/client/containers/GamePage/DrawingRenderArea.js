@@ -26,7 +26,7 @@ const DrawingRenderArea = ({ socket }) => {
 
     React.useEffect(() => {
         setComponentIsMounted(true);
-        //console.log("DrawingRenderArea MOUNTED");
+        console.log("DrawingRenderArea MOUNTED");
     }, []);
     /************************************/
 
@@ -73,7 +73,6 @@ const DrawingRenderArea = ({ socket }) => {
                 await displayPathsArray();
             else
                 console.log("IS RENDERING : TRUE");
-
         });
     }, [socket]);
 

@@ -156,19 +156,16 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     function onMouseUp(event) {
         isDrawing.current = false;
         console.log("ON MOUSE UP");
+
+        var thepath =new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,0,0,false);
+        thepath.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        setListPath([...listPath,thepath]);
+
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+
         emitPathToServ(socket);
         setDessine(false);
-        
-        var x = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x;
-        var y = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y;
-        
-        var thepath =new MyPath([{x:x,y:y}],"black",2,/* ? : */);
-        //To draw a simple point when user doesn't move mouse
-        thepath.isCircle = true;
-        //console.log("isCircle = " + thepath.isCircle);
-        //setListPath([...listPath,thepath]);
-        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
-        workingPath.current.points.push({x:x,y:y});
     }
 
     // The smoothing ratio

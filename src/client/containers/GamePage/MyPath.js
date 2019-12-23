@@ -5,12 +5,12 @@ export default class MyPath{
     color = "#000000";
     thickness = 1;
     time = 1; //default 1sec
-    constructor(points, color, thickness, time,id){
+    constructor(points, color, thickness, time,id, isCircle){
         this.points = points;
         this.color = color;
         this.thickness = thickness;
         this.time = time;
         this.id = id;
-        this.isCircle = false;
+        this.isCircle = isCircle;
     }
 }
