@@ -17,8 +17,7 @@ class Lobby {
   }
 
     leave(socketID) {
-      var pos = this.listPlayer.get(socketID);
-      this.listPlayer.splice(pos, 1);
+      this.listPlayer.delete(socketID);
     }
     addPoint(socketID,point){
       var original = this.listPlayer.get(socketID).pointsTotal

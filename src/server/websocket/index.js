@@ -26,12 +26,14 @@ sockets.start = function (io) {
     socket.isInGame = false;
     socket.on('findGame', async function (username) {
       var lobby = findLobby(io);
-      lobby.join(socket.id)
+      lobby.join(socket.id,username)
       socket.username = username;
       socket.lobby = lobby;
       socket.join(lobby.id);
       socket.isInGame = true;
-      socket.emit("joinedGame", lobby)
+      socket.emit("joinedGame", {lobby})
+      io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: Array.from(lobby.listPlayer)})
+     io.to(socket.lobby.id).emit("announcement", socket.username + " joined the lobby")
         if(!lobby.started && lobby.listPlayer.size > 1)
         {
           lobby.started = true;
@@ -77,9 +79,12 @@ sockets.start = function (io) {
     socket.on('disconnect', function () {
       
       if(!socket.lobby) return; 
-      console.log(socket.lobby)
+      socket.lobby.leave(socket.id)
+
       io.to(socket.lobby.id).emit("announcement",
       "Someone left")
+      io.to(socket.lobby.id).emit("updateLobby",
+      {lobby:socket.lobby,listPlayer: Array.from(socket.lobby.listPlayer)})
     });
     socket.on('sendWordList',function(wordlist){
       if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          

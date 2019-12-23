@@ -27,7 +27,7 @@ function a11yProps(index) {
   };
 }
 
-function ListItemSample(props) {
+function PlayerList(props) {
   return (
     <React.Fragment>
       <ListItem button>
@@ -36,9 +36,9 @@ function ListItemSample(props) {
             <AccountCircleIcon />
           </Avatar>
         </ListItemAvatar>
-        <ListItemText primary="thomasxd24" secondary="231 points" />
+        <ListItemText primary={props.username} secondary="231 points" />
         <ListItemSecondaryAction>
-          #2
+          #{props.index}
     </ListItemSecondaryAction>
       </ListItem>
       <Divider variant="inset" component="li" />
@@ -57,7 +57,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      <Box p={3}>{children}</Box>
+      {children}
     </Typography>
   );
 }
@@ -68,6 +68,7 @@ const GamePage = (props) => {
   const [chatArray, setChat] = useState([]);
   const [chatDisplayed, setChatDisplayed] = useState(null);
   const [LeaderboardDisplayed, setLeaderboardDisplayed] = useState(null);
+  const [listPlayer, setListPlayer] = useState([]);
 
 
   const handleChatClick = event => {
@@ -86,62 +87,11 @@ const GamePage = (props) => {
     setLeaderboardDisplayed(null);
   };
 
-  function LeaderBoardTop(props) {
-    if (isMobile) {
-      return (
-
-        <div>
-          <AppBar>
-            <Toolbar>
-              <IconButton
-              onClick={handleLeaderboardClick}>
-                
-                <MenuRoundedIcon />
-              </IconButton>
-              
-            </Toolbar>
-          </AppBar>
-          <Menu
-            id="leaderboard-pliant"
-            open={Boolean(LeaderboardDisplayed)}
-            onClose={handleCloseLeaderboard}>
-            <MenuItem>
-              <AppBar position="static">
-                <Tabs aria-label="simple tabs example">
-                  <Tab label="Players" />
-                  <Tab label="Statistic" />
-                </Tabs>
-              </AppBar>
-            </MenuItem>
-            <MenuItem>
-              <Box minHeight="300px" height={0.75} overflow="auto">
-                <List >
-                  <ListItemSample />
-                  <ListItemSample />
-                </List>
-              </Box>
-            </MenuItem>
-            <MenuItem>
-              <Grid container alignItems="center" justify="center" spacing={1} align="center">
-                <Grid item>LeaderBoard</Grid>
-                <Grid item>
-                  <Switch
-                    value="checkedC"
-                  />
-                </Grid>
-                <Grid item>Draw Order</Grid>
-              </Grid>
-            </MenuItem>
-          </Menu>
-        </div>
-      );
-    }
-    else{
-      return(<div></div>);
-    }
-  }
-
   function LeaderboardPlateforme(props) {
+    const [value, setValue] = React.useState(0);
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    };
     if (isMobile) {
       return (
         <div></div>
@@ -151,16 +101,22 @@ const GamePage = (props) => {
       return (
         <div>
           <AppBar position="static">
-            <Tabs aria-label="simple tabs example">
+            <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
               <Tab label="Players" />
               <Tab label="Statistic" />
             </Tabs>
           </AppBar>
-          <Box minHeight="300px" height={0.75} overflow="auto">
-            <List >
-              <ListItemSample />
-              <ListItemSample />
+          <Box minHeight="250px" overflow="auto">
+          <TabPanel value={value} index={0} >
+          <List>
+            {listPlayer.map((player) =>  <PlayerList username={player[1].username} id={player[0]}/>)}
+           
             </List>
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        Item Two
+      </TabPanel>
+            
           </Box>
           <Grid container alignItems="center" justify="center" spacing={1} align="center">
             <Grid item>LeaderBoard</Grid>
@@ -194,14 +150,18 @@ const GamePage = (props) => {
   const connect =  (username) => {
     
     socket.on('connect', function(){
+      
       socket.emit("findGame",username)
     });
     socket.on('Unauthorized', function(data){
       console.error(data)
     });
     socket.on('joinedGame', function(data){
-      console.log(data)
-      setChat(chat=>[...chat,"Join Lobby "+data.id])
+      setChat(chat=>[...chat,"Connected to Lobby "+data.lobby.id])
+    });
+    socket.on('updateLobby', function(data){
+      console.log(data.listPlayer)
+      setListPlayer(data.listPlayer)
     });
     socket.on('receiveChat', function(data){
       setChat(chat=>[...chat,data])
@@ -235,7 +195,6 @@ const GamePage = (props) => {
 return (
 
       <Container maxWidth="xl" className="fullHeight">
-        <LeaderBoardTop />
         <Box my={2} className="page" height={0.9}>
           <Grid container direction="row" justify="center" spacing={3} className="fullHeight">
             <Grid item xs={12} md={9}>

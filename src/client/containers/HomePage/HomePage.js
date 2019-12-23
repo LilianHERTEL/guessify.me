@@ -117,12 +117,14 @@ const HomePage = (props) => {
             id="usernameGuest"
             name="username"
             label="Username"
+            value={usernameAnonymous}
+            onChange={e => setUsernameAnonymous(e.target.value)}
             fullWidth
             autoComplete="fname"
           />
           <div className="butt">
           
-          <Link to={{ pathname: '/game', state: { username: 'thomasxd24'}}}><Button variant="contained" size="medium" color="primary" fullWidth>Play</Button></Link>
+          <Link to={{ pathname: '/game', state: { username: usernameAnonymous}}}><Button variant="contained" size="medium" color="primary" fullWidth>Play</Button></Link>
           </div>
           
         
