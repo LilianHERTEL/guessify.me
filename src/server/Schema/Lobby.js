@@ -27,16 +27,7 @@ class Lobby {
   }
 
   getNextDrawer(){
-    var previousOne = false;
-    if(this.currentDrawer == null)
-    {
-      this.currentDrawerIndex = 0;
-    }
-    else
-    {
-      this.currentDrawerIndex = (this.currentDrawerIndex+1)%(this.listPlayer.length);
-    }
-    
+     this.currentDrawerIndex = (this.currentDrawer == null? 0:(this.currentDrawerIndex+1)%(this.listPlayer.length));
     this.currentDrawer = this.listPlayer[this.currentDrawerIndex];
   }
 
@@ -51,8 +42,12 @@ class Lobby {
       
     }
     addPoint(socketID,point){
-      var original = this.listPlayer.get(socketID).pointsTotal
-      this.listPlayer.get(socketID).pointsTotal = original + points
+      for (const player of this.listPlayer) {
+        if(player.socketID == socketID)
+        {
+          player.pointsTotal++;
+        }
+      }
     }
   }
 

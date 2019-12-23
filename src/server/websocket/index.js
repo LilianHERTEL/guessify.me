@@ -57,12 +57,15 @@ sockets.start = function (io) {
       {
         io.to(socket.lobby.id).emit("announcement",
         socket.username+" guessed it!")
+        lobby.addPoint(socket.id,1);
+        io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer})
         lobby.getNextDrawer();
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
           io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
+
       }
       
     });

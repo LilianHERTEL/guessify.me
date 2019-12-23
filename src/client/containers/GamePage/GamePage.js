@@ -17,6 +17,7 @@ import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
 import DrawingRenderArea from './DrawingRenderArea';
+import {Redirect} from 'react-router-dom';
 import {BrowserView, MobileView, isMobile} from 'react-device-detect';
 import { array } from 'prop-types';
 var socket;
@@ -36,9 +37,9 @@ function PlayerList(props) {
             <AccountCircleIcon />
           </Avatar>
         </ListItemAvatar>
-        <ListItemText primary={props.username} secondary="231 points" />
+        <ListItemText primary={props.username} secondary={props.score+" points"} />
         <ListItemSecondaryAction>
-          #{props.index}
+          #{props.index+1}
     </ListItemSecondaryAction>
       </ListItem>
       <Divider variant="inset" component="li" />
@@ -70,6 +71,8 @@ const GamePage = (props) => {
   const [LeaderboardDisplayed, setLeaderboardDisplayed] = useState(null);
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing,setDrawing] = useState(false);
+  
+
 
   const handleChatClick = event => {
     setChatDisplayed(event.currentTarget);
@@ -111,7 +114,7 @@ const GamePage = (props) => {
           <Box minHeight="250px" overflow="auto">
           <TabPanel value={value} index={0} >
           <List>
-            {listPlayer.map((player,index) =>  <PlayerList key={index} username={player.username} id={player.socketID}/>)}
+            {listPlayer.map((player,index) =>  <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal}/>)}
            
             </List>
       </TabPanel>
@@ -162,7 +165,6 @@ const GamePage = (props) => {
       setChat(chat=>[...chat,"Connected to Lobby "+data.lobby.id])
     });
     socket.on('updateLobby', function(data){
-      console.log(data.listPlayer)
       setListPlayer(data.listPlayer)
     });
     socket.on('receiveChat', function(data){
@@ -179,13 +181,13 @@ const GamePage = (props) => {
     });
     socket.on('drawer', function(data){
       setChat(chat=>[...chat,data.username+" is drawing!"])
-      if(data.socketID == socket.id)
-      setDrawing(true);
+      setDrawing(data.socketID == socket.id);
     });
     socket.on('disconnect', function(){});
   }
 
   useEffect(() => {
+    if(!props.location.state) return;
     socket = openSocket('http://localhost:8080');
     connect(props.location.state.username);
     
@@ -204,7 +206,7 @@ const GamePage = (props) => {
 
 
   if (!props.location.state)
-  return (<h3>Not authorised</h3>)
+  return (<Redirect to="/" />)
 return (
 
       <Container maxWidth="xl" className="fullHeight">
