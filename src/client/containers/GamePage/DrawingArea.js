@@ -91,7 +91,6 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
         //console.log("[INFO] : Em");
     }
 
-
     function estPointAZero(point) {
         return (point.x === 0 && point.y === 0) ? true : false;
     }
