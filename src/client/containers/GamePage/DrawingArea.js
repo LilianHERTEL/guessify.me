@@ -40,7 +40,7 @@ const DrawingArea = ({socket}) => {
      */
     function secondCheck(socket){
         
-        console.log('This will run every second!');
+        //console.log('This will run every second!');
         if(!isDrawing.current) return;
         emitPathToServ(socket);
     }
@@ -49,8 +49,8 @@ const DrawingArea = ({socket}) => {
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket){
-        console.log(socket)
-        console.log("ENVOIES EN MODE DESSIN : " + isDrawing.current + "  ///  " + (workingPath.current.points));
+        //console.log(socket)
+        //console.log("ENVOIES EN MODE DESSIN : " + isDrawing.current + "  ///  " + (workingPath.current.points));
         
         if(workingPath.current === null || workingPath.current.points.length === 0 ) return;
         var tmp = new Date(Date.now() - timePassed.current);
@@ -58,8 +58,8 @@ const DrawingArea = ({socket}) => {
         
         timePassed.current = Date.now();
         socket.emit('draw',workingPath.current);
-        workingPath.current = new MyPath([],'black',3);
-        console.log("[INFO] : Em");
+        workingPath.current = new MyPath([],'black',3,1,workingPath.current.id);
+        //console.log("[INFO] : Em");
     }
 
 
@@ -98,8 +98,8 @@ const DrawingArea = ({socket}) => {
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2)]);
-        workingPath.current = new MyPath([],"black",3);
+        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,/* ? : */)]);
+        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
         
         
     }
