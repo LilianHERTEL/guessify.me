@@ -264,7 +264,7 @@ const GamePage = (props) => {
                 <LinearProgress />
               </Box>
               <Box my={1} className="fullHeight" display="flex">
-                <DrawingTools className="fullHeight" handleClearDrawing={handleClearDrawing}></DrawingTools>
+                <DrawingTools className="fullHeight" handleClearDrawing={handleClearDrawing}/>
                 <DrawingArea className="fullHeight" socket={socket} clearer={clearer} handleAfterClear={handleAfterClear}/>
                 <DrawingRenderArea className="fullHeight" socket={socket} clearer={clearer} handleAfterClear={handleAfterClear}/>
               </Box>

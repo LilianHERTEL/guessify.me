@@ -17,12 +17,10 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
-    const workingPath = React.useRef(new MyPath([],'black',3));
+    const workingPath = React.useRef(new MyPath([],'black',3, 0, 0, false));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
     const [thickness, setThickness] = React.useState(30);
-
-    const [hasDrawn, setHasDrawn] = React.useState(false);
 
     /************************************
      * (Hook version of "componentDidMount" lifecycle method)
@@ -89,7 +87,7 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
         
         timePassed.current = Date.now();
         socket.emit('draw',workingPath.current);
-        workingPath.current = new MyPath([],'black',3,1,workingPath.current.id);
+        workingPath.current = new MyPath([],'black',3,1,workingPath.current.id, false);
         //console.log("[INFO] : Em");
     }
 
@@ -125,14 +123,21 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     
 
     function onMouseDown(event) {
-        if (!hasDrawn) setHasDrawn(true);
         isDrawing.current = true;
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
-        var thepath =new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,/* ? : */);
+        var thepath =new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,0,0,false);
+        //thepath.points.push({x:actuelPoint.x,y:actuelPoint.y});
         setListPath([...listPath,thepath]);
-        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
+        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1, false);
+
+        /*
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        */
+
+        //emitPathToServ(socket);
     }
 
     function onMouseDrag(event) {
@@ -142,19 +147,16 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
     function onMouseUp(event) {
         isDrawing.current = false;
         console.log("ON MOUSE UP");
+
+        var thepath =new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,0,0,false);
+        thepath.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        setListPath([...listPath,thepath]);
+
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+
         emitPathToServ(socket);
         setDessine(false);
-        
-        var x = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x;
-        var y = listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y;
-        
-        var thepath =new MyPath([{x:x,y:y}],"black",2,/* ? : */);
-        //To draw a simple point when user doesn't move mouse
-        thepath.isCircle = true;
-        //console.log("isCircle = " + thepath.isCircle);
-        //setListPath([...listPath,thepath]);
-        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
-        workingPath.current.points.push({x:x,y:y});
     }
 
     // The smoothing ratio
@@ -217,12 +219,17 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
         return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`;
     }
 
+    /**
+     * Fonction pour faire un svg circle avec path
+     * N'est pas utilisée ici
+     *
     const circleCommand = (point) => {
         return `M ${point.x} ${point.y}
-            m ${-radius/3}, 0
-            a ${radius/8},${radius/8} 0 1,0 ${radius/2},0
-            a ${radius/8},${radius/8} 0 1,0 ${-radius/2},0`;
+            m ${-thickness/3}, 0
+            a ${thickness/8},${thickness/8} 0 1,0 ${thickness/2},0
+            a ${thickness/8},${thickness/8} 0 1,0 ${-thickness/2},0`;
     }
+     */
 
     // Render the svg <path> element 
     // I:  - points (array): points coordinates
@@ -249,16 +256,17 @@ const DrawingArea = ({socket, clearer, handleAfterClear}) => {
         onMouseMove={(e) => onMouseMove(e)}
         >
             <svg height="100%" width="100%">
-                {/*hasDrawn?<circle cx={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x} cy={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y} r={thickness/2}></circle>:<div></div>*/}
+                {/*hasDrawn?<circle cx={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x} cy={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y} r={thickness/2}></circle>:null*/}
                 {
                     listPath.map((MyPath,index) => {
-                            if (MyPath.isCircle===false) {
-                                return <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness}></path>
-                            }
+                            /*if (MyPath.isCircle===false) {*/
+                                return <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness} strokeLinecap="round"></path>
+                            /*}
                             else {
-                                console.log("JE DESSINE UN CERCLE !");
-                                return <circle cx={MyPath.points[0].x} cy={MyPath.points[0].y} r={thickness/2} fill="red"></circle>
-                            }
+                                //console.log("JE DESSINE UN CERCLE !");
+                                return <circle cx={MyPath.points[0].x} cy={MyPath.points[0].y} key={index}  r={thickness/2} fill="black"></circle>
+                                //return <path d={svgPath(MyPath.points, circleCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness/2}></path>
+                            }*/
                         }
                     )
                 }
