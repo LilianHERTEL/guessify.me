@@ -1,6 +1,7 @@
 var mongoose = require('mongoose')
 var Lobby = require("../Schema/Lobby")
 var sockets = {};
+var Dictionnary = require("../GestionMots/Envoiemot");
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -10,7 +11,7 @@ function sleep(ms) {
 sockets.start = function (io) {
   const findLobby = () => {
     var arr = Array.from(io.lobby.values());
-    var freeLobbies = arr.filter((lobby)=> lobby.listPlayer.size < lobby.maxPlayer);
+    var freeLobbies = arr.filter((lobby)=> lobby.listPlayer.length < lobby.maxPlayer);
     if (freeLobbies.length == 0) {
       lobby = new Lobby();
     io.lobby.set(lobby.id,lobby);
@@ -32,17 +33,19 @@ sockets.start = function (io) {
       socket.join(lobby.id);
       socket.isInGame = true;
       socket.emit("joinedGame", {lobby})
-      io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: Array.from(lobby.listPlayer)})
+      io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer})
      io.to(socket.lobby.id).emit("announcement", socket.username + " joined the lobby")
-        if(!lobby.started && lobby.listPlayer.size > 1)
+        if(!lobby.started && lobby.listPlayer.length > 1)
         {
           lobby.started = true;
-          lobby.drawer = lobby.listPlayer[0];
+          lobby.getNextDrawer();
           io.to(socket.lobby.id).emit("announcement",
           "La partie va commencer!")
           await sleep(5000);
           io.to(socket.lobby.id).emit("drawer",
-          lobby.drawer);
+          lobby.currentDrawer);
+          lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
+          io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
 
           
         }
@@ -50,14 +53,16 @@ sockets.start = function (io) {
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit("receiveChat", msg)
-      if(msg == "guess")
+      if(msg == socket.lobby.currentWord)
       {
         io.to(socket.lobby.id).emit("announcement",
         socket.username+" guessed it!")
-        lobby.drawer = lobby.listPlayer[1];
+        lobby.getNextDrawer();
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
-        lobby.drawer);
+          lobby.currentDrawer);
+          lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
+          io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
       }
       
     });
@@ -84,8 +89,15 @@ sockets.start = function (io) {
       io.to(socket.lobby.id).emit("announcement",
       "Someone left")
       io.to(socket.lobby.id).emit("updateLobby",
-      {lobby:socket.lobby,listPlayer: Array.from(socket.lobby.listPlayer)})
+      {lobby:socket.lobby,listPlayer: socket.lobby.listPlayer})
+      if(socket.lobby.listPlayer.length < 2)
+      {
+        io.to(socket.lobby.id).emit("announcement",
+        "Not enough players! Gmae resetted. Waiting for a second player...")
+        socket.lobby.resetGame();
+      }
     });
+   
     socket.on('sendWordList',function(wordlist){
       if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
       io.to(socket.lobby.id).emit('receiveWordList',wordlist);

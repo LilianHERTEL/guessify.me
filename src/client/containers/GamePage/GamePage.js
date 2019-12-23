@@ -69,11 +69,13 @@ const GamePage = (props) => {
   const [chatDisplayed, setChatDisplayed] = useState(null);
   const [LeaderboardDisplayed, setLeaderboardDisplayed] = useState(null);
   const [listPlayer, setListPlayer] = useState([]);
-
+  const [drawing,setDrawing] = useState(false);
 
   const handleChatClick = event => {
     setChatDisplayed(event.currentTarget);
   };
+
+
 
   const handleCloseChat = () => {
     setChatDisplayed(null);
@@ -109,7 +111,7 @@ const GamePage = (props) => {
           <Box minHeight="250px" overflow="auto">
           <TabPanel value={value} index={0} >
           <List>
-            {listPlayer.map((player) =>  <PlayerList username={player[1].username} id={player[0]}/>)}
+            {listPlayer.map((player,index) =>  <PlayerList key={index} username={player.username} id={player.socketID}/>)}
            
             </List>
       </TabPanel>
@@ -169,6 +171,17 @@ const GamePage = (props) => {
     socket.on('announcement', function(data){
       setChat(chat=>[...chat,data])
     });
+    socket.on('draw', function(data){
+      setChat(chat=>[...chat,data])
+    });
+    socket.on('wordToBeDrawn', function(data){
+      setChat(chat=>[...chat,"The word is "+data+" !"])
+    });
+    socket.on('drawer', function(data){
+      setChat(chat=>[...chat,data.username+" is drawing!"])
+      if(data.socketID == socket.id)
+      setDrawing(true);
+    });
     socket.on('disconnect', function(){});
   }
 
@@ -206,8 +219,7 @@ return (
                   <LinearProgress />
                 </Box>
                 <Box my={1} className="fullHeight" display="flex">
-                  <DrawingArea className="fullHeight" socket={socket}/>
-                  <DrawingRenderArea className="fullHeight" socket={socket}/>
+                  {drawing ? (<DrawingArea className="fullHeight" socket={socket}/>): (<DrawingRenderArea className="fullHeight" socket={socket}/>)}   
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>

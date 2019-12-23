@@ -13,3 +13,4 @@ function tirerMots(dictionnaire){
     }
     return tabmot;
 }
+module.exports.tirerMots = tirerMots;
