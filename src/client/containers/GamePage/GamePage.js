@@ -221,9 +221,8 @@ return (
                   <LinearProgress />
                 </Box>
                 <Box my={1} className="fullHeight" display="flex">
-                <DrawingArea className="fullHeight" socket={socket}/>
-                <DrawingRenderArea className="fullHeight" socket={socket}/>
-                  {/*drawing  true ? (<DrawingArea className="fullHeight" socket={socket}/>): (<DrawingRenderArea className="fullHeight" socket={socket}/>)*/}   
+                
+                  {drawing ? (<DrawingArea className="fullHeight" socket={socket}/>): (<DrawingRenderArea className="fullHeight" socket={socket}/>)}   
                 </Box>
                 <Box my={1}>
                   <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
