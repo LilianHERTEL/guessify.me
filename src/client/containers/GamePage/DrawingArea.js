@@ -1,28 +1,43 @@
 import React from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
-import { HuePicker } from 'react-color';
+import {HuePicker} from 'react-color';
+import {Circle} from 'react-color/lib';
 import Option from './Option';
 import {OptionTypes} from './OptionTypes';
+import BlackWhiteColorPicker from './BlackWhiteColorPicker';
 
 var path;
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
 
+const useStyles = makeStyles(theme => ({
+    container:{
+        background:"whitesmoke"
+    },
+    blackWhite:{
+        margin:"5%"
+    }
+  }));
+
 
 
 const DrawingArea = ({socket}) => {
+    const classes = useStyles();
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
-    const workingPath = React.useRef(new MyPath([],'black',3));
+    const workingPath = React.useRef(new MyPath([],"#000000",8));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
+    const ActualColor = React.useRef("#000000");
+    
 
     var distanceMiniAvantCreation = 2;
     var distanceMaxAvantCreation = 20;
@@ -61,7 +76,7 @@ const DrawingArea = ({socket}) => {
         
         timePassed.current = Date.now();
         socket.emit('draw',workingPath.current);
-        workingPath.current = new MyPath([],'black',3,1,workingPath.current.id);
+        workingPath.current = new MyPath([],ActualColor.current,8,1,workingPath.current.id);
         //console.log("[INFO] : Em");
     }
 
@@ -101,8 +116,8 @@ const DrawingArea = ({socket}) => {
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,/* ? : */)]);
-        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
+        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],ActualColor.current,8,/* ? : */)]);
+        workingPath.current = new MyPath([],ActualColor.current,3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
         
         
     }
@@ -200,10 +215,14 @@ const DrawingArea = ({socket}) => {
     const handleChangeComplete = (color, event) =>{
         var obj = new Option(OptionTypes.COLOR,color);
         console.log("COLOR CHANGED : " + obj.getType());
-        socket.emit('drawingSideOption',color);
+        //socket.emit('drawingSideOption',color);
+        ActualColor.current = color.hex;
+        console.log("Changement de couleur pour : " + ActualColor.current);
     }
 
+    var { Saturation } = require('react-color/lib/components/common');
 
+    
 
     return (
         <div style={{width:"100%"}}>
@@ -213,12 +232,16 @@ const DrawingArea = ({socket}) => {
             onMouseMove={(e) => onMouseMove(e)}
             >
                 <svg height="100%" width="100%">
-                    {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)}
+                    {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} ></path>)}
                 </svg>
             </Paper>
-            <HuePicker width="100%" 
-                 onChangeComplete={ handleChangeComplete }
-            />
+            <Grid className={classes.container} container direction="row">
+                <HuePicker width="80%" 
+                    onChangeComplete={ handleChangeComplete }
+                />
+                <BlackWhiteColorPicker onValueChanged={handleChangeComplete}  className={classes.blackWhite} onChange={handleChangeComplete} onChangeComplete={ handleChangeComplete }/>
+                
+            </Grid>
         
         </div>
 

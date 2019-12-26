@@ -22,7 +22,7 @@ const DrawingRenderArea = ({socket}) => {
         if (socket == null) return;
         socket.on('drawCmd', async function(data){
             pathsArray = [...pathsArray,data];
-            console.log("//////// DATA : " + JSON.stringify(data));
+            console.log("//////// VIEWER DATA : " + JSON.stringify(data));
             setListPath(path=>{
                 if(path.length == 0 || path[path.length-1].id != data.id){
                     if(path.length != 0) console.log("adding new Path : " + path[path.length-1].id + " : " + data.id);
@@ -156,7 +156,7 @@ const DrawingRenderArea = ({socket}) => {
          
             
             <svg className="fullHeight" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black"></path>)}
+                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color}></path>)}
             </svg>         
         </Paper>
     );
