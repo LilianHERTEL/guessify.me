@@ -236,7 +236,8 @@ const DrawingArea = ({socket}) => {
                 </svg>
             </Paper>
             <Grid className={classes.container} container direction="row">
-                <HuePicker width="80%" 
+                <HuePicker width="80%"
+                    color={ActualColor.current}  
                     onChangeComplete={ handleChangeComplete }
                 />
                 <BlackWhiteColorPicker onValueChanged={handleChangeComplete}  className={classes.blackWhite} onChange={handleChangeComplete} onChangeComplete={ handleChangeComplete }/>

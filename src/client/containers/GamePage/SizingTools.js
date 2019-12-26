@@ -13,8 +13,8 @@ class BlackWhiteColorPicker extends React.Component {
   render() {
     return (
     <div style={{height:"50px",width:"50px",position:"relative", background:"whitesmoke"}}>
-      <Circle width="max-content" onChange={this.props.onValueChanged} circleSize={20} colors={['#FFFFFF','#000000']}/>
-      
+    
+      <i class="fas fa-plus-circle"></i>
 
     </div>);
   }
