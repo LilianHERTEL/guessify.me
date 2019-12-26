@@ -105,6 +105,12 @@ sockets.start = function (io) {
       if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
       io.to(socket.lobby.id).emit('receiveWordList',wordlist);
     });
+
+    socket.on('drawingSideOption',function(option){
+      if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
+      io.to(socket.lobby.id).emit('viewerSideOption',option);
+      console.log(JSON.stringify(option));
+    });
   });
 }
 

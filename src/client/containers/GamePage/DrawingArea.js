@@ -2,6 +2,9 @@ import React from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import MyPath from './MyPath';
+import { HuePicker } from 'react-color';
+import Option from './Option';
+import {OptionTypes} from './OptionTypes';
 
 var path;
 var ancienTemps = Date.now();
@@ -194,18 +197,30 @@ const DrawingArea = ({socket}) => {
         return `${d}`
     }
 
+    const handleChangeComplete = (color, event) =>{
+        var obj = new Option(OptionTypes.COLOR,color);
+        console.log("COLOR CHANGED : " + obj.getType());
+        socket.emit('drawingSideOption',color);
+    }
+
 
 
     return (
-        <Paper height="100%" className="canvas"
-        onMouseDown={(e) => onMouseDown(e)}
-        onMouseUp={(e) => onMouseUp(e)}
-        onMouseMove={(e) => onMouseMove(e)}
-        >
-            <svg height="100%" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)}
-            </svg>
-        </Paper>
+        <div style={{width:"100%"}}>
+            <Paper height="100%" className="canvas"
+            onMouseDown={(e) => onMouseDown(e)}
+            onMouseUp={(e) => onMouseUp(e)}
+            onMouseMove={(e) => onMouseMove(e)}
+            >
+                <svg height="100%" width="100%">
+                    {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" ></path>)}
+                </svg>
+            </Paper>
+            <HuePicker width="100%" 
+                 onChangeComplete={ handleChangeComplete }
+            />
+        
+        </div>
 
 
     );
