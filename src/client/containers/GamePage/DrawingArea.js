@@ -8,7 +8,7 @@ import {Circle} from 'react-color/lib';
 import Option from './Option';
 import {OptionTypes} from './OptionTypes';
 import BlackWhiteColorPicker from './BlackWhiteColorPicker';
-
+import SizingTools from './SizingTools';
 var path;
 var ancienTemps = Date.now();
 
@@ -33,11 +33,11 @@ const DrawingArea = ({socket}) => {
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath,setListPath] = React.useState([]);
-    const workingPath = React.useRef(new MyPath([],"#000000",8));
+    const workingPath = React.useRef(new MyPath([],"#000000",5));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
     const ActualColor = React.useRef("#000000");
-    
+    const ActualSize = React.useRef(5);
 
     var distanceMiniAvantCreation = 2;
     var distanceMaxAvantCreation = 20;
@@ -76,7 +76,7 @@ const DrawingArea = ({socket}) => {
         
         timePassed.current = Date.now();
         socket.emit('draw',workingPath.current);
-        workingPath.current = new MyPath([],ActualColor.current,8,1,workingPath.current.id);
+        workingPath.current = new MyPath([],ActualColor.current,ActualSize.current,1,workingPath.current.id);
         //console.log("[INFO] : Em");
     }
 
@@ -116,8 +116,8 @@ const DrawingArea = ({socket}) => {
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
-        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],ActualColor.current,8,/* ? : */)]);
-        workingPath.current = new MyPath([],ActualColor.current,3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
+        setListPath([...listPath,new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],ActualColor.current,ActualSize.current,/* ? : */)]);
+        workingPath.current = new MyPath([],ActualColor.current,ActualSize.current,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1);
         
         
     }
@@ -219,9 +219,15 @@ const DrawingArea = ({socket}) => {
         ActualColor.current = color.hex;
         console.log("Changement de couleur pour : " + ActualColor.current);
     }
-
-    var { Saturation } = require('react-color/lib/components/common');
-
+    const handleChangeSizePlus = () =>{
+        ActualSize.current += 5;
+        console.log("Size + : "+ActualSize.current);
+    }
+    
+    const handleChangeSizeMinus = () =>{
+        ActualSize.current -= 5;
+        console.log("Size - : "+ActualSize.current);
+    }
     
 
     return (
@@ -232,7 +238,7 @@ const DrawingArea = ({socket}) => {
             onMouseMove={(e) => onMouseMove(e)}
             >
                 <svg height="100%" width="100%">
-                    {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} ></path>)}
+                    {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} stroke-width={MyPath.thickness}></path>)}
                 </svg>
             </Paper>
             <Grid className={classes.container} container direction="row">
@@ -241,7 +247,7 @@ const DrawingArea = ({socket}) => {
                     onChangeComplete={ handleChangeComplete }
                 />
                 <BlackWhiteColorPicker onValueChanged={handleChangeComplete}  className={classes.blackWhite} onChange={handleChangeComplete} onChangeComplete={ handleChangeComplete }/>
-                
+                <SizingTools onClickPlus={handleChangeSizePlus} onClickMinus={handleChangeSizeMinus} />
             </Grid>
         
         </div>

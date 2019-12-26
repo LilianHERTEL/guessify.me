@@ -156,7 +156,7 @@ const DrawingRenderArea = ({socket}) => {
          
             
             <svg className="fullHeight" width="100%">
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color}></path>)}
+                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} stroke-width={MyPath.thickness}></path>)}
             </svg>         
         </Paper>
     );
