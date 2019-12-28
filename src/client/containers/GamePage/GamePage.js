@@ -272,9 +272,9 @@ const GamePage = (props) => {
 
   return (
 
-    <Container maxWidth="xl" className="fullHeight">
-      <Box my={2} className="page" height={0.9}>
-        <Grid container direction="row" justify="center" spacing={3} className="fullHeight">
+    <Container maxWidth="xl" height={1}>
+      <Box className="page" my={4} height={1}>
+        <Grid container direction="row" justify="center" spacing={3} height={1}>
           <Grid item xs={12} md={9}>
             <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
               <Box my={1}>
