@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 
 import { Button, Paper, Box, Grid } from '@material-ui/core';
 import ClearDrawingTool from './ClearDrawingTool';
@@ -55,6 +56,21 @@ const DrawingTools = ({ socket, brushSize, brushColor, brushMode, handleChangeCo
                     {/*<BlackWhiteColorPicker onValueChanged={handleChangeComplete}  className={classes.blackWhite} onChange={handleChangeComplete} onChangeComplete={ handleChangeComplete }/>*/}
                     <SizingTools item xs={1} brushSize={brushSize} brushColor={brushColor} onChangeSize={onChangeSize} />
                 </Grid>
+=======
+import { Button, Paper, Box } from '@material-ui/core';
+import ClearDrawingTool from './ClearDrawingTool';
+
+const DrawingTools = ({handleClearDrawing}) => {
+
+    function onClearDrawingClick() {
+        handleClearDrawing();
+    }
+
+    return (
+        <Paper height="100%">
+            <Box m={1}>
+                <ClearDrawingTool onToolClick={onClearDrawingClick}></ClearDrawingTool>
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
             </Box>
         </Paper>
     )

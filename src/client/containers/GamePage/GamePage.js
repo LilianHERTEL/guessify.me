@@ -82,6 +82,10 @@ const GamePage = (props) => {
 
 
 
+  /************************************
+   * DrawingTools handlers & state
+   */
+  const [clearer, setClearer] = useState(false);
 
   /************************************
    * Chat handlers

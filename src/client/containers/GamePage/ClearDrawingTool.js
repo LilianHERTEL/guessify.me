@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, IconButton, Typography, Button } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
+<<<<<<< HEAD
 const ClearDrawingTool = ({ socket, onToolClick }) => {
     function handleClick() {
         socket.emit('clearDrawing');
@@ -13,6 +14,22 @@ const ClearDrawingTool = ({ socket, onToolClick }) => {
             </IconButton>
             <Typography variant="caption">Clear drawing</Typography>
         </Box>
+=======
+
+
+const ClearDrawingTool = ({onToolClick}) => {
+    function handleClick() {
+        onToolClick();
+    }
+
+    return (
+        <Button onClick={handleClick}>
+            <Box display="flex" flexDirection="column" justify="center" alignItems="center">
+                <DeleteForeverIcon fontSize="large"/>
+                <Typography variant="caption">Clear drawing</Typography>
+            </Box>
+        </Button>
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     )
 }
 

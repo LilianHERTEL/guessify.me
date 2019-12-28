@@ -24,12 +24,17 @@ const useStyles = makeStyles(theme => ({
 
 
 
+<<<<<<< HEAD
 const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
+=======
+const DrawingArea = ({socket, clearer, handleAfterClear}) => {
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
+<<<<<<< HEAD
     const [listPath, setListPath] = React.useState([]);
     const workingPath = React.useRef(new MyPath([], "#000000", 5));
     const isDrawing = React.useRef(false);
@@ -44,6 +49,21 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
      */
     const [componentIsMounted, setComponentIsMounted] = React.useState(false);
 
+=======
+    const [listPath,setListPath] = React.useState([]);
+    const workingPath = React.useRef(new MyPath([],'black',3, 0, 0, false));
+    const isDrawing = React.useRef(false);
+    const timePassed = React.useRef(0.0);
+    const [thickness, setThickness] = React.useState(30);
+
+    /************************************
+     * (Hook version of "componentDidMount" lifecycle method)
+     * **
+     * This effect is executed only once : after the component has mounted
+     */
+    const [componentIsMounted, setComponentIsMounted] = React.useState(false);
+
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     React.useEffect(() => {
         setComponentIsMounted(true);
         console.log("DrawingArea MOUNTED");
@@ -57,18 +77,32 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
      * Sets clearer in gamePage to false (via handleAfterClear)
      */
     React.useEffect(() => {
+<<<<<<< HEAD
         if (socket == null) return;
         socket.on('clearDrawing', () => {
             //console.log("CLEARING DrawingArea");
             setListPath([]);
         });
     }, [socket]);
+=======
+        console.log("CLEARING DrawingArea");
+        if (!componentIsMounted) {
+            return;
+        }
+        setListPath([]);
+        handleAfterClear();
+    }, [clearer]);
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     /************************************/
 
     var distanceMiniAvantCreation = 0;
     var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
+<<<<<<< HEAD
     var ecartTemps = 50;
+=======
+    var ecartTemps = 0;    
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
 
     React.useEffect(() => {
         timePassed.current;
@@ -76,7 +110,11 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
             secondCheck(socket);
         }, 1000);
         return () => clearInterval(interval);
+<<<<<<< HEAD
     }, [socket]);
+=======
+      }, [socket]);
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
 
     /**
      * secondCheck est une fonction appelée toutes les secondes, c'est ce qui est appelé
@@ -100,8 +138,13 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         workingPath.current.time = tmp.getTime() / 1000;
 
         timePassed.current = Date.now();
+<<<<<<< HEAD
         socket.emit('draw', workingPath.current);
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, workingPath.current.id);
+=======
+        socket.emit('draw',workingPath.current);
+        workingPath.current = new MyPath([],'black',3,1,workingPath.current.id, false);
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
         //console.log("[INFO] : Em");
     }
 
@@ -140,12 +183,26 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         timePassed.current = Date.now();
         setDessine(true);
         console.log("ON MOUSE DOWN = ");
+<<<<<<< HEAD
         var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize);
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
+=======
+        var thepath =new MyPath([{x:actuelPoint.x,y:actuelPoint.y}],"black",2,0,0,false);
+        //thepath.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        setListPath([...listPath,thepath]);
+        workingPath.current = new MyPath([],"black",3,1,(workingPath.current.id == null)? 0 : workingPath.current.id+1, false);
+
+        /*
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        workingPath.current.points.push({x:actuelPoint.x,y:actuelPoint.y});
+        */
+
+        //emitPathToServ(socket);
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     }
 
     function onMouseDrag(event) {
@@ -222,11 +279,29 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     const bezierCommand = (point, i, a) => {
         // start control point
         const cps = controlPoint(a[i - 1], a[i - 2], point)
+<<<<<<< HEAD
 
         // end control point
         const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
         return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
+=======
+        // end control point
+        const cpe = controlPoint(point, a[i - 1], a[i + 1], true);
+        return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`;
     }
+
+    /**
+     * Fonction pour faire un svg circle avec path
+     * N'est pas utilisée ici
+     *
+    const circleCommand = (point) => {
+        return `M ${point.x} ${point.y}
+            m ${-thickness/3}, 0
+            a ${thickness/8},${thickness/8} 0 1,0 ${thickness/2},0
+            a ${thickness/8},${thickness/8} 0 1,0 ${-thickness/2},0`;
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
+    }
+     */
 
     // Render the svg <path> element 
     // I:  - points (array): points coordinates
@@ -241,6 +316,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         const d = points.reduce((acc, point, i, a) => i === 0
             ? `M ${point.x},${point.y}`
             : `${acc} ${command(point, i, a)}`
+<<<<<<< HEAD
             , '')
         return `${d}`
     }
@@ -264,6 +340,13 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }
     */
 
+=======
+            , ''
+        );
+        return `${d}`
+    }
+
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     return (
         <Paper height="100%" className="canvas"
             onMouseDown={(e) => onMouseDown(e)}
@@ -271,8 +354,24 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
             onMouseMove={(e) => onMouseMove(e)}
         >
             <svg height="100%" width="100%">
+<<<<<<< HEAD
                 {
                     listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+=======
+                {/*hasDrawn?<circle cx={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].x} cy={listPath[listPath.length-1].points[listPath[listPath.length-1].points.length-1].y} r={thickness/2}></circle>:null*/}
+                {
+                    listPath.map((MyPath,index) => {
+                            /*if (MyPath.isCircle===false) {*/
+                                return <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness} strokeLinecap="round"></path>
+                            /*}
+                            else {
+                                //console.log("JE DESSINE UN CERCLE !");
+                                return <circle cx={MyPath.points[0].x} cy={MyPath.points[0].y} key={index}  r={thickness/2} fill="black"></circle>
+                                //return <path d={svgPath(MyPath.points, circleCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness/2}></path>
+                            }*/
+                        }
+                    )
+>>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
                 }
             </svg>
         </Paper>
