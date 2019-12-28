@@ -22,6 +22,7 @@ import { BrowserView, MobileView, isMobile } from 'react-device-detect';
 import { array } from 'prop-types';
 import DrawingTools from './DrawingTools';
 import DrawerArea from './DrawerArea';
+import blue from '@material-ui/core/colors/blue';
 
 var socket;
 
@@ -78,23 +79,14 @@ const GamePage = (props) => {
   const [LeaderboardDisplayed, setLeaderboardDisplayed] = useState(null);
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
-
-
-
+  const [currentDrawerName, setCurrentDrawerName] = useState(null);
 
   /************************************
-   * DrawingTools handlers & state
-   */
-  const [clearer, setClearer] = useState(false);
-
-  /************************************
-   * Chat handlers
+   * Chat handlers  
    */
   const handleChatClick = event => {
     setChatDisplayed(event.currentTarget);
   };
-
-
 
   const handleCloseChat = () => {
     setChatDisplayed(null);
@@ -124,7 +116,6 @@ const GamePage = (props) => {
             id="leaderboard-pliant"
             open={Boolean(LeaderboardDisplayed)}
             onClose={handleCloseLeaderboard}>
-
             <MenuItem>
               <AppBar position="static">
                 <Tabs aria-label="simple tabs example">
@@ -171,9 +162,9 @@ const GamePage = (props) => {
     }
     else {
       return (
-        <div>
+        <Paper>
           <AppBar position="static">
-            <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
+            <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth" indicatorColor="white">
               <Tab label="Players" />
               <Tab label="Statistic" />
             </Tabs>
@@ -181,16 +172,14 @@ const GamePage = (props) => {
           <Box minHeight="250px" overflow="auto">
             <TabPanel value={value} index={0} >
               <List>
-                {listPlayer.map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)}
-
+                {
+                  listPlayer.map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
+                }
               </List>
             </TabPanel>
-            <TabPanel value={value} index={1}>
-              Item Two
-      </TabPanel>
-
+            <TabPanel value={value} index={1}>Item Two</TabPanel>
           </Box>
-          <Grid container alignItems="center" justify="center" spacing={1} align="center">
+          <Grid container alignItems="center" justify="center" align="center">
             <Grid item>LeaderBoard</Grid>
             <Grid item>
               <Switch
@@ -199,7 +188,7 @@ const GamePage = (props) => {
             </Grid>
             <Grid item>Draw Order</Grid>
           </Grid>
-        </div>
+        </Paper>
       );
     }
   }
@@ -216,11 +205,7 @@ const GamePage = (props) => {
     }
   }
 
-
-
-
   const connect = (username) => {
-
     socket.on('connect', function () {
       socket.emit("findGame", username)
     });
@@ -247,6 +232,7 @@ const GamePage = (props) => {
     });
     socket.on('drawer', function (data) {
       setChat(chat => [...chat, data.username + " is drawing!"])
+      setCurrentDrawerName(data.username);
       setDrawing(data.socketID == socket.id);
     });
     socket.on('disconnect', function () { });
@@ -259,8 +245,6 @@ const GamePage = (props) => {
 
   }, []);
 
-
-
   const _handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       if (e.target.value == "") return
@@ -269,55 +253,79 @@ const GamePage = (props) => {
     }
   }
 
-
-
   if (!props.location.state)
     return (<Redirect to="/" />)
 
   return (
-
-    <Container maxWidth="xl" height={1}>
-      <Box className="page" my={4} height={1}>
-        <Grid container direction="row" justify="center" spacing={3} height={1}>
-          <Grid item xs={12} md={9}>
-            <Box display="flex" flexDirection="column" justifyContent="center" height={1}>
-              <Box my={1}>
-                <Typography variant="h5" align="center"> is drawing...</Typography>
-              </Box>
-              <Box my={1}>
-                <LinearProgress />
-              </Box>
-              <Box my={1} className="fullHeight" display="flex" flexDirection="column">
-                {/*
-                  drawing ?
-                    ( // drawer view
-                      <DrawerArea className="fullHeight" socket={socket} />
-                    ) :
-                    ( // guesser view
-                      <DrawingRenderArea className="fullHeight" socket={socket} />
-                    )*/
-                }
-                <DrawerArea className="fullHeight" socket={socket} />
-              </Box>
-              <Box my={1}>
-                <Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Box className="fullHeight" display="flex" flexDirection="column" >
-              <Paper>
-                <LeaderboardPlateforme />
-              </Paper>
-              <Box flex="1" mt={3}>
-                <Chat chat={chatArray} enterKey={_handleKeyDown} />
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
+    <Box display="flex" height={1} padding={2}>
+      <Box display="flex" height={1} flexDirection="column" flexGrow={4} justifyContent="space-between">
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
+          <Box mx={1}></Box>
+          <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
+        </Box>
+        <LinearProgress />
+        {
+          drawing ?
+            ( // drawer view
+              <DrawerArea socket={socket} />
+            ) :
+            ( // guesser view
+              <DrawingRenderArea socket={socket} />
+            )
+        }
       </Box>
-    </Container>
+      <Box mx={1}></Box>
+      <Box display="flex" height={1} flexDirection="column">
+        <LeaderboardPlateforme />
+        <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
+      </Box>
+    </Box>
   );
 }
 
 export default GamePage;
+
+
+/*************************************************************************************************
+ * OLD GAME PAGE (must be removed)
+ *************************************************************************************************
+<Box container display="flex">
+<Grid item xs={12} md={9}>
+<Box display="flex" flexDirection="column" justifyContent="center" height={1} flexGrow={1}>
+<Box my={1} height={1}>
+<Typography variant="h5" align="center"> is drawing...</Typography>
+</Box>
+<Box my={1}>
+<LinearProgress />
+</Box>
+<Box my={1} className="fullHeight" display="flex" flexDirection="column" height={1}>
+{/*
+drawing ?
+( // drawer view
+<DrawerArea className="fullHeight" socket={socket} />
+) :
+( // guesser view
+<DrawingRenderArea className="fullHeight" socket={socket} />
+)
+}
+<DrawerArea socket={socket} />
+</Box>
+<Box my={1}>
+<Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
+</Box>
+</Box>
+</Grid>
+<Grid item xs={12} md={3}>
+<Box className="fullHeight" display="flex" flexDirection="column" >
+<Paper>
+<LeaderboardPlateforme />
+</Paper>
+<Box>
+<Chat chat={chatArray} enterKey={_handleKeyDown} />
+</Box>
+</Box>
+</Grid>
+</Box>
+
+/*********************************************************************************/

@@ -1,6 +1,5 @@
 import React from 'react';
 import { CustomPicker } from 'react-color';
-var { Hue } = require('react-color/lib/components/common');
 var {Circle} = require('react-color/lib/components/circle/Circle.js');
 class BlackWhiteColorPicker extends React.Component {
   

@@ -8,11 +8,34 @@
   height: 100%;
 }
 
-
+*/
 
 .fullHeight{
   height:100%
 }
+
+.fullWidth{
+  width:100%
+}
+
+.box-sizing-border-box {
+  box-sizing: border-box;
+}
+
+.flexGrow1 {
+  flex-grow: 1 !important;
+}
+
+.borderBottomPrimary {
+  border-bottom: 1px solid #3f51b5;
+  box-shadow: #3f51b5;
+}
+
+.PrivateTabIndicator-root-120 {
+  background-color: white !important;
+}
+
+/*
 
 .blackco {
 

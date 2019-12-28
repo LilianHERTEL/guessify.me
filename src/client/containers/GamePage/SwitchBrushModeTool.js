@@ -6,13 +6,20 @@ import { Button, IconButton, Box, Typography } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+/**
+ * hexToRgb function
+ * **
+ * @description
+ * Takes a hex color value and returns the corresponding (red green blue) values in an object
+ * **
+ * @param hex A hex color value
+ */
 function hexToRgb(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.replace(shorthandRegex, function (m, r, g, b) {
         return r + r + g + g + b + b;
     });
-
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1], 16),
@@ -21,33 +28,40 @@ function hexToRgb(hex) {
     } : null;
 }
 
-const SwitchBrushModeTool = ({ brushColor, brushMode, onChangeMode }) => {
-    var brushColorRGB = hexToRgb(brushColor);
+/**
+ * SwitchBrushModeTool component
+ * **
+ * @PROPS
+    * @param brushColor
+    * @param brushMode
+    * @param setBrushMode Function
+ */
+const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode }) => {
 
+    /**
+     * Styling utils
+     */
+    const BRUSH_COLOR_RGB = hexToRgb(brushColor);
     const useStyles = makeStyles({
         modeSelected: {
-            //transition: '0.5s',
-            backgroundColor: `rgba(${brushColorRGB.r}, ${brushColorRGB.g}, ${brushColorRGB.b},0.1)`,
+            backgroundColor: `rgba(${BRUSH_COLOR_RGB.r}, ${BRUSH_COLOR_RGB.g}, ${BRUSH_COLOR_RGB.b},0.1)`,
             borderRadius: '25%',
             pointerEvents: 'none',
         },
     });
+    const classes = useStyles();
+    /** */
 
     const onDrawModeClick = () => {
-        if (brushMode !== 'Draw') {
-            onChangeMode('Draw');
-        }
+        if (brushMode !== 'Draw') setBrushMode('Draw');
     }
 
     const onEraseModeClick = () => {
-        if (brushMode !== 'Erase') {
-            onChangeMode('Erase');
-        }
+        if (brushMode !== 'Erase') setBrushMode('Erase');
     }
 
-    const classes = useStyles();
     return (
-        <Box display="flex" flexDirection="column" justifyContent="center" alignContent="center" alignItems="center">
+        <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center">
             <Box display="flex" flexDirection="row">
                 <IconButton onClick={onDrawModeClick} size="small" className={brushMode === 'Draw' ? classes.modeSelected : null}>
                     <Icon icon={brushIcon} color={brushColor} width="2em" />

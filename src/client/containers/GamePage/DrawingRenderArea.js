@@ -9,11 +9,7 @@ var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
 
-<<<<<<< HEAD
 const DrawingRenderArea = ({ socket }) => {
-=======
-const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
->>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     //liste de paths qui sont actuellement affichés à l'écran 
     const [listPath, setListPath] = React.useState([]);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -27,21 +23,11 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
      * This effect is executed only once : after the component has mounted
      */
     const [componentIsMounted, setComponentIsMounted] = React.useState(false);
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     React.useEffect(() => {
         setComponentIsMounted(true);
         console.log("DrawingRenderArea MOUNTED");
     }, []);
     /************************************/
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     /************************************
      * Handles the drawing clear effect
      * **
@@ -49,7 +35,6 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
      * Sets clearer in gamePage to false (via handleAfterClear)
      */
     React.useEffect(() => {
-<<<<<<< HEAD
         if (socket == null) return;
         socket.on('clearDrawing', () => {
             //console.log("CLEARING DrawingRenderArea");
@@ -61,19 +46,6 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
 
 
 
-=======
-        console.log("CLEARING DrawingRenderArea");
-        if (!componentIsMounted) {
-            return;
-        }
-        setListPath([]);
-        handleAfterClear();
-    }, [clearer]);
-    /************************************/
-
-
-    
->>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
     //liste de paths en attente d'affichage
 
 
@@ -209,18 +181,17 @@ const DrawingRenderArea = ({socket, clearer, handleAfterClear}) => {
     }
 
     return (
-        <Paper className="canvas fullHeight">
-
-
-            <svg className="fullHeight" width="100%">
-<<<<<<< HEAD
-                {listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)}
-            </svg>
-=======
-                {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke="black" strokeWidth={thickness} strokeLinecap="round"></path>)}
-            </svg>         
->>>>>>> 9a5f1fb6e75f07e85e6fa3f4d55aef21a3c69479
-        </Paper>
+        <Box flexGrow={1} mt={1}>
+            <Paper 
+                className="fullHeight"
+            >
+                <svg className="fullHeight fullWidth">
+                    {
+                        listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+                    }
+                </svg>
+            </Paper>
+        </Box>
     );
 }
 
