@@ -36,7 +36,7 @@ export const GuessifyColorPicker = ({ hsv, rgb, hsl, onChange }) => {
                         onChange={onChange}
                         pointer={GuessifySliderPointer} />
                 </Box>
-                <Typography variant="caption">Brush color</Typography>
+                <Typography className="noselect" variant="caption">Brush color</Typography>
             </Box>
         </Box>
     )

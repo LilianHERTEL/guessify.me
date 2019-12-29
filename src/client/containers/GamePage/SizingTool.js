@@ -65,13 +65,13 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
           <AddCircleIcon fontSize="large"></AddCircleIcon>
         </IconButton>
         <Box marginLeft={1} marginRight={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          <Typography variant="caption">{brushSize}</Typography>
+          <Typography className="noselect" variant="caption">{brushSize}</Typography>
         </Box>
         <IconButton onMouseDown={runClickMinus} onMouseUp={stopClick} color="primary" size="small">
           <RemoveCircleIcon fontSize="large"></RemoveCircleIcon>
         </IconButton>
       </Box>
-      <Typography variant="caption">Brush size</Typography>
+      <Typography className="noselect" variant="caption">Brush size</Typography>
     </Box>
   );
 }

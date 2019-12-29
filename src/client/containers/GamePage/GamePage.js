@@ -258,14 +258,14 @@ const GamePage = (props) => {
 
   return (
     <Box display="flex" height={1} padding={2}>
-      <Box display="flex" height={1} flexDirection="column" flexGrow={4} justifyContent="space-between">
+      <Box display="flex" height={1} flexDirection="column" flexGrow={4} id="svgArea">
         <Box display="flex" justifyContent="center" alignItems="center">
           <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
           <Box mx={1}></Box>
           <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
         </Box>
         <LinearProgress />
-        {
+        {/*
           drawing ?
             ( // drawer view
               <DrawerArea socket={socket} />
@@ -273,7 +273,8 @@ const GamePage = (props) => {
             ( // guesser view
               <DrawingRenderArea socket={socket} />
             )
-        }
+        */}
+        <DrawerArea socket={socket} />
       </Box>
       <Box mx={1}></Box>
       <Box display="flex" height={1} flexDirection="column">

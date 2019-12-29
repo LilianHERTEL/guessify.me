@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
-    const [mousep, setMouse] = React.useState({ x: 0, y: 0 });
+    const [mousep, setMouse] = React.useState(null);
     const [dessine, setDessine] = React.useState(false);
     const [distance, setDistance] = React.useState(0.0);
     const [listPath, setListPath] = React.useState([]);
@@ -49,6 +49,12 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     React.useEffect(() => {
         setComponentIsMounted(true);
         console.log("DrawingArea MOUNTED");
+
+        const w = document.getElementById('svgArea').clientWidth;
+        const h = w / 1168 * 617.817;
+        setSvgBoxWidth(w);
+        setSvgBoxHeight(h);
+        console.log("yo : " + svgBoxHeight);
     }, []);
     /************************************/
 
@@ -116,21 +122,29 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }
 
     function onMouseMove(event) {
-        setMouse({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+        var svg = document.getElementById("mySvg");
+        var pt = svg.createSVGPoint();
+        pt.x = event.clientX;
+        pt.y = event.clientY;
+
+        var svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+        setMouse({ x: svgP.x, y: svgP.y });
 
         if (estPointAZero(ancienPoint)) {
-            setAncienPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+            setAncienPoint({ x: svgP.x, y: svgP.y });
         }
-        setActuelPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+        setActuelPoint({ x: svgP.x, y: svgP.y });
         setDistance(distanceBtw(ancienPoint, actuelPoint));
 
         if (((((Date.now() - ancienTemps) > ecartTemps) && distance > distanceMiniAvantCreation)) && dessine) {
             ancienTemps = Date.now();
-            setAncienPoint({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+            setAncienPoint({ x: svgP.x, y: svgP.y });
 
             listPath[listPath.length - 1].points.push({ x: actuelPoint.x, y: actuelPoint.y });
             setListPath(listPath);
             workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
+
 
         }
     }
@@ -148,6 +162,9 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
+
+        console.log("MOUSE\t" + mousep.x + ' ' + mousep.y);
+        console.log("POINT\t" + actuelPoint.x + ' ' + actuelPoint.y);
     }
 
     function onMouseDrag(event) {
@@ -258,18 +275,39 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }
     */
 
+    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
+    const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
+
+
+    window.onresize = () => {
+        const oldWidth = svgBoxWidth;
+        const oldHeight = svgBoxHeight;
+        const newWidth = document.getElementById('svgArea').clientWidth;
+        const newHeight = newWidth / 1168 * 617.817;
+        setSvgBoxWidth(newWidth);
+        setSvgBoxHeight(newHeight);
+    }
+
     return (
-        <Box flexGrow={1} mt={1}>
-            <Paper 
-                className="fullHeight"
-                onMouseDown={(e) => onMouseDown(e)}
-                onMouseUp={(e) => onMouseUp(e)}
-                onMouseMove={(e) => onMouseMove(e)}
-            >
-                <svg className="fullHeight fullWidth">
+        <Box mt={1} height={svgBoxHeight}>
+            <Paper
+                className="fullHeight">
+                <svg
+                    id="mySvg"
+                    className="drawingArea"
+                    onMouseMove={(e) => onMouseMove(e)}
+                    onMouseDown={(e) => onMouseDown(e)}
+                    onMouseUp={(e) => onMouseUp(e)}
+                    viewBox={`0 0 ${1168} ${617.817}`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    version="1.1"
+                    baseProfile="full"
+                    preserveAspectRatio="xMidYMid">
                     {
                         listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
+                    {mousep!==null?<circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle>:null}
                 </svg>
             </Paper>
         </Box>
@@ -286,7 +324,7 @@ export default DrawingArea;
             onMouseUp={(e) => onMouseUp(e)}
             onMouseMove={(e) => onMouseMove(e)}
             >
-                <svg height="100%" width="100%">
+                <svg className="fullHeight fullWidth">
                     {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} stroke-width={MyPath.thickness}></path>)}
                 </svg>
             </Paper>
@@ -305,7 +343,7 @@ export default DrawingArea;
 /**
  * CURSOR TEST
  {
-    <circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="red"></circle>
+    <circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle>
     <line x1={mousep.x - brushSize / 8} x2={mousep.x - brushSize / 8 + brushSize / 4} y1={mousep.y} y2={mousep.y} strokeWidth="1" stroke="red"></line>
     <line x1={mousep.x} x2={mousep.x} y1={mousep.y - brushSize / 8} y2={mousep.y - brushSize / + brushSize / 2} strokeWidth="1" stroke="red"></line>
 }

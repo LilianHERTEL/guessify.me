@@ -11,7 +11,7 @@ const ClearDrawingTool = ({ socket, onToolClick }) => {
             <IconButton onClick={handleClick} color="primary" size="small">
                 <DeleteForeverIcon fontSize="large"></DeleteForeverIcon>
             </IconButton>
-            <Typography variant="caption">Clear drawing</Typography>
+            <Typography className="noselect" variant="caption">Clear drawing</Typography>
         </Box>
     )
 }
