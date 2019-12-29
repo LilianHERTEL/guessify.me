@@ -164,7 +164,7 @@ const GamePage = (props) => {
       return (
         <Paper>
           <AppBar position="static">
-            <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth" indicatorColor="white">
+            <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
               <Tab label="Players" />
               <Tab label="Statistic" />
             </Tabs>

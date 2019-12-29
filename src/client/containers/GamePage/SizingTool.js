@@ -59,7 +59,7 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" onMouseOut={stopClick}>
+    <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" width={1} onMouseOut={stopClick}>
       <Box display="flex" flexDirection="row">
         <IconButton onMouseDown={runClickPlus} onMouseUp={stopClick} color="primary" size="small">
           <AddCircleIcon fontSize="large"></AddCircleIcon>

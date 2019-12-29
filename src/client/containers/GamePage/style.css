@@ -35,6 +35,33 @@
   background-color: white !important;
 }
 
+
+.slider {
+  border-radius: 5px !important;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+}
+.slider * {
+  border-radius: 5px !important;
+  margin: 0 !important;
+}
+.guessifyPointer {
+  width: 10px !important;
+  height: 10px !important;
+  border: 2px solid white !important;
+  border-radius: 100px !important;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12) !important;
+  transform: translate(-50%, -50%) !important;
+}
+.guessifySliderPointer {
+  width: 9px !important;
+  height: 18px !important;
+  border: 2px solid white !important;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12) !important;
+  transform: translate(-50%, -1px) !important;
+}
+
+
+
 /*
 
 .blackco {

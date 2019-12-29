@@ -7,7 +7,7 @@ const ClearDrawingTool = ({ socket, onToolClick }) => {
         socket.emit('clearDrawing');
     }
     return (
-        <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center">
+        <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" width={1}>
             <IconButton onClick={handleClick} color="primary" size="small">
                 <DeleteForeverIcon fontSize="large"></DeleteForeverIcon>
             </IconButton>

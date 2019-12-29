@@ -36,15 +36,15 @@ function hexToRgb(hex) {
     * @param brushMode
     * @param setBrushMode Function
  */
-const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode }) => {
+const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode, rgbBrushColor }) => {
 
     /**
      * Styling utils
      */
-    const BRUSH_COLOR_RGB = hexToRgb(brushColor);
+    //const BRUSH_COLOR_RGB = hexToRgb(brushColor);
     const useStyles = makeStyles({
         modeSelected: {
-            backgroundColor: `rgba(${BRUSH_COLOR_RGB.r}, ${BRUSH_COLOR_RGB.g}, ${BRUSH_COLOR_RGB.b},0.1)`,
+            backgroundColor: `rgba(${rgbBrushColor.r}, ${rgbBrushColor.g}, ${rgbBrushColor.b},0.3)`,
             borderRadius: '25%',
             pointerEvents: 'none',
         },
@@ -61,7 +61,7 @@ const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode }) => {
     }
 
     return (
-        <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center">
+        <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" width={1}>
             <Box display="flex" flexDirection="row">
                 <IconButton onClick={onDrawModeClick} size="small" className={brushMode === 'Draw' ? classes.modeSelected : null}>
                     <Icon icon={brushIcon} color={brushColor} width="2em" />
