@@ -1,12 +1,12 @@
 import React from 'react';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { Box, IconButton, Typography } from '@material-ui/core';
+import { Box, IconButton, Typography, TextField } from '@material-ui/core';
 
 /**
  * brush size utils
  */
-const BRUSH_SIZE_MAX = 100;
+const BRUSH_SIZE_MAX = 200;
 const BRUSH_SIZE_STEP = 1;
 const BRUSH_SIZE_MIN = 1;
 /** */
@@ -58,6 +58,28 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
     changeInterval = CHANGE_INTERVAL_INITIAL;
   }
 
+  const onInputChange = (event) => {
+    const val = parseInt(event.target.value, 10);
+    if (Number.isSafeInteger(val)) {
+      if (val <= BRUSH_SIZE_MAX && val >= BRUSH_SIZE_MIN) {
+        setBrushSize(val);
+        localBrushSize.current = val;
+      }
+      else if (val > BRUSH_SIZE_MAX) {
+        setBrushSize(BRUSH_SIZE_MAX);
+        localBrushSize.current = BRUSH_SIZE_MAX;
+      }
+      else if (val < BRUSH_SIZE_MIN) {
+        setBrushSize(BRUSH_SIZE_MIN);
+        localBrushSize.current = BRUSH_SIZE_MIN;
+      }
+    }
+  }
+
+  const setSelect = (event) => {
+    event.target.select();
+  }
+
   return (
     <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" width={1} onMouseOut={stopClick}>
       <Box display="flex" flexDirection="row">
@@ -65,7 +87,13 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
           <AddCircleIcon fontSize="large"></AddCircleIcon>
         </IconButton>
         <Box marginLeft={1} marginRight={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          <Typography className="noselect" variant="caption">{brushSize}</Typography>
+          <TextField
+            className="brushSizeInput"
+            value={brushSize}
+            variant="standard"
+            onChange={onInputChange}
+            onFocus={setSelect}
+          />
         </Box>
         <IconButton onMouseDown={runClickMinus} onMouseUp={stopClick} color="primary" size="small">
           <RemoveCircleIcon fontSize="large"></RemoveCircleIcon>

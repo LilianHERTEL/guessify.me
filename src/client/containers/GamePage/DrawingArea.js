@@ -74,10 +74,10 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }, [socket]);
     /************************************/
 
-    var distanceMiniAvantCreation = 0;
+    var distanceMiniAvantCreation = 5;
     var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
-    var ecartTemps = 50;
+    var ecartTemps = 25;
 
     React.useEffect(() => {
         timePassed.current;
@@ -176,6 +176,10 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         isDrawing.current = false;
         console.log("ON MOUSE UP");
         emitPathToServ(socket);
+        setDessine(false);
+    }
+
+    function onMouseLeave(event) {
         setDessine(false);
     }
 
@@ -296,6 +300,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
                     onMouseMove={(e) => onMouseMove(e)}
                     onMouseDown={(e) => onMouseDown(e)}
                     onMouseUp={(e) => onMouseUp(e)}
+                    onMouseLeave={(e) => onMouseLeave(e)}
                     viewBox={`0 0 ${1168} ${617.817}`}
                     xmlns="http://www.w3.org/2000/svg"
                     xmlnsXlink="http://www.w3.org/1999/xlink"

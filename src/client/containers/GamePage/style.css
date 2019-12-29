@@ -10,6 +10,10 @@
 
 */
 
+:root {
+  --color-primary: #3f51b5 !important;
+}
+
 .fullHeight{
   height:100%
 }
@@ -27,8 +31,8 @@
 }
 
 .borderBottomPrimary {
-  border-bottom: 1px solid #3f51b5;
-  box-shadow: #3f51b5;
+  border-bottom: 1px solid var(--color-primary);
+  box-shadow: var(--color-primary);
 }
 
 .PrivateTabIndicator-root-120 {
@@ -61,10 +65,29 @@
 }
 
 .drawingArea {
-  cursor: none !important;
+  cursor: crosshair !important;
 }
 .drawingRenderArea {
   cursor: not-allowed !important;
+}
+
+.blurSVG {
+  
+}
+
+.brushSizeInput * {
+  width: 2em !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  overflow: visible !important;
+}
+
+::selection {
+  background: transparent !important;
+}
+::-moz-selection {
+  background: transparent !important;
 }
 
 .noselect {

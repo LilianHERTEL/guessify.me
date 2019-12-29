@@ -3,7 +3,7 @@ import DrawingArea from './DrawingArea';
 import DrawingTools from './DrawingTools';
 
 const DrawerArea = ({ socket }) => {
-    const [brushSize, setBrushSize] = React.useState(5);
+    const [brushSize, setBrushSize] = React.useState(20);
     const [brushColor, setBrushColor] = React.useState("#1266db");
     const [rgbBrushColor, setRgbBrushColor] = React.useState({r:18, g:102, b:219});
     const [brushMode, setBrushMode] = React.useState("Draw"); // 'draw' || 'erase'
