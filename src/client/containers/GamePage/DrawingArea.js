@@ -50,6 +50,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         setComponentIsMounted(true);
         console.log("DrawingArea MOUNTED");
 
+        // Sets the initial drawing area size
         const w = document.getElementById('svgArea').clientWidth;
         const h = w / 1168 * 617.817;
         setSvgBoxWidth(w);
@@ -277,8 +278,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 
     const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
-
-
     window.onresize = () => {
         const oldWidth = svgBoxWidth;
         const oldHeight = svgBoxHeight;
@@ -290,8 +289,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 
     return (
         <Box mt={1} height={svgBoxHeight}>
-            <Paper
-                className="fullHeight">
+            <Paper className="fullHeight">
                 <svg
                     id="mySvg"
                     className="drawingArea"
@@ -307,7 +305,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
                     {
                         listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
-                    {mousep!==null?<circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle>:null}
+                    {mousep !== null ? <circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
                 </svg>
             </Paper>
         </Box>

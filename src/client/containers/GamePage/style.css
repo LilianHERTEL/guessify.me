@@ -63,6 +63,9 @@
 .drawingArea {
   cursor: none !important;
 }
+.drawingRenderArea {
+  cursor: not-allowed !important;
+}
 
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */

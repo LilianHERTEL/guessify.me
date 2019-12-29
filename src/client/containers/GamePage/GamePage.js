@@ -265,7 +265,7 @@ const GamePage = (props) => {
           <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
         </Box>
         <LinearProgress />
-        {/*
+        {
           drawing ?
             ( // drawer view
               <DrawerArea socket={socket} />
@@ -273,8 +273,7 @@ const GamePage = (props) => {
             ( // guesser view
               <DrawingRenderArea socket={socket} />
             )
-        */}
-        <DrawerArea socket={socket} />
+        }
       </Box>
       <Box mx={1}></Box>
       <Box display="flex" height={1} flexDirection="column">

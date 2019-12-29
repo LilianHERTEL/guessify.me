@@ -26,6 +26,13 @@ const DrawingRenderArea = ({ socket }) => {
     React.useEffect(() => {
         setComponentIsMounted(true);
         console.log("DrawingRenderArea MOUNTED");
+        
+        // Sets the initial drawing area size
+        const w = document.getElementById('svgArea').clientWidth;
+        const h = w / 1168 * 617.817;
+        setSvgBoxWidth(w);
+        setSvgBoxHeight(h);
+        console.log("yo : " + svgBoxHeight);
     }, []);
     /************************************/
     /************************************
@@ -180,12 +187,29 @@ const DrawingRenderArea = ({ socket }) => {
         return `${d}`
     }
 
+    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
+    const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
+    window.onresize = () => {
+        const oldWidth = svgBoxWidth;
+        const oldHeight = svgBoxHeight;
+        const newWidth = document.getElementById('svgArea').clientWidth;
+        const newHeight = newWidth / 1168 * 617.817;
+        setSvgBoxWidth(newWidth);
+        setSvgBoxHeight(newHeight);
+    }
+
     return (
-        <Box flexGrow={1} mt={1}>
-            <Paper 
-                className="fullHeight"
-            >
-                <svg className="fullHeight fullWidth">
+        <Box mt={1} height={svgBoxHeight}>
+            <Paper className="fullHeight">
+                <svg
+                    id="mySvg"
+                    className="drawingRenderArea"
+                    viewBox={`0 0 ${1168} ${617.817}`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    version="1.1"
+                    baseProfile="full"
+                    preserveAspectRatio="xMidYMid">
                     {
                         listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
