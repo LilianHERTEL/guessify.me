@@ -74,6 +74,12 @@ sockets.start = function (io) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit('drawCmd', msg);
     });
+
+    socket.on('clearDrawing', function (msg) {
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      io.to(socket.lobby.id).emit('clearDrawing', msg);
+    });
+
     socket.on('requestListPlayer', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit('listPlayer', socket.lobby);
@@ -104,6 +110,12 @@ sockets.start = function (io) {
     socket.on('sendWordList',function(wordlist){
       if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
       io.to(socket.lobby.id).emit('receiveWordList',wordlist);
+    });
+
+    socket.on('drawingSideOption',function(option){
+      if(!socket.isInGame) return socket.emit("Unauthorized","You are not allowed send this command!");          
+      io.to(socket.lobby.id).emit('viewerSideOption',option);
+      console.log(JSON.stringify(option));
     });
   });
 }
