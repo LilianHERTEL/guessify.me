@@ -241,7 +241,7 @@ const GamePage = (props) => {
   useEffect(() => {
     if (!props.location.state) return;
     if(window.location.hostname == "guessify.me")
-    socket = openSocket('http://kimsufi.thomasxd24.com:8880/');
+    socket = openSocket('https://ws.guessify.me:8880/');
     else
     socket = openSocket('http://'+window.location.hostname+':8880/');
     connect(props.location.state.username);
