@@ -240,7 +240,7 @@ const GamePage = (props) => {
 
   useEffect(() => {
     if (!props.location.state) return;
-    socket = openSocket('https://'+window.location.hostname+':8880');
+    socket = openSocket('/');
     connect(props.location.state.username);
 
   }, []);
