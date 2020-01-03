@@ -14,7 +14,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var loginRoute = require('./routes/login.js');
 const fs = require('fs');
-fs.readFile('Dictionnaires/ENdic.txt','utf8',function(err,data){
+console.log(__dirname);
+fs.readFile(__dirname+'/Dictionnaires/ENdic.txt','utf8',function(err,data){
     if(err) throw err;
     global.dictionnaire = data.toString().split("\r\n");
 });
