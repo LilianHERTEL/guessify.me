@@ -103,7 +103,7 @@ class SignUpPage extends React.Component {
   }
 
   async sendRequest(user){
-    return await fetch('http://localhost:3000/api/auth/register', {
+    return await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

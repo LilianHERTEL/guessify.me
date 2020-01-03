@@ -54,7 +54,7 @@ const classes = {
 
 async function disconnect() {
 
-  const response = await fetch('http://localhost:3000/api/auth/logout')
+  const response = await fetch('/api/auth/logout')
 
   if (response.ok) {
     var data = await response.json();
@@ -74,7 +74,7 @@ const HomePage = (props) => {
   const [statusText, setStatusText] = useState('');
   const tryConnect = async () => {
     console.log(usernameM, passwordM)
-    const response = await fetch('http://localhost:3000/api/auth/login', {
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
