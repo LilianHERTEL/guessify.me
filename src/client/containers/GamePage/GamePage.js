@@ -3,7 +3,7 @@
 *
 * List all the features
 */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect,useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -16,13 +16,14 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
-import DrawingRenderArea from './DrawingRenderArea';
+import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
 import { BrowserView, MobileView, isMobile } from 'react-device-detect';
 import { array } from 'prop-types';
 import DrawingTools from './DrawingTools';
 import DrawerArea from './DrawerArea';
 import blue from '@material-ui/core/colors/blue';
+import MyPath from './MyPath';
 
 var socket;
 
@@ -68,6 +69,10 @@ function TabPanel(props) {
   );
 }
 
+var pathsArray = [];
+class Point { x = 0; y = 0; }
+var isRendering = false;
+
 /*****************************
  * THE COMPONENT STARTS HERE *
  * ***************************/
@@ -80,6 +85,42 @@ const GamePage = (props) => {
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
+  //drawing rendering :
+  const [listPath, setListPath] = React.useState([]);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+const fctQuiAjouteUnParUn = (myPath) => {
+
+    var { x, y } = myPath.points.shift();
+    setListPath(listpath => {
+        if (listpath.length === 0) return [];
+        listpath[listpath.length - 1].points.push({ x, y });
+        return listpath;
+    });
+    forceUpdate();
+
+}
+
+const displayPathsArray = async () => {
+    isRendering = true;
+    while (pathsArray.length > 0) {
+        let time = pathsArray[0].time;
+        let nbPoints = pathsArray[0].points.length;
+        for (var i = 0; i < nbPoints; i++) {
+            fctQuiAjouteUnParUn(pathsArray[0]);
+
+            await sleep((time * 1000) / nbPoints);
+
+        }
+        pathsArray.shift();
+    }
+    isRendering = false;
+}
+
 
   /************************************
    * Chat handlers  
@@ -234,7 +275,31 @@ const GamePage = (props) => {
       setChat(chat => [...chat, data.username + " is drawing!"])
       setCurrentDrawerName(data.username);
       setDrawing(data.socketID == socket.id);
+      //On vide la listPath à chaque fois 
+      setListPath([]);
     });
+    socket.on('drawCmd', async function (data) {
+      if(drawing) return;
+      pathsArray = [...pathsArray, data];
+      console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      setListPath(path => {
+          if (path.length == 0 || path[path.length - 1].id != data.id) {
+              if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
+              return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
+
+          }
+          else {
+              console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
+              return [...path];
+
+          }
+      });
+
+      if (!isRendering)
+          await displayPathsArray();
+      else
+          console.log("IS RENDERING : TRUE");
+  });
     socket.on('disconnect', function () { });
   }
 
@@ -274,7 +339,7 @@ const GamePage = (props) => {
               <DrawerArea socket={socket} />
             ) :
             ( // guesser view
-              <DrawingRenderArea socket={socket} />
+              <RenderAreaV2 listPath={listPath} />
             )
         }
       </Box>

@@ -9,104 +9,8 @@ var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
 
-const DrawingRenderArea = ({ socket }) => {
-    //liste de paths qui sont actuellement affichés à l'écran 
-    const [listPath, setListPath] = React.useState([]);
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-    const [thickness, setThickness] = React.useState(30);
-
-
-    /************************************
-     * (Hook version of "componentDidMount" lifecycle method)
-     * **
-     * This effect is executed only once : after the component has mounted
-     */
-    const [componentIsMounted, setComponentIsMounted] = React.useState(false);
-    React.useEffect(() => {
-        setComponentIsMounted(true);
-        console.log("DrawingRenderArea MOUNTED");
-        
-        // Sets the initial drawing area size
-        const w = document.getElementById('svgArea').clientWidth;
-        const h = w / 1168 * 617.817;
-        setSvgBoxWidth(w);
-        setSvgBoxHeight(h);
-        console.log("yo : " + svgBoxHeight);
-    }, []);
-    /************************************/
-    /************************************
-     * Handles the drawing clear effect
-     * **
-     * Sets listPath empty
-     * Sets clearer in gamePage to false (via handleAfterClear)
-     */
-    React.useEffect(() => {
-        if (socket == null) return;
-        socket.on('clearDrawing', () => {
-            //console.log("CLEARING DrawingRenderArea");
-            if (!componentIsMounted) return;
-            setListPath([]);
-        });
-    }, [socket]);
-    /************************************/
-
-    useEffect(() => {
-        if (socket == null) return;
-        socket.on('drawCmd', async function (data) {
-            pathsArray = [...pathsArray, data];
-            console.log("//////// VIEWER DATA : " + JSON.stringify(data));
-            setListPath(path => {
-                if (path.length == 0 || path[path.length - 1].id != data.id) {
-                    if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
-                    return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
-
-                }
-                else {
-                    console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
-                    return [...path];
-
-                }
-            });
-
-            if (!isRendering)
-                await displayPathsArray();
-            else
-                console.log("IS RENDERING : TRUE");
-        });
-    }, [socket]);
-
-    const sleep = (milliseconds) => {
-        return new Promise(resolve => setTimeout(resolve, milliseconds));
-    }
-
-    const fctQuiAjouteUnParUn = (myPath) => {
-
-        var { x, y } = myPath.points.shift();
-        setListPath(listpath => {
-            if (listpath.length === 0) return [];
-            listpath[listpath.length - 1].points.push({ x, y });
-            return listpath;
-        });
-        forceUpdate();
-
-    }
-
-    const displayPathsArray = async () => {
-        isRendering = true;
-        while (pathsArray.length > 0) {
-            let time = pathsArray[0].time;
-            let nbPoints = pathsArray[0].points.length;
-            for (var i = 0; i < nbPoints; i++) {
-                fctQuiAjouteUnParUn(pathsArray[0]);
-
-                await sleep((time * 1000) / nbPoints);
-
-            }
-            pathsArray.shift();
-        }
-        isRendering = false;
-    }
-
+const RenderAreaV2 = (props) => {
+    
     // The smoothing ratio
     const smoothing = 0.2
 
@@ -205,7 +109,7 @@ const DrawingRenderArea = ({ socket }) => {
                     baseProfile="full"
                     preserveAspectRatio="xMidYMid">
                     {
-                        listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+                        props.listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
                 </svg>
             </Paper>
@@ -213,4 +117,4 @@ const DrawingRenderArea = ({ socket }) => {
     );
 }
 
-export default DrawingRenderArea;
+export default RenderAreaV2;
