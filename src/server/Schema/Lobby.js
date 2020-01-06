@@ -1,56 +1,56 @@
-var mongoose = require('mongoose');
+
 var uniqid = require('uniqid')
-  var Schema = mongoose.Schema;
 
-  var PlayerSchema = Schema({
-    session : String,
-    username : String,
-    pointsTotal    : Number,
-  });
-
-  var LobbySchema = new Schema({
-    codeLobby:  String,
-    theme: String,
-    maxPlayer: {type: Number, default:10},
-    isPrivate:   Boolean,
-    isActive:   Boolean,
-    status: String,
-    joinable: Boolean,
-    inGame: Boolean,
-    listPlayer: [PlayerSchema]
-  });
-
-  LobbySchema.statics.createLobby = async function () {
-    var Lobby = this.model("Lobby");
-    var lobbyID  = uniqid.time();
-    var l = new Lobby({
-        codeLobby: lobbyID
-    })
-    var result = await l.save()
-    return result;
+class Lobby {
+  constructor() {
+    this.id = uniqid();
+    this.maxPlayer = 10;
+    this.inGame = false;
+    this.listPlayer = [];
+    this.started = false;
+    this.currentDrawerIndex = null;
+    this.currentDrawer = null;
   }
 
-  LobbySchema.methods.join = async function (sessionID,username) {
+  join(socketID, username) {
     this.listPlayer.push({
-      session:sessionID,
+      socketID,
       username,
-      pointsTotal : 0
+      pointsTotal: 0
     })
-    await this.save();
+  }
 
+  resetGame() {
+    this.started = false;
+    this.currentDrawer = null;
+    this.currentDrawerIndex = null;
+  }
+
+  getNextDrawer(){
+     this.currentDrawerIndex = (this.currentDrawer == null? 0:(this.currentDrawerIndex+1)%(this.listPlayer.length));
+    this.currentDrawer = this.listPlayer[this.currentDrawerIndex];
+  }
+
+    leave(socketID) {
+      for (const [index, player] of this.listPlayer.entries()) {
+        if(player.socketID == socketID)
+        {
+          this.listPlayer.splice(index,1);
+          break;
+        }
+      }
+      
+    }
+    addPoint(socketID,point){
+      for (const player of this.listPlayer) {
+        if(player.socketID == socketID)
+        {
+          player.pointsTotal++;
+        }
+      }
+    }
   }
 
 
-  LobbySchema.methods.join = async function (sessionID) {
-    var currentSession = await global.MongoStore.get(sessionID,function (err,data) {
-      console.log(data)
-    })
-    // l.listPlayer.push({
-    //   session
-    // })
 
-  }
-
-  
-  
-  module.exports =  LobbySchema
+module.exports = Lobby

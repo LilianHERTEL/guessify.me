@@ -17,6 +17,7 @@ import GamePage from '../../containers/GamePage';
 import NotFoundPage from '../../containers/NotFoundPage';
 import './style.css';
 import '../../styles/global-styles.css';
+
 const App = () => (
   <React.Fragment>
     <div className="app-wrapper">
