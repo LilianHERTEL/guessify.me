@@ -30,6 +30,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
+import MediaQuery from 'react-responsive';
+
+
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 function a11yProps(index) {
   return {
@@ -114,6 +118,10 @@ const GamePage = (props) => {
   const [chatDisplayed, setChatDisplayed] = useState(null);
   const [LeaderboardDisplayed, setLeaderboardDisplayed] = useState(null);
 
+  const mobilePhone = useMediaQuery('(max-width:600px)');
+  const pc = useMediaQuery('(min-width:600px) and (max-width:1000px)');
+  const grandPc = useMediaQuery('(min-width:1000px)');
+
   const socket = useRef(null);
   const connect = async (username) => {
     console.log(username, state)
@@ -175,7 +183,7 @@ const GamePage = (props) => {
   };
 
   function LeaderBoardTop(props) {
-    if (isMobile) {
+    if (mobilePhone) {
       return (
 
         <div>
@@ -228,7 +236,7 @@ const GamePage = (props) => {
   }
 
   function LeaderboardPlateforme(props) {
-    if (isMobile) {
+    if (mobilePhone) {
       return (
         <div></div>
       );
@@ -263,7 +271,7 @@ const GamePage = (props) => {
   }
 
   function ChatPlateforme(props) {
-    if (isMobile) {
+    if (mobilePhone) {
       return (
         <Chat chat={chat} enterKey={_handleKeyDown} />
       );

@@ -17,8 +17,10 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
 import AvatarIcon from '@material-ui/icons/AccountBox'
 import {Link} from 'react-router-dom';
+import withWidth from '@material-ui/core/withWidth';
 import './style.css';
 import { Divider, Hidden, CardMedia,Avatar,Snackbar } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 const theme = createMuiTheme();
 const classes = {
   appBar: {
@@ -176,12 +178,12 @@ handleOpen(text){
           
           <React.Fragment>
             
-      
       <Grid container spacing={3} justify="center" alignItems="center">
         <Grid item xs={12} sm={5}>
         <Typography  variant="h4" align="center">
             Quick Play
           </Typography>
+          
           <TextField
             id="usernameGuest"
             name="username"
