@@ -17,10 +17,11 @@ import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
 import AvatarIcon from '@material-ui/icons/AccountBox'
-import { Link } from 'react-router-dom';
-import './style.css';
-import { Divider, Hidden, CardMedia, Avatar, Snackbar } from '@material-ui/core';
+import {Link} from 'react-router-dom';
 import banner from '../../images/banner.png';
+import './style.css';
+import { Divider, Hidden, CardMedia,Avatar,Snackbar } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const theme = createMuiTheme();
 const classes = {
@@ -72,6 +73,12 @@ const HomePage = (props) => {
   const [isValid, setIsValid] = useState(true);
   const [user, setUser] = useState(null);
   const [statusText, setStatusText] = useState('');
+
+
+  const portable = useMediaQuery('(max-width:800px)');
+  const pc = useMediaQuery('(min-width:800px) and (max-width:1000px)');
+  const grandPc = useMediaQuery('(min-width:1000px)');
+
   const tryConnect = async () => {
     console.log(usernameM, passwordM)
     const response = await fetch('/api/auth/login', {
