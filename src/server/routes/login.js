@@ -3,7 +3,8 @@ const uniqid = require('uniqid');
 var router = express.Router();
 const mongoose = require('mongoose');
 var passport = require('passport')
-const mailer = require("nodemailer");
+const nodemailer = require("nodemailer");
+
 
 
 router.post('/login',passport.authenticate('local'), function(req, res){
@@ -33,7 +34,33 @@ router.post('/unregister',passport.authenticate('local'),function(req,res){
 router.post('/register' , function(req, res){
   var data = req.body;
   var User = mongoose.model('User');
-
+  
+  var transporter = nodemailer.createTransport({
+    sendMail: true,
+    host: 'smtp.ethereal.email',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'freida.huels@ethereal.email',
+      pass: '8bS6FJdbHfNHmq79Yx'
+    }
+  });
+  
+  var mailOptions = {
+    from: 'freida.huels@ethereal.email',
+    to: 'romain.barou@etu.uca.fr',
+    subject: 'Sending Email using Node.js',
+    text: 'That was (not) easy!'
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+      console.log('Email:',mailOptions.to);
+    }
+  });
 
   var newUser = new User({
       ...data
