@@ -2,6 +2,7 @@
 
 
 export default class BezierTools {
+    static smoothing = 0.2;
     // Properties of a line 
     // I:  - pointA (array) [x,y]: coordinates
     //     - pointB (array) [x,y]: coordinates
@@ -29,11 +30,11 @@ export default class BezierTools {
         const n = next || current;
 
         // Properties of the opposed-line
-        const o = line(p, n);
+        const o = BezierTools.line(p, n);
 
         // If is end-control-point, add PI to the angle to go backward
         const angle = o.angle + (reverse ? Math.PI : 0);
-        const length = o.length * smoothing;
+        const length = o.length * BezierTools.smoothing;
 
         // The control point position is relative to the current point
         const x = current.x + Math.cos(angle) * length;
@@ -53,10 +54,10 @@ export default class BezierTools {
     // O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
     static bezierCommand(point, i, a) {
         // start control point
-        const cps = controlPoint(a[i - 1], a[i - 2], point)
+        const cps = BezierTools.controlPoint(a[i - 1], a[i - 2], point)
 
         // end control point
-        const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
+        const cpe = BezierTools.controlPoint(point, a[i - 1], a[i + 1], true)
         return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
     }
 

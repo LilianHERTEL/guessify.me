@@ -13,7 +13,6 @@ const DrawingRenderArea = ({ socket }) => {
     //liste de paths qui sont actuellement affichés à l'écran 
     const [listPath, setListPath] = React.useState([]);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-
     const [thickness, setThickness] = React.useState(30);
 
 
@@ -42,19 +41,15 @@ const DrawingRenderArea = ({ socket }) => {
      * Sets clearer in gamePage to false (via handleAfterClear)
      */
     React.useEffect(() => {
+        console.log("------------------------------------------------------------");
         if (socket == null) return;
         socket.on('clearDrawing', () => {
-            //console.log("CLEARING DrawingRenderArea");
+            console.log("CLEARING DrawingRenderArea");
             if (!componentIsMounted) return;
             setListPath([]);
         });
     }, [socket]);
     /************************************/
-
-
-
-    //liste de paths en attente d'affichage
-
 
     useEffect(() => {
         if (socket == null) return;
