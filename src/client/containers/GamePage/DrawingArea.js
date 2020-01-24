@@ -68,7 +68,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     React.useEffect(() => {
         if (socket == null) return;
         socket.on('clearDrawing', () => {
-            //console.log("CLEARING DrawingArea");
+            console.log("CLEARING DrawingArea");
             setListPath([]);
         });
     }, [socket]);

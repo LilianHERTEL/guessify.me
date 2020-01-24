@@ -41,9 +41,10 @@ const DrawingRenderArea = ({ socket }) => {
      * Sets clearer in gamePage to false (via handleAfterClear)
      */
     React.useEffect(() => {
+        console.log("------------------------------------------------------------");
         if (socket == null) return;
         socket.on('clearDrawing', () => {
-            //console.log("CLEARING DrawingRenderArea");
+            console.log("CLEARING DrawingRenderArea");
             if (!componentIsMounted) return;
             setListPath([]);
         });

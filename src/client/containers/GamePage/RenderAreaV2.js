@@ -23,6 +23,8 @@ const RenderAreaV2 = (props) => {
         setSvgBoxHeight(newHeight);
     }
 
+    
+
     return (
         <Box mt={1} height={svgBoxHeight}>
             <Paper className="fullHeight">
