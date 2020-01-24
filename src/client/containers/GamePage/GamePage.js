@@ -278,6 +278,10 @@ const displayPathsArray = async () => {
       //On vide la listPath à chaque fois 
       setListPath([]);
     });
+    socket.on('clearDrawing', () => {
+      //console.log("CLEARING DrawingArea");
+      setListPath([]);
+    });
     socket.on('drawCmd', async function (data) {
       if(drawing) return;
       pathsArray = [...pathsArray, data];

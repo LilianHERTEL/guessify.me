@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import MyPath from './MyPath';
-import BezizeTools from './BezierTools';
+import {controlPoint,line,bezierCommand,svgPath} from './BezierTools';
 
 var path;
 var ancienTemps = Date.now();
@@ -36,7 +36,7 @@ const RenderAreaV2 = (props) => {
                     baseProfile="full"
                     preserveAspectRatio="xMidYMid">
                     {
-                        props.listPath.map((MyPath, index) => <path d={BezizeTools.svgPath(MyPath.points, BezizeTools.bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+                        props.listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
                 </svg>
             </Paper>
