@@ -18,7 +18,8 @@ const ColorPickerTool = ({ brushColor, setBrushColor, setBrushMode, setRgbBrushC
     }
 
     const handleColorChange = (color) => {
-        setBrushColor(`rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})`);
+        //setBrushColor(`rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})`);
+        setBrushColor(color.hex);
         setBrushMode('Draw');
         setRgbBrushColor({r:color.rgb.r, g:color.rgb.g, b:color.rgb.b});
         console.log("r = " + color.rgb.r);

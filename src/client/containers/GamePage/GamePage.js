@@ -281,7 +281,7 @@ const displayPathsArray = async () => {
     socket.on('drawCmd', async function (data) {
       if(drawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      console.log("//////// VIEWER DATA : " + JSON.stringify(data.time) + " / " + JSON.stringify(data.id) + " / " + JSON.stringify(data.color));
       setListPath(path => {
           if (path.length == 0 || path[path.length - 1].id != data.id) {
               if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);

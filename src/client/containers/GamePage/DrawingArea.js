@@ -3,6 +3,7 @@ import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
+import SelectInput from '@material-ui/core/Select/SelectInput';
 /*
 import { HuePicker } from 'react-color';
 import Option from './Option';
@@ -49,13 +50,11 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     React.useEffect(() => {
         setComponentIsMounted(true);
         console.log("DrawingArea MOUNTED");
-
         // Sets the initial drawing area size
         const w = document.getElementById('svgArea').clientWidth;
         const h = w / 1168 * 617.817;
         setSvgBoxWidth(w);
         setSvgBoxHeight(h);
-        console.log("yo : " + svgBoxHeight);
     }, []);
     /************************************/
 
@@ -74,10 +73,10 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }, [socket]);
     /************************************/
 
-    var distanceMiniAvantCreation = 5;
+    var distanceMiniAvantCreation = 3;
     var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
-    var ecartTemps = 25;
+    var ecartTemps = 20;
 
     React.useEffect(() => {
         timePassed.current;
@@ -101,17 +100,19 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket) {
-        //console.log(socket)
-        //console.log("ENVOIES EN MODE DESSIN : " + isDrawing.current + "  ///  " + (workingPath.current.points));
-
-        if (workingPath.current === null || workingPath.current.points.length === 0) return;
+        //if (workingPath.current === null || workingPath.current.points.length === 0) return;
+        if(listPath.length === 0 || listPath[listPath.length -1].points.length === 0 ) return;
         var tmp = new Date(Date.now() - timePassed.current);
-        workingPath.current.time = tmp.getTime() / 1000;
-
+        //workingPath.current.time = tmp.getTime() / 1000;
+        listPath[listPath.length - 1].time = tmp.getTime()/1000;
         timePassed.current = Date.now();
-        socket.emit('draw', workingPath.current);
-        workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, workingPath.current.id);
-        //console.log("[INFO] : Em");
+
+        // On désyncronise l'envoie des informations de dessin car sinon ça bloque l'algorithme 
+        let promis = new Promise(function(resolve,reject){
+            console.log("emit");
+            socket.emit('draw', listPath[listPath.length - 1]);
+        });
+        //workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
     }
 
     function estPointAZero(point) {
@@ -127,7 +128,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         var pt = svg.createSVGPoint();
         pt.x = event.clientX;
         pt.y = event.clientY;
-
         var svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
 
         setMouse({ x: svgP.x, y: svgP.y });
@@ -137,6 +137,15 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         }
         setActuelPoint({ x: svgP.x, y: svgP.y });
         setDistance(distanceBtw(ancienPoint, actuelPoint));
+        /*
+        console.log("============");
+        console.log(((Date.now() - ancienTemps) > ecartTemps));
+        console.log(distance > distanceMiniAvantCreation);
+        console.log(dessine);
+        console.log("============");
+        */
+        //console.log((Date.now() - ancienTemps));
+        //console.log(distance);
 
         if (((((Date.now() - ancienTemps) > ecartTemps) && distance > distanceMiniAvantCreation)) && dessine) {
             ancienTemps = Date.now();
@@ -144,10 +153,12 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 
             listPath[listPath.length - 1].points.push({ x: actuelPoint.x, y: actuelPoint.y });
             setListPath(listPath);
-            workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
-
-
+            //workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         }
+    }
+
+    function onTouchMoved(event){
+        console.log("touchMoved ! Yeah ! ");
     }
 
 
@@ -156,16 +167,12 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         isDrawing.current = true;
         timePassed.current = Date.now();
         setDessine(true);
-        console.log("ON MOUSE DOWN = ");
-        var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize);
+    
+        var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize,1,(workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
-        workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
-        workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
-        workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
-
-        console.log("MOUSE\t" + mousep.x + ' ' + mousep.y);
-        console.log("POINT\t" + actuelPoint.x + ' ' + actuelPoint.y);
+        //workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
+        //workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
     }
 
     function onMouseDrag(event) {
@@ -290,13 +297,14 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         setSvgBoxWidth(newWidth);
         setSvgBoxHeight(newHeight);
     }
-
+    //onTouchMove={(e)=>onMouseMove(e)}
     return (
         <Box mt={1} height={svgBoxHeight}>
             <Paper className="fullHeight">
                 <svg
                     id="mySvg"
                     className="drawingArea"
+                    
                     onMouseMove={(e) => onMouseMove(e)}
                     onMouseDown={(e) => onMouseDown(e)}
                     onMouseUp={(e) => onMouseUp(e)}
@@ -318,36 +326,3 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 }
 
 export default DrawingArea;
-
-
-/*
-<div style={{width:"100%"}}>
-            <Paper height="100%" className="canvas"
-            onMouseDown={(e) => onMouseDown(e)}
-            onMouseUp={(e) => onMouseUp(e)}
-            onMouseMove={(e) => onMouseMove(e)}
-            >
-                <svg className="fullHeight fullWidth">
-                    {listPath.map((MyPath,index) => <path d={svgPath(MyPath.points,bezierCommand)} key={index} fill="none" stroke={MyPath.color} stroke-width={MyPath.thickness}></path>)}
-                </svg>
-            </Paper>
-            <Grid className={classes.container} container direction="row">
-                <HuePicker width="80%"
-                    color={(brushMode==='Erase')?'white':brushColor}
-                    onChangeComplete={ handleChangeComplete }
-                />
-                <BlackWhiteColorPicker onValueChanged={handleChangeComplete}  className={classes.blackWhite} onChange={handleChangeComplete} onChangeComplete={ handleChangeComplete }/>
-                <SizingTools onClickPlus={handleChangeSizePlus} onClickMinus={handleChangeSizeMinus} />
-            </Grid>
-
-        </div>
-*/
-
-/**
- * CURSOR TEST
- {
-    <circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle>
-    <line x1={mousep.x - brushSize / 8} x2={mousep.x - brushSize / 8 + brushSize / 4} y1={mousep.y} y2={mousep.y} strokeWidth="1" stroke="red"></line>
-    <line x1={mousep.x} x2={mousep.x} y1={mousep.y - brushSize / 8} y2={mousep.y - brushSize / + brushSize / 2} strokeWidth="1" stroke="red"></line>
-}
- */
