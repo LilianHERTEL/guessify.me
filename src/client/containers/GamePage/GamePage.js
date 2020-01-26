@@ -110,6 +110,18 @@ const displayPathsArray = async () => {
     while (pathsArray.length > 0) {
         let time = pathsArray[0].time;
         let nbPoints = pathsArray[0].points.length;
+        let id = pathsArray[0].id;
+        setListPath(path => {
+          console.log(JSON.stringify(path[path.length - 1]))
+          if (path.length == 0 || path[path.length-1].id != id) {
+            return [...path, new MyPath([], pathsArray[0].color, pathsArray[0].thickness, pathsArray[0].time, pathsArray[0].id)];
+          }
+          else {
+              //console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
+              return [...path];
+          }
+        });
+
         for (var i = 0; i < nbPoints; i++) {
             fctQuiAjouteUnParUn(pathsArray[0]);
 
@@ -282,23 +294,9 @@ const displayPathsArray = async () => {
       if(drawing) return;
       pathsArray = [...pathsArray, data];
       console.log("//////// VIEWER DATA : " + JSON.stringify(data.time) + " / " + JSON.stringify(data.id) + " / " + JSON.stringify(data.color));
-      setListPath(path => {
-          if (path.length == 0 || path[path.length - 1].id != data.id) {
-              if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
-              return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
-
-          }
-          else {
-              console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
-              return [...path];
-
-          }
-      });
 
       if (!isRendering)
           await displayPathsArray();
-      else
-          console.log("IS RENDERING : TRUE");
   });
   socket.on('clearDrawing', () => {
     console.log("CLEARING DrawingRenderArea");

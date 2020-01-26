@@ -168,7 +168,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         timePassed.current = Date.now();
         setDessine(true);
     
-        var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize,1,(workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
+        var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize,1,(listPath.length == 0 || listPath[listPath.length-1] == null) ? 0 : listPath[listPath.length-1].id + 1);
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
         //workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
