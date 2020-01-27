@@ -20,7 +20,7 @@ import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
 import { BrowserView, MobileView, isMobile } from 'react-device-detect';
 import { array } from 'prop-types';
-import DrawingTools from './DrawingTools';
+import DrawingTools from './DrawingToolsVertical';
 import DrawerArea from './DrawerArea';
 import blue from '@material-ui/core/colors/blue';
 import MyPath from './MyPath';
@@ -337,7 +337,8 @@ const displayPathsArray = async () => {
           <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
         </Box>
         <LinearProgress />
-        {
+        <DrawerArea socket={socket} />
+        {/*
           drawing ?
             ( // drawer view
               <DrawerArea socket={socket} />
@@ -345,7 +346,7 @@ const displayPathsArray = async () => {
             ( // guesser view
               <RenderAreaV2 listPath={listPath} />
             )
-        }
+            */}
       </Box>
       <Box mx={1}></Box>
       <Box display="flex" height={1} flexDirection="column">

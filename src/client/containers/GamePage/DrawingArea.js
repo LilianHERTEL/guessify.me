@@ -292,7 +292,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
     }
 
     return (
-        <Box mt={1} height={svgBoxHeight}>
+        <Box height={svgBoxHeight}>
             <Paper className="fullHeight">
                 <svg
                     id="mySvg"

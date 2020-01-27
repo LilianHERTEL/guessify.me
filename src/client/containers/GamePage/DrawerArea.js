@@ -1,6 +1,8 @@
 import React from 'react';
 import DrawingArea from './DrawingArea';
-import DrawingTools from './DrawingTools';
+import DrawingToolsVertical from './DrawingToolsVertical';
+import { Box } from '@material-ui/core';
+import DrawingToolsHorizontal from './DrawingToolsHorizontal';
 
 const DrawerArea = ({ socket }) => {
     const [brushSize, setBrushSize] = React.useState(20);
@@ -10,20 +12,29 @@ const DrawerArea = ({ socket }) => {
     const [brushShape, setBrushShape] = React.useState("round"); // WIP (circle, rectangle, etc. ?)
 
     return (
-        <React.Fragment>
-            <DrawingArea
-                socket={socket}
-                brushSize={brushSize}
-                brushColor={brushColor}
-                brushMode={brushMode}
-            />
-            <DrawingTools
+        <Box display="flex" height={1} flexDirection="row"  mt={1}>
+            <DrawingToolsVertical
                 socket={socket}
                 brushSize={brushSize} setBrushSize={setBrushSize}
                 brushColor={brushColor} setBrushColor={setBrushColor} rgbBrushColor={rgbBrushColor} setRgbBrushColor={setRgbBrushColor}
                 brushMode={brushMode} setBrushMode={setBrushMode}
             />
-        </React.Fragment>
+            <Box mx={1}></Box>
+            <Box display="flex" height={1} flexDirection="column" flexGrow="1">
+                <DrawingArea
+                    socket={socket}
+                    brushSize={brushSize}
+                    brushColor={brushColor}
+                    brushMode={brushMode}
+                />
+                <DrawingToolsHorizontal
+                    socket={socket}
+                    brushSize={brushSize} setBrushSize={setBrushSize}
+                    brushColor={brushColor} setBrushColor={setBrushColor} rgbBrushColor={rgbBrushColor} setRgbBrushColor={setRgbBrushColor}
+                    brushMode={brushMode} setBrushMode={setBrushMode}
+                />
+            </Box>
+        </Box>
     );
 }
 
