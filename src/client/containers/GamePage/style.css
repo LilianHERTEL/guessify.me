@@ -83,11 +83,16 @@
   overflow: visible !important;
 }
 
+/*
 ::selection {
   background: transparent !important;
 }
 ::-moz-selection {
   background: transparent !important;
+}
+*/
+* {
+  user-select: none;
 }
 
 .noselect {

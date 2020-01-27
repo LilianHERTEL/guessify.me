@@ -12,14 +12,14 @@ const DrawerArea = ({ socket }) => {
     const [brushShape, setBrushShape] = React.useState("round"); // WIP (circle, rectangle, etc. ?)
 
     return (
-        <Box display="flex" height={1} flexDirection="row"  mt={1}>
+        <Box display="flex" flexDirection="row"  mt={1}>
             <DrawingToolsVertical
                 socket={socket}
                 brushSize={brushSize} setBrushSize={setBrushSize}
                 brushColor={brushColor} setBrushColor={setBrushColor} rgbBrushColor={rgbBrushColor} setRgbBrushColor={setRgbBrushColor}
                 brushMode={brushMode} setBrushMode={setBrushMode}
             />
-            <Box mx={1}></Box>
+            <Box mr={1}></Box>
             <Box display="flex" height={1} flexDirection="column" flexGrow="1">
                 <DrawingArea
                     socket={socket}
