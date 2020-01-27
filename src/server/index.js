@@ -1,5 +1,5 @@
 /* eslint consistent-return:0 */
-
+console.log(__dirname+"/../../dist")
 const express = require('express');
 
 const { resolve } = require('path');
@@ -39,7 +39,7 @@ var launchDataBase = require('./database.js');
 
 app.set('trust proxy', 1) // trust first proxy (autorise l'utilisation d'un proxy)
 app.use(express.json());
-
+app.use(express.static(__dirname+"/../../dist", { dotfiles: 'allow' } ));
 // In production we need to pass these values in instead of relying on webpack
 //Pris 
 launchDataBase(app,io);
