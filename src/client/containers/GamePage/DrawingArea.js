@@ -4,14 +4,7 @@ import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, 
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
 import SelectInput from '@material-ui/core/Select/SelectInput';
-/*
-import { HuePicker } from 'react-color';
-import Option from './Option';
-import { OptionTypes } from './OptionTypes';
-import BlackWhiteColorPicker from './BlackWhiteColorPicker';
-import SizingTool from './SizingTool';
-var path;
-*/
+import {estPointAZero,distanceBtw,svgPath,bezierCommand} from './BezierTools';
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
@@ -91,7 +84,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
      */
     function secondCheck(socket) {
 
-        //console.log('This will run every second!');
+        console.log('This will run every second!');
         if (!isDrawing.current) return;
         emitPathToServ(socket);
     }
@@ -100,28 +93,21 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket) {
-        //if (workingPath.current === null || workingPath.current.points.length === 0) return;
-        if(listPath.length === 0 || listPath[listPath.length -1].points.length === 0 ) return;
+        if (workingPath.current === null || workingPath.current.points.length === 0) return;
+        console.log("First emit : " + workingPath.current.points.length);
         var tmp = new Date(Date.now() - timePassed.current);
-        //workingPath.current.time = tmp.getTime() / 1000;
-        listPath[listPath.length - 1].time = tmp.getTime()/1000;
+        workingPath.current.time = tmp.getTime() / 1000;
         timePassed.current = Date.now();
-
+        console.log("emitting !");
         // On désyncronise l'envoie des informations de dessin car sinon ça bloque l'algorithme 
         let promis = new Promise(function(resolve,reject){
-            console.log("emit");
-            socket.emit('draw', listPath[listPath.length - 1]);
+            console.log("emit promise");
+            socket.emit('draw', workingPath.current);
         });
-        //workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
+        workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
+        
     }
 
-    function estPointAZero(point) {
-        return (point.x === 0 && point.y === 0) ? true : false;
-    }
-
-    function distanceBtw(pointA, pointB) {
-        return Math.sqrt(Math.pow((pointA.x - pointB.x), 2) + Math.pow(pointA.y - pointB.y, 2));
-    }
 
     function onMouseMove(event) {
         var svg = document.getElementById("mySvg");
@@ -137,15 +123,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         }
         setActuelPoint({ x: svgP.x, y: svgP.y });
         setDistance(distanceBtw(ancienPoint, actuelPoint));
-        /*
-        console.log("============");
-        console.log(((Date.now() - ancienTemps) > ecartTemps));
-        console.log(distance > distanceMiniAvantCreation);
-        console.log(dessine);
-        console.log("============");
-        */
-        //console.log((Date.now() - ancienTemps));
-        //console.log(distance);
 
         if (((((Date.now() - ancienTemps) > ecartTemps) && distance > distanceMiniAvantCreation)) && dessine) {
             ancienTemps = Date.now();
@@ -153,30 +130,19 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 
             listPath[listPath.length - 1].points.push({ x: actuelPoint.x, y: actuelPoint.y });
             setListPath(listPath);
-            //workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
+            workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         }
     }
-
-    function onTouchMoved(event){
-        console.log("touchMoved ! Yeah ! ");
-    }
-
-
 
     function onMouseDown(event) {
         isDrawing.current = true;
         timePassed.current = Date.now();
         setDessine(true);
-    
         var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize,1,(listPath.length == 0 || listPath[listPath.length-1] == null) ? 0 : listPath[listPath.length-1].id + 1);
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
-        //workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
-        //workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
-    }
-
-    function onMouseDrag(event) {
-        console.log("ON MOUSE DRAG");
+        workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
+        workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
     }
 
     function onMouseUp(event) {
@@ -190,103 +156,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         setDessine(false);
     }
 
-    // The smoothing ratio
-    const smoothing = 0.2
-
-    // Properties of a line 
-    // I:  - pointA (array) [x,y]: coordinates
-    //     - pointB (array) [x,y]: coordinates
-    // O:  - (object) { length: l, angle: a }: properties of the line
-    const line = (pointA, pointB) => {
-        const lengthX = pointB.x - pointA.x
-        const lengthY = pointB.y - pointA.y
-        return {
-            length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
-            angle: Math.atan2(lengthY, lengthX)
-        }
-    }
-
-    // Position of a control point 
-    // I:  - current (array) [x, y]: current point coordinates
-    //     - previous (array) [x, y]: previous point coordinates
-    //     - next (array) [x, y]: next point coordinates
-    //     - reverse (boolean, optional): sets the direction
-    // O:  - (array) [x,y]: a tuple of coordinates
-    const controlPoint = (current, previous, next, reverse) => {
-        // When 'current' is the first or last point of the array
-        // 'previous' or 'next' don't exist.
-        // Replace with 'current'
-        const p = previous || current;
-        const n = next || current;
-
-        // Properties of the opposed-line
-        const o = line(p, n);
-
-        // If is end-control-point, add PI to the angle to go backward
-        const angle = o.angle + (reverse ? Math.PI : 0);
-        const length = o.length * smoothing;
-
-        // The control point position is relative to the current point
-        const x = current.x + Math.cos(angle) * length;
-        const y = current.y + Math.sin(angle) * length;
-
-        if (x < 20 && y < 20) {
-            console.log("x = " + x + " y = " + y);
-        }
-
-        return [x, y];
-    }
-
-    // Create the bezier curve command 
-    // I:  - point (array) [x,y]: current point coordinates
-    //     - i (integer): index of 'point' in the array 'a'
-    //     - a (array): complete array of points coordinates
-    // O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
-    const bezierCommand = (point, i, a) => {
-        // start control point
-        const cps = controlPoint(a[i - 1], a[i - 2], point)
-
-        // end control point
-        const cpe = controlPoint(point, a[i - 1], a[i + 1], true)
-        return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
-    }
-
-    // Render the svg <path> element 
-    // I:  - points (array): points coordinates
-    //     - command (function)
-    //       I:  - point (array) [x,y]: current point coordinates
-    //           - i (integer): index of 'point' in the array 'a'
-    //           - a (array): complete array of points coordinates
-    //       O:  - (string) a svg path command
-    // O:  - (string): a Svg <path> element
-    const svgPath = (points, command) => {
-        // build the d attributes by looping over the points
-        const d = points.reduce((acc, point, i, a) => i === 0
-            ? `M ${point.x},${point.y}`
-            : `${acc} ${command(point, i, a)}`
-            , '')
-        return `${d}`
-    }
-
-    /*
-    const handleChangeComplete = (color, event) => {
-        var obj = new Option(OptionTypes.COLOR, color);
-        console.log("COLOR CHANGED : " + obj.getType());
-        //socket.emit('drawingSideOption',color);
-        (brushMode === 'Erase') ? 'white' : brushColor = color.hex;
-        console.log("Changement de couleur pour : " + (brushMode === 'Erase') ? 'white' : brushColor);
-    }
-    const handleChangeSizePlus = () => {
-        brushSize += 5;
-        console.log("Size + : " + brushSize);
-    }
-
-    const handleChangeSizeMinus = () => {
-        brushSize -= 5;
-        console.log("Size - : " + brushSize);
-    }
-    */
-
     const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
     window.onresize = () => {
@@ -297,7 +166,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         setSvgBoxWidth(newWidth);
         setSvgBoxHeight(newHeight);
     }
-    //onTouchMove={(e)=>onMouseMove(e)}
     return (
         <Box mt={1} height={svgBoxHeight}>
             <Paper className="fullHeight">

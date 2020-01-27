@@ -20,10 +20,11 @@ import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
 import { BrowserView, MobileView, isMobile } from 'react-device-detect';
 import { array } from 'prop-types';
-import DrawingTools from './DrawingTools';
 import DrawerArea from './DrawerArea';
 import blue from '@material-ui/core/colors/blue';
 import MyPath from './MyPath';
+
+
 
 var socket;
 
@@ -72,6 +73,7 @@ function TabPanel(props) {
 var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
+var isDrawing = false;
 
 /*****************************
  * THE COMPONENT STARTS HERE *
@@ -112,21 +114,17 @@ const displayPathsArray = async () => {
         let nbPoints = pathsArray[0].points.length;
         let id = pathsArray[0].id;
         setListPath(path => {
-          console.log(JSON.stringify(path[path.length - 1]))
           if (path.length == 0 || path[path.length-1].id != id) {
             return [...path, new MyPath([], pathsArray[0].color, pathsArray[0].thickness, pathsArray[0].time, pathsArray[0].id)];
           }
           else {
-              //console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
               return [...path];
           }
         });
-
+        console.log("TIME : "+time+ " " + (time * 1000) / nbPoints + " : " + nbPoints);
         for (var i = 0; i < nbPoints; i++) {
             fctQuiAjouteUnParUn(pathsArray[0]);
-
-            await sleep((time * 1000) / nbPoints);
-
+            await sleep((time)/nbPoints); 
         }
         pathsArray.shift();
     }
@@ -286,22 +284,22 @@ const displayPathsArray = async () => {
     socket.on('drawer', function (data) {
       setChat(chat => [...chat, data.username + " is drawing!"])
       setCurrentDrawerName(data.username);
+      isDrawing = data.socketID == socket.id; 
       setDrawing(data.socketID == socket.id);
       //On vide la listPath à chaque fois 
       setListPath([]);
     });
     socket.on('drawCmd', async function (data) {
-      if(drawing) return;
+      if(isDrawing) return;
       pathsArray = [...pathsArray, data];
       console.log("//////// VIEWER DATA : " + JSON.stringify(data.time) + " / " + JSON.stringify(data.id) + " / " + JSON.stringify(data.color));
-
       if (!isRendering)
           await displayPathsArray();
-  });
-  socket.on('clearDrawing', () => {
-    console.log("CLEARING DrawingRenderArea");
-    setListPath([]);
-});
+    });
+    socket.on('clearDrawing', () => {
+      setListPath([]);
+      pathsArray = [];
+    });
     socket.on('disconnect', function () { });
   }
 

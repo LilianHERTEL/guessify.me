@@ -1,9 +1,31 @@
-//WORK IN PROGRESS
 
-// Properties of a line 
-// I:  - pointA (array) [x,y]: coordinates
-//     - pointB (array) [x,y]: coordinates
-// O:  - (object) { length: l, angle: a }: properties of the line
+export const smoothing = 0.2;
+/**
+ * Permet de déterminer si le point est à la position 0,0 ou non
+ * @param {Point} point : Le point en question
+ * @return {boolean} : True si le point est en 0,0, False sinon.
+ */
+export const estPointAZero = (point) => {
+    return (point.x === 0 && point.y === 0) ? true : false;
+}
+
+/**
+ * Permet de calculer la distance entre deux points.
+ * @param {Point} pointA : le premier point d'une ligne 
+ * @param {Point} pointB : le deuxième point d'une ligne
+ * @return {float} : la distance entre les deux points
+ */
+export const distanceBtw = (pointA, pointB) => {
+    return Math.sqrt(Math.pow((pointA.x - pointB.x), 2) + Math.pow(pointA.y - pointB.y, 2));
+}
+
+
+/**
+ * Permet de calculer la longeur et l'angle d'une ligne constituée des deux points fournis en paramètres
+ * @param {Point} pointA  : Premier point
+ * @param {Point} pointB  : Second point
+ * @return {array} : [length,angle] : les informations sur la ligne.
+ */
 export const line = (pointA, pointB) =>{
     const lengthX = pointB.x - pointA.x
     const lengthY = pointB.y - pointA.y
@@ -13,12 +35,14 @@ export const line = (pointA, pointB) =>{
     }
 }
 
-// Position of a control point 
-// I:  - current (array) [x, y]: current point coordinates
-//     - previous (array) [x, y]: previous point coordinates
-//     - next (array) [x, y]: next point coordinates
-//     - reverse (boolean, optional): sets the direction
-// O:  - (array) [x,y]: a tuple of coordinates
+/**
+ *  Permet de calculer les coordonnées des points de controle.
+ * @param {Point} current : Le point actuel
+ * @param {Point} previous : Le point précédent
+ * @param {Point} next : Le point suivant
+ * @param {Boolean} reverse : [Optional] La direction du point de controle
+ * @return {Point} : Les coordonnées du point de controle. 
+ */
 export const controlPoint = (current, previous, next, reverse) => {
     const smoothing = 0.2;
     // When 'current' is the first or last point of the array
@@ -45,11 +69,13 @@ export const controlPoint = (current, previous, next, reverse) => {
     return [x, y];
 }
 
-// Create the bezier curve command 
-// I:  - point (array) [x,y]: current point coordinates
-//     - i (integer): index of 'point' in the array 'a'
-//     - a (array): complete array of points coordinates
-// O:  - (string) 'C x2,y2 x1,y1 x,y': SVG cubic bezier C command
+/**
+ * Permet de calculer la commande SVG pour un point précis dans une array de points.
+ * @param {Point} point : Le point courant
+ * @param {integer} i : L'index du 'point' dans l'array 'a'
+ * @param {array} a : l'array des coordonnées des points.
+ * @return {string} : la commande SVG bezier prêt à être mise dans l'html
+ */
 export const bezierCommand = (point, i, a) => {
     // start control point
     const cps = controlPoint(a[i - 1], a[i - 2], point)
@@ -59,14 +85,11 @@ export const bezierCommand = (point, i, a) => {
     return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point.x},${point.y}`
 }
 
-// Render the svg <path> element 
-// I:  - points (array): points coordinates
-//     - command (function)
-//       I:  - point (array) [x,y]: current point coordinates
-//           - i (integer): index of 'point' in the array 'a'
-//           - a (array): complete array of points coordinates
-//       O:  - (string) a svg path command
-// O:  - (string): a Svg <path> element
+/**
+ * Permet de calculer la commande SVG pour l'ensemble des points.
+ * @param {array} points : L'array des points.
+ * @param {function} command : La fonction à appliquer pour calculer les commandes SVG sur chaque points.
+ */
 export const svgPath = (points, command) => {
     // build the d attributes by looping over the points
     const d = points.reduce((acc, point, i, a) => i === 0
