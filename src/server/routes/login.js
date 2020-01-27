@@ -34,7 +34,10 @@ router.post('/unregister',passport.authenticate('local'),function(req,res){
 router.post('/register' , function(req, res){
   var data = req.body;
   var User = mongoose.model('User');
-  
+  var newUser = new User({
+      ...data
+  })
+  console.log(newUser);
   var transporter = nodemailer.createTransport({
     sendMail: true,
     host: 'smtp.live.com',
@@ -48,9 +51,9 @@ router.post('/register' , function(req, res){
   
   var mailOptions = {
     from: 'thomasxd24@hotmail.com',
-    to: 'romain.barou@etu.uca.fr',
-    subject: 'Sending Email using Node.js',
-    text: 'That was (not) easy!'
+    to: newUser.email,
+    subject: 'Welcome to Guessify.me',
+    text: 'Enjoy!'
   };
   
   transporter.sendMail(mailOptions, function(error, info){
@@ -63,14 +66,15 @@ router.post('/register' , function(req, res){
     }
   });
 
-  var newUser = new User({
-      ...data
-  })
+
   newUser.save(function (err){
     if (err) return res.status(401).json({success:false,msg:err.errmsg});
     return res.json({success:true,msg:"You have successfully registered!"});
   })
 });
+
+
+
 
 router.get('/logout', function(req,res){
   req.logout();
