@@ -21,7 +21,7 @@ const credentials = {
 	ca: ca
 };
 var https = require('https').createServer(credentials,app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(https);
 var loginRoute = require('./routes/login.js');
 
 console.log(__dirname);
