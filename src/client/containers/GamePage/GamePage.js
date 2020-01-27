@@ -6,68 +6,28 @@
 import React, { useState, useRef, useEffect,useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
+import Leaderboard from './Leaderboard';
 import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
-import { BrowserView, MobileView, isMobile } from 'react-device-detect';
-import { array } from 'prop-types';
 import DrawingTools from './DrawingTools';
 import DrawerArea from './DrawerArea';
 import blue from '@material-ui/core/colors/blue';
 import MyPath from './MyPath';
 
+
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+
 var socket;
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
-function PlayerList(props) {
-  return (
-    <React.Fragment>
-      <ListItem button>
-        <ListItemAvatar>
-          <Avatar>
-            <AccountCircleIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary={props.username} secondary={props.score + " points"} />
-        <ListItemSecondaryAction>
-          #{props.index + 1}
-        </ListItemSecondaryAction>
-      </ListItem>
-      <Divider variant="inset" component="li" />
-    </React.Fragment>
-  );
-}
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {children}
-    </Typography>
-  );
-}
+
 
 var pathsArray = [];
 class Point { x = 0; y = 0; }
@@ -78,10 +38,7 @@ var isRendering = false;
  * ***************************/
 const GamePage = (props) => {
   const [loading, setLoading] = useState(true);
-  const [lobby, setLobby] = useState(null);
   const [chatArray, setChat] = useState([]);
-  const [chatDisplayed, setChatDisplayed] = useState(null);
-  const [LeaderboardDisplayed, setLeaderboardDisplayed] = useState(null);
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
@@ -89,9 +46,7 @@ const GamePage = (props) => {
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
+
 
 const fctQuiAjouteUnParUn = (myPath) => {
 
@@ -187,7 +142,7 @@ const displayPathsArray = async () => {
   useEffect(() => {
     if (!props.location.state) return;
     if(window.location.hostname == "guessify.me")
-    socket = openSocket('http://ws.guessify.me:8880/');
+    socket = openSocket('https://guessify.me/');
     else
     socket = openSocket('http://'+window.location.hostname+':8880/');
     connect(props.location.state.username);
@@ -206,7 +161,7 @@ const displayPathsArray = async () => {
     return (<Redirect to="/" />)
 
   return (
-    <Box display="flex" height={1} padding={2}>
+    <Box display="flex" height={1} padding={2} >
       <Box display="flex" height={1} flexDirection="column" flexGrow={4} id="svgArea">
         <Box display="flex" justifyContent="center" alignItems="center">
           <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
@@ -224,9 +179,8 @@ const displayPathsArray = async () => {
             )
         }
       </Box>
-      <Box mx={1}></Box>
       <Box display="flex" height={1} flexDirection="column">
-        <LeaderboardPlateforme />
+        <Leaderboard listPlayer={listPlayer}/>
         <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
       </Box>
     </Box>
@@ -234,47 +188,3 @@ const displayPathsArray = async () => {
 }
 
 export default GamePage;
-
-
-/*************************************************************************************************
- * OLD GAME PAGE (must be removed)
- *************************************************************************************************
-<Box container display="flex">
-<Grid item xs={12} md={9}>
-<Box display="flex" flexDirection="column" justifyContent="center" height={1} flexGrow={1}>
-<Box my={1} height={1}>
-<Typography variant="h5" align="center"> is drawing...</Typography>
-</Box>
-<Box my={1}>
-<LinearProgress />
-</Box>
-<Box my={1} className="fullHeight" display="flex" flexDirection="column" height={1}>
-{/*
-drawing ?
-( // drawer view
-<DrawerArea className="fullHeight" socket={socket} />
-) :
-( // guesser view
-<DrawingRenderArea className="fullHeight" socket={socket} />
-)
-}
-<DrawerArea socket={socket} />
-</Box>
-<Box my={1}>
-<Typography variant="h4" align="center">_ _ _ _ _    _ _ _</Typography>
-</Box>
-</Box>
-</Grid>
-<Grid item xs={12} md={3}>
-<Box className="fullHeight" display="flex" flexDirection="column" >
-<Paper>
-<LeaderboardPlateforme />
-</Paper>
-<Box>
-<Chat chat={chatArray} enterKey={_handleKeyDown} />
-</Box>
-</Box>
-</Grid>
-</Box>
-
-/*********************************************************************************/
