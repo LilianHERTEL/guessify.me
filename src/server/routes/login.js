@@ -35,6 +35,7 @@ router.post('/register' , function(req, res){
   var data = req.body;
   var User = mongoose.model('User');
   
+<<<<<<< Updated upstream
   var transporter = nodemailer.createTransport({
     sendMail: true,
     host: 'smtp.ethereal.email',
@@ -61,6 +62,8 @@ router.post('/register' , function(req, res){
       console.log('Email:',mailOptions.to);
     }
   });
+=======
+>>>>>>> Stashed changes
 
   var newUser = new User({
       ...data
