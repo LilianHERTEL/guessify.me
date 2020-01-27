@@ -35,26 +35,26 @@ router.post('/register' , function(req, res){
   var data = req.body;
   var User = mongoose.model('User');
   
-<<<<<<< Updated upstream
   var transporter = nodemailer.createTransport({
     sendMail: true,
-    host: 'smtp.ethereal.email',
-    port: 587,
+    host: 'smtp.live.com',
+    port: 25,
     secure: false,
     auth: {
-      user: 'freida.huels@ethereal.email',
-      pass: '8bS6FJdbHfNHmq79Yx'
+      user: 'thomasxd24@hotmail.com',
+      pass: 'thomasxdxdxd24'
     }
   });
   
   var mailOptions = {
-    from: 'freida.huels@ethereal.email',
+    from: 'thomasxd24@hotmail.com',
     to: 'romain.barou@etu.uca.fr',
     subject: 'Sending Email using Node.js',
     text: 'That was (not) easy!'
   };
   
   transporter.sendMail(mailOptions, function(error, info){
+    
     if (error) {
       console.log(error);
     } else {
@@ -62,8 +62,6 @@ router.post('/register' , function(req, res){
       console.log('Email:',mailOptions.to);
     }
   });
-=======
->>>>>>> Stashed changes
 
   var newUser = new User({
       ...data
