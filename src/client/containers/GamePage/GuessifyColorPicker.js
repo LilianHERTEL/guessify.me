@@ -46,32 +46,3 @@ export default CustomPicker(GuessifyColorPicker)
 
 
 
-/*
-import React from 'react';
-import { CustomPicker } from 'react-color';
-import { Hue } from 'react-color/lib/components/common';
-import { Box, Grid } from '@material-ui/core';
-import GuessifyPointer from './GuessifyPointer';
-
-class MyColorPicker extends React.Component {
-
-    handleChange() {
-
-    }
-
-    render() {
-        return (
-            <Box width={1} height={1} position="relative">
-                <Alpha
-                    rgb={rgb}
-                    hsl={hsl}
-                    onChange={onChange}
-                    pointer={MyPointer}
-                />
-            </Box>
-        );
-    }
-}
-
-export default CustomPicker(MyColorPicker);
-*/

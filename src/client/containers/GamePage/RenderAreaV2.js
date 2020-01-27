@@ -27,7 +27,7 @@ const RenderAreaV2 = (props) => {
 
     return (
         <Box mt={1} height={svgBoxHeight}>
-            <Paper className="fullHeight">
+            <Paper>
                 <svg
                     id="mySvg"
                     className="drawingRenderArea"

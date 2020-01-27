@@ -9,12 +9,23 @@ const argv = require('./util/argv');
 const port = require('./util//port');
 const websocket = require('./websocket');
 const mongoose = require('mongoose') //Pris
+const fs = require('fs');
 const app = express();
-var http = require('http').Server(app);
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+var https = require('https').createServer(credentials,app);
 var io = require('socket.io')(http);
 var loginRoute = require('./routes/login.js');
-const fs = require('fs');
+
 console.log(__dirname);
+
 fs.readFile(__dirname+'/Dictionnaires/ENdic.txt','utf8',function(err,data){
     if(err) throw err;
     global.dictionnaire = data.toString().split("\r\n");
@@ -70,7 +81,7 @@ const host = customHost || null; // Let http.Server use its default IPv6/4 host
 const prettyHost = customHost || 'localhost';
 websocket.start(io);
 // Start your app.
-http.listen(port, function(){
+https.listen(port, function(){
   logger.appStarted(port, prettyHost);
   
 });
