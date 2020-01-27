@@ -20,7 +20,7 @@ const credentials = {
 	cert: certificate,
 	ca: ca
 };
-var https = require('http').Server(app);
+var https = require('https').createServer(credentials,app);
 var io = require('socket.io')(https);
 var loginRoute = require('./routes/login.js');
 
