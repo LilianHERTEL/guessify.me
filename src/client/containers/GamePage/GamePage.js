@@ -9,7 +9,7 @@ import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, 
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import DrawingArea from './DrawingArea';
-import Leaderboard from './Leaderboard';
+import Leaderboard from './Leaderboard.js';
 import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
 import DrawingTools from './DrawingTools';
