@@ -10,7 +10,7 @@
     "server": "nodemon src/server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "Thomas TSE , Hector PITEAU",
+  "author": "Thomas TSE , Hector PITEAU, Lilian HERTEL, Romain BAROU, Adrien PLANTADE",
   "license": "ISC",
   "dependencies": {
     "@iconify/icons-mdi": "^1.0.41",
