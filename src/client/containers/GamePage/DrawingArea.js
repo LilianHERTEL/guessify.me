@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
+const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors }) => {
     const [ancienPoint, setAncienPoint] = React.useState(new Point());
     const [actuelPoint, setActuelPoint] = React.useState(new Point());
     const [mousep, setMouse] = React.useState(null);
@@ -52,7 +52,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 
         // Sets the initial drawing area size
         const w = document.getElementById('svgArea').clientWidth;
-        const h = w / 1168 * 617.817;
+        const h = w / 1102 * 578.917;
         setSvgBoxWidth(w);
         setSvgBoxHeight(h);
         console.log("yo : " + svgBoxHeight);
@@ -153,6 +153,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
 
 
     function onMouseDown(event) {
+        updateOldColors(); // adds the current color to color history
         isDrawing.current = true;
         timePassed.current = Date.now();
         setDessine(true);
@@ -286,13 +287,13 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
         const oldWidth = svgBoxWidth;
         const oldHeight = svgBoxHeight;
         const newWidth = document.getElementById('svgArea').clientWidth;
-        const newHeight = newWidth / 1168 * 617.817;
+        const newHeight = newWidth / 1102 * 578.917;
         setSvgBoxWidth(newWidth);
         setSvgBoxHeight(newHeight);
     }
 
     return (
-        <Box height={svgBoxHeight}>
+        <Box height={svgBoxHeight} mb={1}>
             <Paper className="fullHeight">
                 <svg
                     id="mySvg"
@@ -301,7 +302,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode }) => {
                     onMouseDown={(e) => onMouseDown(e)}
                     onMouseUp={(e) => onMouseUp(e)}
                     onMouseLeave={(e) => onMouseLeave(e)}
-                    viewBox={`0 0 ${1168} ${617.817}`}
+                    viewBox={`0 0 ${1102} ${578.917}`}
                     xmlns="http://www.w3.org/2000/svg"
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     version="1.1"

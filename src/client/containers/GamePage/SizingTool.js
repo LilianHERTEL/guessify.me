@@ -99,7 +99,7 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
           <AddCircleIcon fontSize="large"></AddCircleIcon>
         </IconButton>
       </Box>
-      <Typography className="noselect" variant="caption">Brush size</Typography>
+      <Typography className="noselect" variant="caption">Size</Typography>
     </Box>
   );
 }

@@ -5,16 +5,16 @@ import SwitchBrushModeTool from './SwitchBrushModeTool';
 import ColorPickerTool from './ColorPickerTool';
 import { Paper, Box, Grid } from '@material-ui/core';
 
-const DrawingToolsHorizontal = ({ socket, brushSize, setBrushSize, brushColor, setBrushColor, rgbBrushColor, setRgbBrushColor, brushMode, setBrushMode }) => {
+const DrawingToolsHorizontal = ({ socket, brushSize, setBrushSize, brushColor, setBrushColor, rgbBrushColor, setRgbBrushColor, brushMode, setBrushMode, oldColors, setOldColors }) => {
     return (
-        <Box mt={1}>
-            <Paper>
-                <Box p={1}>
+        <Box className="drawing-tools-horizontal">
+
+                <Box p={0}>
                     <Box display="flex" flexDirection="row" alignContent="center" alignItems="center" justify="space-evenly">
-                        <ColorPickerTool brushColor={brushColor} setBrushColor={setBrushColor} setBrushMode={setBrushMode} setRgbBrushColor={setRgbBrushColor} />
+                        <ColorPickerTool brushColor={brushColor} setBrushColor={setBrushColor} setBrushMode={setBrushMode} setRgbBrushColor={setRgbBrushColor} oldColors={oldColors} setOldColors={setOldColors} />
                     </Box>
                 </Box>
-            </Paper>
+
         </Box >
     )
 }

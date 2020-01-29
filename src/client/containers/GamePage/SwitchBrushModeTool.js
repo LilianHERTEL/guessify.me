@@ -70,7 +70,7 @@ const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode, rgbBrushColo
                     <Icon icon={eraserIcon} color="grey" width="2em" />
                 </IconButton>
             </Box>
-            <Typography className="noselect" variant="caption">Brush mode</Typography>
+            <Typography className="noselect" variant="caption">Mode</Typography>
         </Box>
     )
 }
