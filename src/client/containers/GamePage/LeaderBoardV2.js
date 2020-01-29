@@ -42,6 +42,11 @@ function LeaderBoard({listPlayer}) {
     setValue(newValue);
   };
 
+  const sortPlayers = (a,b) => {
+    console.log("COMPARE : " + a.pointsTotal + " " + b.pointsTotal);
+    return b.pointsTotal-a.pointsTotal;
+  }
+
     return (
       <Paper>
       <AppBar position="static">
@@ -54,7 +59,7 @@ function LeaderBoard({listPlayer}) {
         <TabPanel value={value} index={0} >
           <List>
             {
-              listPlayer.map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
+              listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
             }
           </List>
         </TabPanel>
