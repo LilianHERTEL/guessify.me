@@ -41,7 +41,6 @@ sockets.start = function (io) {
           lobby.getNextDrawer();
           io.to(socket.lobby.id).emit("announcement",
           "La partie va commencer!")
-          await sleep(5000);
           io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
