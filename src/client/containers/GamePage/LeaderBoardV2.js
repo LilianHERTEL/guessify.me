@@ -1,9 +1,10 @@
 import React from 'react';
-import { Paper, Grid, Box, Container, List,ListItem,ListItemAvatar,ListItemText,Avatar, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Grid, Box, Container, List, ListItem, ListItemAvatar, ListItemText, Avatar, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction, Popover, Button } from '@material-ui/core';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
 import SettingsIcon from '@material-ui/icons/Settings';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -11,25 +12,25 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 300,
     height: 300
   },
-  title:{
-    flexGrow:1
+  title: {
+    flexGrow: 1
   },
-  header:{
-    borderTopLeftRadius:"inherit",
-    borderTopRightRadius:"inherit"
+  header: {
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit"
   },
-  bottom:{
-    backgroundColor:"#3f51b5",
-    color:"white",
-    borderBottomLeftRadius:"inherit",
-    borderBottomRightRadius:"inherit"
+  bottom: {
+    backgroundColor: "#3f51b5",
+    color: "white",
+    borderBottomLeftRadius: "inherit",
+    borderBottomRightRadius: "inherit"
   },
-  botContent:{
-    marginTop:".5rem",
-    marginBottom:".5rem"
+  botContent: {
+    marginTop: ".5rem",
+    marginBottom: ".5rem"
   },
-  position:{
-    fontWeight:"bold"
+  position: {
+    fontWeight: "bold"
   }
 }));
 
@@ -68,15 +69,15 @@ function TabPanel(props) {
   );
 }
 
-function LeaderBoard({listPlayer}) {
+function LeaderBoard({ listPlayer }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const sortPlayers = (a,b) => {
+  const sortPlayers = (a, b) => {
     console.log("COMPARE : " + a.pointsTotal + " " + b.pointsTotal);
-    return b.pointsTotal-a.pointsTotal;
+    return b.pointsTotal - a.pointsTotal;
   }
 
   /*
@@ -95,30 +96,74 @@ function LeaderBoard({listPlayer}) {
       </Box>
    
    */
+
+  /**
+   * Settings popover utils
+   */
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+  /** */
+
+  const handleStatsClick = () => {
+
+  }
+
   const classes = useStyles();
 
-    return (
-      <Paper>
+  return (
+    <Paper>
       <AppBar position="static" className={classes.header}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             LEADERBOARD
           </Typography>
-          <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu">
-              <SettingsIcon fontSize="small"/>
-          </IconButton>
+
+          <div>
+            <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleClick}>
+              <SettingsIcon fontSize="small" />
+            </IconButton>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}>
+              <Button
+                color="primary"
+                className={classes.button}
+                endIcon={<EqualizerIcon />}>Statistics</Button>
+            </Popover>
+          </div>
+
         </Toolbar>
       </AppBar>
-        <List className={classes.list}>
-            {
-              listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
-            }
-        </List>
+      <List className={classes.list}>
+        {
+          listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
+        }
+      </List>
       <Grid container alignItems="center" justify="center" align="center" className={classes.bottom}>
         <span className={classes.botContent}>You will draw in <span className={classes.position}>2</span> rounds.</span>
       </Grid>
     </Paper>
-    )
+  )
 }
 
 export default LeaderBoard;
