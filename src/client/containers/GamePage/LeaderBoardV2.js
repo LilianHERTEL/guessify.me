@@ -1,14 +1,35 @@
 import React from 'react';
 import { Paper, Grid, Box, Container, List,ListItem,ListItemAvatar,ListItemText,Avatar, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-
+import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles(theme => ({
   list: {
     overflow: 'auto',
     maxHeight: 300,
     height: 300
+  },
+  title:{
+    flexGrow:1
+  },
+  header:{
+    borderTopLeftRadius:"inherit",
+    borderTopRightRadius:"inherit"
+  },
+  bottom:{
+    backgroundColor:"#3f51b5",
+    color:"white",
+    borderBottomLeftRadius:"inherit",
+    borderBottomRightRadius:"inherit"
+  },
+  botContent:{
+    marginTop:".5rem",
+    marginBottom:".5rem"
+  },
+  position:{
+    fontWeight:"bold"
   }
 }));
 
@@ -58,34 +79,43 @@ function LeaderBoard({listPlayer}) {
     return b.pointsTotal-a.pointsTotal;
   }
 
-  const classes = useStyles();
+  /*
 
-    return (
-      <Paper>
       <AppBar position="static">
         <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
           <Tab label="Players" />
-          <Tab label="Statistic" />
+          <Tab label="Statistics" />
         </Tabs>
       </AppBar>
       <Box minHeight="250px"> 
         <TabPanel className={classes.list} value={value} index={0}>
-          <List>
+          
+        </TabPanel>
+        <TabPanel value={value} index={1}><SettingsIcon/></TabPanel>
+      </Box>
+   
+   */
+  const classes = useStyles();
+
+    return (
+      <Paper>
+      <AppBar position="static" className={classes.header}>
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            LEADERBOARD
+          </Typography>
+          <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu">
+              <SettingsIcon fontSize="small"/>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+        <List className={classes.list}>
             {
               listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
             }
-          </List>
-        </TabPanel>
-        <TabPanel value={value} index={1}>Item Two</TabPanel>
-      </Box>
-      <Grid container alignItems="center" justify="center" align="center">
-        <Grid item>LeaderBoard</Grid>
-        <Grid item>
-          <Switch
-            value="checkedC"
-          />
-        </Grid>
-        <Grid item>Draw Order</Grid>
+        </List>
+      <Grid container alignItems="center" justify="center" align="center" className={classes.bottom}>
+        <span className={classes.botContent}>You will draw in <span className={classes.position}>2</span> rounds.</span>
       </Grid>
     </Paper>
     )
