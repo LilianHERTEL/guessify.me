@@ -4,6 +4,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
 import SettingsIcon from '@material-ui/icons/Settings';
+import { Icon, InlineIcon } from '@iconify/react';
+import crownIcon from '@iconify/icons-fa-solid/crown';
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -33,6 +35,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function Crown(props){
+  if(props == null) return "";
+  let colors = ['#FFF501','#E8E8E8','#DB8D0E'];
+  switch(props.index+1){
+    case 1:
+    case 2:
+    case 3:
+      return <Icon icon={crownIcon} color={colors[props.index]} height="1.5rem" />;
+      break;
+    default:
+      return "";
+      break;
+  }
+}
+
 function PlayerList(props) {
   return (
     <React.Fragment>
@@ -43,6 +60,7 @@ function PlayerList(props) {
           </Avatar>
         </ListItemAvatar>
         <ListItemText primary={props.username} secondary={props.score + " points"} />
+        <Crown index={props.index}/>
         <ListItemSecondaryAction>
           #{props.index + 1}
         </ListItemSecondaryAction>
