@@ -1,6 +1,17 @@
 import React from 'react';
 import { Paper, Grid, Box, Container, List,ListItem,ListItemAvatar,ListItemText,Avatar, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  list: {
+    overflow: 'auto',
+    maxHeight: 300,
+    height: 300
+  }
+}));
+
 function PlayerList(props) {
   return (
     <React.Fragment>
@@ -47,6 +58,8 @@ function LeaderBoard({listPlayer}) {
     return b.pointsTotal-a.pointsTotal;
   }
 
+  const classes = useStyles();
+
     return (
       <Paper>
       <AppBar position="static">
@@ -55,8 +68,8 @@ function LeaderBoard({listPlayer}) {
           <Tab label="Statistic" />
         </Tabs>
       </AppBar>
-      <Box minHeight="250px" overflow="auto">
-        <TabPanel value={value} index={0} >
+      <Box minHeight="250px"> 
+        <TabPanel className={classes.list} value={value} index={0}>
           <List>
             {
               listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
