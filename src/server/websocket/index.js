@@ -46,8 +46,6 @@ sockets.start = function (io) {
           lobby.currentDrawer);
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
           io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
-
-          
         }
     });
     socket.on('sendChat', async function (msg) {
@@ -55,14 +53,12 @@ sockets.start = function (io) {
       io.to(socket.lobby.id).emit("receiveChat", msg)
       if(msg == socket.lobby.currentWord)
       {
-        io.to(socket.lobby.id).emit("announcement",
-        socket.username+" guessed it!")
+        io.to(socket.lobby.id).emit("announcement",socket.username+" guessed it!")
         lobby.addPoint(socket.id,1);
         io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer})
         lobby.getNextDrawer();
         await sleep(2000);
-        io.to(socket.lobby.id).emit("drawer",
-          lobby.currentDrawer);
+        io.to(socket.lobby.id).emit("drawer",lobby.currentDrawer);
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
           io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
 
@@ -102,7 +98,7 @@ sockets.start = function (io) {
       if(socket.lobby.listPlayer.length < 2)
       {
         io.to(socket.lobby.id).emit("announcement",
-        "Not enough players! Gmae resetted. Waiting for a second player...")
+        "Not enough players! Game resetted. Waiting for a second player...");
         socket.lobby.resetGame();
       }
     });

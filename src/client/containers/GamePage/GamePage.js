@@ -24,11 +24,6 @@ const sleep = (milliseconds) => {
 
 
 var socket;
-
-
-
-
-
 var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
@@ -45,6 +40,7 @@ const GamePage = (props) => {
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const sockid = useRef(null);
 
 
 
@@ -87,6 +83,7 @@ const displayPathsArray = async () => {
     });
     socket.on('joinedGame', function (data) {
       setChat(chat => [...chat, "Connected to Lobby " + data.lobby.id])
+      sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
       setListPlayer(data.listPlayer)
@@ -118,7 +115,6 @@ const displayPathsArray = async () => {
           if (path.length == 0 || path[path.length - 1].id != data.id) {
               if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
               return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
-
           }
           else {
               console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
@@ -146,7 +142,6 @@ const displayPathsArray = async () => {
     else
     socket = openSocket('http://'+window.location.hostname+':8880/');
     connect(props.location.state.username);
-
   }, []);
 
   const _handleKeyDown = (e) => {
@@ -180,7 +175,7 @@ const displayPathsArray = async () => {
         }
       </Box>
       <Box display="flex" height={1} flexDirection="column">
-        <Leaderboard listPlayer={listPlayer}/>
+        <Leaderboard listPlayer={listPlayer} socketID={sockid} order={listPlayer.find(player => player.socketID === sockid.current)}/>
         <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
       </Box>
     </Box>

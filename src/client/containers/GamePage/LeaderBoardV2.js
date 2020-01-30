@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Crown(props){
-  if(props == null) return "";
+  if(props == null || props.score == 0) return "";
   let colors = ['#FFF501','#E8E8E8','#DB8D0E'];
   switch(props.index+1){
     case 1:
@@ -60,9 +60,9 @@ function PlayerList(props) {
           </Avatar>
         </ListItemAvatar>
         <ListItemText primary={props.username} secondary={props.score + " points"} />
-        <Crown index={props.index}/>
+        <Crown index={props.index} score={props.score}/>
         <ListItemSecondaryAction>
-          #{props.index + 1}
+          #{props.index + 1}#{props.order}
         </ListItemSecondaryAction>
       </ListItem>
       <Divider variant="inset" component="li" />
@@ -86,7 +86,7 @@ function TabPanel(props) {
   );
 }
 
-function LeaderBoard({listPlayer}) {
+function LeaderBoard({listPlayer,socketID,order}) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -96,25 +96,8 @@ function LeaderBoard({listPlayer}) {
     console.log("COMPARE : " + a.pointsTotal + " " + b.pointsTotal);
     return b.pointsTotal-a.pointsTotal;
   }
-
-  /*
-
-      <AppBar position="static">
-        <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
-          <Tab label="Players" />
-          <Tab label="Statistics" />
-        </Tabs>
-      </AppBar>
-      <Box minHeight="250px"> 
-        <TabPanel className={classes.list} value={value} index={0}>
-          
-        </TabPanel>
-        <TabPanel value={value} index={1}><SettingsIcon/></TabPanel>
-      </Box>
-   
-   */
+  
   const classes = useStyles();
-
     return (
       <Paper>
       <AppBar position="static" className={classes.header}>
@@ -129,14 +112,14 @@ function LeaderBoard({listPlayer}) {
       </AppBar>
         <List className={classes.list}>
             {
-              listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} username={player.username} id={player.socketID} score={player.pointsTotal} />)
+              listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} order={player.order} username={player.username} id={player.socketID} score={player.pointsTotal} />)
             }
         </List>
       <Grid container alignItems="center" justify="center" align="center" className={classes.bottom}>
-        <span className={classes.botContent}>You will draw in <span className={classes.position}>2</span> rounds.</span>
+          <span className={classes.botContent}>You will draw in <span className={classes.position}>3</span> rounds.</span>
       </Grid>
     </Paper>
-    )
+    );
 }
 
 export default LeaderBoard;
