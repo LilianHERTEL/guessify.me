@@ -142,7 +142,7 @@ const displayPathsArray = async () => {
   useEffect(() => {
     if (!props.location.state) return;
     if(window.location.hostname == "guessify.me")
-    socket = openSocket('https://guessify.me/');
+    socket = openSocket('http://guessify.me/');
     else
     socket = openSocket('http://'+window.location.hostname+':8880/');
     connect(props.location.state.username);
