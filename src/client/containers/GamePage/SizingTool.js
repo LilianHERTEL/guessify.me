@@ -82,11 +82,11 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" width={1} onMouseOut={stopClick}>
-      <Box display="flex" flexDirection="row">
+      <Box display="flex" flexDirection="column-reverse">
         <IconButton onMouseDown={runClickMinus} onMouseUp={stopClick} color="primary" size="small">
           <RemoveCircleIcon fontSize="large"></RemoveCircleIcon>
         </IconButton>
-        <Box marginLeft={1} marginRight={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+        <Box marginTop={1} marginBottom={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
           <TextField
             className="brushSizeInput"
             value={brushSize}
@@ -99,7 +99,7 @@ const SizingTool = ({ brushSize, setBrushSize }) => {
           <AddCircleIcon fontSize="large"></AddCircleIcon>
         </IconButton>
       </Box>
-      <Typography className="noselect" variant="caption">Brush size</Typography>
+      <Typography className="noselect" variant="caption">Size</Typography>
     </Box>
   );
 }

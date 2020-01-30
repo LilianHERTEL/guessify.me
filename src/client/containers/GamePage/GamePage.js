@@ -3,7 +3,7 @@
 *
 * List all the features
 */
-import React, { useState, useRef, useEffect,useReducer } from 'react';
+import React, { useState, useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import Chat from './Chat'
@@ -47,43 +47,37 @@ const GamePage = (props) => {
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
+  const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
 
-
-const fctQuiAjouteUnParUn = (myPath) => {
+  const fctQuiAjouteUnParUn = (myPath) => {
 
     var { x, y } = myPath.points.shift();
     setListPath(listpath => {
-        if (listpath.length === 0) return [];
-        listpath[listpath.length - 1].points.push({ x, y });
-        return listpath;
+      if (listpath.length === 0) return [];
+      listpath[listpath.length - 1].points.push({ x, y });
+      return listpath;
     });
     forceUpdate();
 
-}
+  }
 
-const displayPathsArray = async () => {
+  const displayPathsArray = async () => {
     isRendering = true;
     while (pathsArray.length > 0) {
-        let time = pathsArray[0].time;
-        let nbPoints = pathsArray[0].points.length;
-        let id = pathsArray[0].id;
-        setListPath(path => {
-          if (path.length == 0 || path[path.length-1].id != id) {
-            return [...path, new MyPath([], pathsArray[0].color, pathsArray[0].thickness, pathsArray[0].time, pathsArray[0].id)];
-          }
-          else {
-              return [...path];
-          }
-        });
-        console.log("TIME : "+time+ " " + (time * 1000) / nbPoints + " : " + nbPoints);
-        for (var i = 0; i < nbPoints; i++) {
-            fctQuiAjouteUnParUn(pathsArray[0]);
-            await sleep((time)/nbPoints); 
-        }
-        pathsArray.shift();
+      let time = pathsArray[0].time;
+      let nbPoints = pathsArray[0].points.length;
+      for (var i = 0; i < nbPoints; i++) {
+        fctQuiAjouteUnParUn(pathsArray[0]);
+
+        await sleep((time * 1000) / nbPoints);
+
+      }
+      pathsArray.shift();
     }
     isRendering = false;
-}
+  }
 
 
 
@@ -121,15 +115,30 @@ const displayPathsArray = async () => {
       setListPath([]);
     });
     socket.on('drawCmd', async function (data) {
-      if(isDrawing) return;
+      if (drawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("//////// VIEWER DATA : " + JSON.stringify(data.time) + " / " + JSON.stringify(data.id) + " / " + JSON.stringify(data.color));
+      console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      setListPath(path => {
+        if (path.length == 0 || path[path.length - 1].id != data.id) {
+          if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
+          return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
+
+        }
+        else {
+          console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
+          return [...path];
+
+        }
+      });
+
       if (!isRendering)
-          await displayPathsArray();
+        await displayPathsArray();
+      else
+        console.log("IS RENDERING : TRUE");
     });
     socket.on('clearDrawing', () => {
+      console.log("CLEARING DrawingRenderArea");
       setListPath([]);
-      pathsArray = [];
     });
     socket.on('disconnect', function () { });
   }
@@ -139,7 +148,7 @@ const displayPathsArray = async () => {
     if(window.location.hostname == "guessify.me")
     socket = openSocket('http://guessify.me/');
     else
-    socket = openSocket('http://'+window.location.hostname+':8880/');
+      socket = openSocket('http://' + window.location.hostname + ':8880/');
     connect(props.location.state.username);
 
   }, []);
@@ -164,15 +173,18 @@ const displayPathsArray = async () => {
           <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
         </Box>
         <LinearProgress />
-        {
-          drawing ?
-            ( // drawer view
-              <DrawerArea socket={socket} />
-            ) :
-            ( // guesser view
-              <RenderAreaV2 listPath={listPath} />
-            )
-        }
+
+        <Box mt={1}>
+          {
+            drawing ?
+              ( // drawer view
+                <DrawerArea socket={socket} />
+              ) :
+              ( // guesser view
+                <RenderAreaV2 listPath={listPath} />
+              )
+          }
+        </Box>
       </Box>
       <Box display="flex" height={1} flexDirection="column">
         <Leaderboard listPlayer={listPlayer}/>

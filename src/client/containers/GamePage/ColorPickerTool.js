@@ -6,26 +6,13 @@ import BlackWhiteColorPicker from './BlackWhiteColorPicker';
 import reactCSS from 'reactcss'
 import GuessifyColorPicker from './GuessifyColorPicker';
 
-const ColorPickerTool = ({ brushColor, setBrushColor, setBrushMode, setRgbBrushColor }) => {
-
-    const onChangeColor = (color, event) => {
-        var obj = new Option(OptionTypes.COLOR, color);
-        //console.log("COLOR CHANGED : " + obj.getType());
-        //socket.emit('drawingSideOption',color);
-        setBrushColor(color.hex);
-        setBrushMode('Draw');
-        //console.log("Changement de couleur pour : " + brushColor);
-    }
+const ColorPickerTool = ({ brushColor, setBrushColor, setBrushMode, setRgbBrushColor, oldColors, setOldColors }) => {
 
     const handleColorChange = (color) => {
         //setBrushColor(`rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})`);
         setBrushColor(color.hex);
         setBrushMode('Draw');
-        setRgbBrushColor({r:color.rgb.r, g:color.rgb.g, b:color.rgb.b});
-        console.log("r = " + color.rgb.r);
-        console.log("g = " + color.rgb.g);
-        console.log("b = " + color.rgb.b);
-        console.log("a = " + color.rgb.a);
+        setRgbBrushColor({ r: color.rgb.r, g: color.rgb.g, b: color.rgb.b });
     }
 
     return (
@@ -36,11 +23,13 @@ const ColorPickerTool = ({ brushColor, setBrushColor, setBrushMode, setRgbBrushC
                     item
                     xs={1}
                     color={brushColor}
-                    onChange={onChangeColor}
+                    onChangeComplete={handleColorChange}
                 />*/}
                 <GuessifyColorPicker
                     color={brushColor}
-                    onChangeComplete={handleColorChange} />
+                    onChange={handleColorChange}
+                    oldColors={oldColors}
+                    brushColor={brushColor} />
             </Box>
             {/*<Typography variant="caption">Brush color</Typography>*/}
         </Box>
