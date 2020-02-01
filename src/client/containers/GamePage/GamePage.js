@@ -5,7 +5,7 @@
 */
 import React, { useState, useEffect, useReducer } from 'react';
 import './style.css';
-import { Box, LinearProgress, Typography } from '@material-ui/core';
+import { Box, LinearProgress, Typography, Grid } from '@material-ui/core';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
@@ -155,33 +155,39 @@ const GamePage = (props) => {
     return (<Redirect to="/" />)
 
   return (
-    <Box display="flex" height={1} padding={2} >
-      <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
-          <Box mx={1}></Box>
-          <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
-        </Box>
-        <LinearProgress />
+    <Box height={1} padding={2} >
+      <Grid container className="fullHeight">
+        <Grid item lg={9}>
+          <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
+              <Box mx={1}></Box>
+              <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
+            </Box>
+            <LinearProgress />
 
-        <Box mt={1}>
-          {
-            drawing ?
-              ( // drawer view
-                <DrawerArea socket={socket} />
-              ) :
-              ( // guesser view
-                <Box id="svgArea">
-                  <RenderAreaV2 listPath={listPath} />
-                </Box>
-              )
-          }
-        </Box>
-      </Box>
-      <Box ml={1} display="flex" height={1} flexDirection="column">
-        <Leaderboard listPlayer={listPlayer} />
-        <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
-      </Box>
+            <Box mt={1}>
+              {
+                drawing ?
+                  ( // drawer view
+                    <DrawerArea socket={socket} />
+                  ) :
+                  ( // guesser view
+                    <Box id="svgArea">
+                      <RenderAreaV2 listPath={listPath} />
+                    </Box>
+                  )
+              }
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item lg={3}>
+          <Box ml={1} display="flex" height={1} flexDirection="column">
+            <Leaderboard listPlayer={listPlayer} />
+            <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

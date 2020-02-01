@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, TextField, Typography, Paper } from '@material-ui/core';
+import { Box, TextField, Typography, Paper, Divider } from '@material-ui/core';
 
 function Chat(prop) {
   const messagesEndRef = React.useRef(null)
@@ -18,7 +18,7 @@ function Chat(prop) {
             <Box overflow="auto" mx={1} mt={1} height="10em" flexGrow={1} className="borderBottomPrimary">
               {
                 prop.chat.map((value, key) => (
-                  <Typography variant="body2" key={key}>{value}</Typography>
+                  <Typography className="overflowWrap-breakWord" variant="body2" key={key}>{value}</Typography>
                 ))
               }
               <div ref={messagesEndRef} />

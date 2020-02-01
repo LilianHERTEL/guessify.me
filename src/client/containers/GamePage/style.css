@@ -125,3 +125,7 @@
   max-height: 200px;
 }
 */
+
+.overflowWrap-breakWord {
+  overflow-wrap: break-word;
+}
