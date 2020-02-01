@@ -161,6 +161,8 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
+        // push the same point twice because a path needs at least 2 points
+        workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
     }
 
