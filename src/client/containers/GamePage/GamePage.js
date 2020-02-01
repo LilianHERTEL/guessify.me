@@ -156,7 +156,7 @@ const GamePage = (props) => {
 
   return (
     <Box display="flex" height={1} padding={2} >
-      <Box display="flex" height={1} flexDirection="column" flexGrow={4} id="svgArea">
+      <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
         <Box display="flex" justifyContent="center" alignItems="center">
           <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
           <Box mx={1}></Box>
@@ -176,7 +176,7 @@ const GamePage = (props) => {
           }
         </Box>
       </Box>
-      <Box display="flex" height={1} flexDirection="column">
+      <Box ml={1} display="flex" height={1} flexDirection="column">
         <Leaderboard listPlayer={listPlayer}/>
         <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
       </Box>
