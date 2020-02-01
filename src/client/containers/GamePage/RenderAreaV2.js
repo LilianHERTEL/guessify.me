@@ -12,37 +12,42 @@ var isRendering = false;
 
 const RenderAreaV2 = (props) => {
 
-    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
+    /****************************************************************************/
+    /****************************************************************************/
+    /* SVG AREA SIZING UTILS
+     *
+     * Used to initialize and update responsive svg area size (height)
+     */
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
+
+    /**
+     * (Hook version of "componentDidMount" lifecycle method)
+     * **
+     * This effect is executed only once : after the component has mounted
+     * **
+     * Sets the initial drawing area size
+     */
+    React.useEffect(() => {
+        console.log("DrawingRenderArea MOUNTED");
+        // Sets the initial drawing area size
+        const w = document.getElementById('svgArea').clientWidth;
+        const h = w / 1110 * 582;
+        setSvgBoxHeight(h);
+    }, []);
+
+    /**
+     * Updates drawing area size on resize event
+     */
     window.onresize = () => {
-        const oldWidth = svgBoxWidth;
-        const oldHeight = svgBoxHeight;
         const newWidth = document.getElementById('svgArea').clientWidth;
-        const newHeight = newWidth / 1168 * 617.817;
-        setSvgBoxWidth(newWidth);
+        const newHeight = newWidth / 1110 * 582;
         setSvgBoxHeight(newHeight);
     }
+    /****************************************************************************/
+    /****************************************************************************/
 
-    
-    const smoothing = 0.2;
-    /**
-     * Permet de déterminer si le point est à la position 0,0 ou non
-     * @param {Point} point : Le point en question
-     * @return {boolean} : True si le point est en 0,0, False sinon.
-     */
-    const estPointAZero = (point) => {
-        return (point.x === 0 && point.y === 0) ? true : false;
-    }
 
-    /**
-     * Permet de calculer la distance entre deux points.
-     * @param {Point} pointA : le premier point d'une ligne 
-     * @param {Point} pointB : le deuxième point d'une ligne
-     * @return {float} : la distance entre les deux points
-     */
-    const distanceBtw = (pointA, pointB) => {
-        return Math.sqrt(Math.pow((pointA.x - pointB.x), 2) + Math.pow(pointA.y - pointB.y, 2));
-    }
+
 
 
     /**
@@ -127,12 +132,12 @@ const RenderAreaV2 = (props) => {
 
 
     return (
-        <Box mt={1} height={svgBoxHeight}>
+        <Box height={svgBoxHeight}>
             <Paper>
                 <svg
                     id="mySvg"
                     className="drawingRenderArea"
-                    viewBox={`0 0 ${1168} ${617.817}`}
+                    viewBox={`0 0 ${1110} ${582}`}
                     xmlns="http://www.w3.org/2000/svg"
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     version="1.1"

@@ -1,10 +1,9 @@
 import React from 'react';
 import './style.css';
-import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
-import SelectInput from '@material-ui/core/Select/SelectInput';
-import {estPointAZero,distanceBtw,svgPath,bezierCommand} from './BezierTools';
+import { estPointAZero, distanceBtw, svgPath, bezierCommand } from './BezierTools';
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
@@ -30,26 +29,45 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     const workingPath = React.useRef(new MyPath([], "#000000", 5));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
-    const ActualColor = React.useRef("#000000");
-    const ActualSize = React.useRef(5);
 
-    /************************************
+
+    /****************************************************************************/
+    /****************************************************************************/
+    /* SVG AREA SIZING UTILS
+     *
+     * Used to initialize and update responsive svg area size (height)
+     */
+    const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
+
+    /**
      * (Hook version of "componentDidMount" lifecycle method)
      * **
      * This effect is executed only once : after the component has mounted
+     * **
+     * Sets the initial drawing area size
      */
-    const [componentIsMounted, setComponentIsMounted] = React.useState(false);
-
     React.useEffect(() => {
-        setComponentIsMounted(true);
         console.log("DrawingArea MOUNTED");
         // Sets the initial drawing area size
         const w = document.getElementById('svgArea').clientWidth;
         const h = w / 1110 * 582;
-        setSvgBoxWidth(w);
         setSvgBoxHeight(h);
     }, []);
-    /************************************/
+
+    /**
+     * Updates drawing area size on resize event
+     */
+    window.onresize = () => {
+        const newWidth = document.getElementById('svgArea').clientWidth;
+        const newHeight = newWidth / 1110 * 582;
+        setSvgBoxHeight(newHeight);
+    }
+    /****************************************************************************/
+    /****************************************************************************/
+
+
+
+
 
     /************************************
      * Handles the drawing clear effect
@@ -100,12 +118,12 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         timePassed.current = Date.now();
         console.log("emitting !");
         // On désyncronise l'envoie des informations de dessin car sinon ça bloque l'algorithme 
-        let promis = new Promise(function(resolve,reject){
+        let promis = new Promise(function (resolve, reject) {
             console.log("emit promise");
             socket.emit('draw', workingPath.current);
         });
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
-        
+
     }
 
 
@@ -139,7 +157,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         isDrawing.current = true;
         timePassed.current = Date.now();
         setDessine(true);
-        var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize,1,(listPath.length == 0 || listPath[listPath.length-1] == null) ? 0 : listPath[listPath.length-1].id + 1);
+        var endPath = new MyPath([{ x: actuelPoint.x, y: actuelPoint.y }], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (listPath.length == 0 || listPath[listPath.length - 1] == null) ? 0 : listPath[listPath.length - 1].id + 1);
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
@@ -157,23 +175,13 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         setDessine(false);
     }
 
-    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
-    const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
-    window.onresize = () => {
-        const oldWidth = svgBoxWidth;
-        const oldHeight = svgBoxHeight;
-        const newWidth = document.getElementById('svgArea').clientWidth;
-        const newHeight = newWidth / 1110 * 582;
-        setSvgBoxWidth(newWidth);
-        setSvgBoxHeight(newHeight);
-    }
     return (
         <Box height={svgBoxHeight} mb={1}>
             <Paper className="fullHeight">
                 <svg
                     id="mySvg"
                     className="drawingArea"
-                    
+
                     onMouseMove={(e) => onMouseMove(e)}
                     onMouseDown={(e) => onMouseDown(e)}
                     onMouseUp={(e) => onMouseUp(e)}

@@ -99,7 +99,7 @@ const GamePage = (props) => {
     socket.on('drawer', function (data) {
       setChat(chat => [...chat, data.username + " is drawing!"])
       setCurrentDrawerName(data.username);
-      isDrawing = data.socketID == socket.id; 
+      isDrawing = data.socketID == socket.id;
       setDrawing(data.socketID == socket.id);
       //On vide la listPath à chaque fois 
       setListPath([]);
@@ -135,8 +135,8 @@ const GamePage = (props) => {
 
   useEffect(() => {
     if (!props.location.state) return;
-    if(window.location.hostname == "guessify.me")
-    socket = openSocket('http://guessify.me/');
+    if (window.location.hostname == "guessify.me")
+      socket = openSocket('http://guessify.me/');
     else
       socket = openSocket('http://' + window.location.hostname + ':8880/');
     connect(props.location.state.username);
@@ -171,13 +171,15 @@ const GamePage = (props) => {
                 <DrawerArea socket={socket} />
               ) :
               ( // guesser view
-                <RenderAreaV2 listPath={listPath} />
+                <Box id="svgArea">
+                  <RenderAreaV2 listPath={listPath} />
+                </Box>
               )
           }
         </Box>
       </Box>
       <Box ml={1} display="flex" height={1} flexDirection="column">
-        <Leaderboard listPlayer={listPlayer}/>
+        <Leaderboard listPlayer={listPlayer} />
         <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
       </Box>
     </Box>
