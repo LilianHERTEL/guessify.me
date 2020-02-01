@@ -3,18 +3,15 @@
 *
 * List all the features
 */
-import React, { useState, useRef, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import './style.css';
-import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { Box, LinearProgress, Typography } from '@material-ui/core';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
-import DrawingArea from './DrawingArea';
 import Leaderboard from './LeaderBoardV2.js';
 import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
-import DrawingTools from './DrawingTools';
 import DrawerArea from './DrawerArea';
-import blue from '@material-ui/core/colors/blue';
 import MyPath from './MyPath';
 
 
@@ -22,12 +19,7 @@ const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-
 var socket;
-
-
-
-
 
 var pathsArray = [];
 class Point { x = 0; y = 0; }
@@ -78,8 +70,6 @@ const GamePage = (props) => {
     }
     isRendering = false;
   }
-
-
 
   const connect = (username) => {
     socket.on('connect', function () {
