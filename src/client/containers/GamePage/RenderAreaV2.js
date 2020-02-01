@@ -31,7 +31,7 @@ const RenderAreaV2 = (props) => {
         console.log("DrawingRenderArea MOUNTED");
         // Sets the initial drawing area size
         const w = document.getElementById('svgArea').clientWidth;
-        const h = w / 1110 * 582;
+        const h = w / 1060 * 582;
         setSvgBoxHeight(h);
     }, []);
 
@@ -40,7 +40,7 @@ const RenderAreaV2 = (props) => {
      */
     window.onresize = () => {
         const newWidth = document.getElementById('svgArea').clientWidth;
-        const newHeight = newWidth / 1110 * 582;
+        const newHeight = newWidth / 1060 * 582;
         setSvgBoxHeight(newHeight);
     }
     /****************************************************************************/
@@ -137,7 +137,7 @@ const RenderAreaV2 = (props) => {
                 <svg
                     id="mySvg"
                     className="drawingRenderArea"
-                    viewBox={`0 0 ${1110} ${582}`}
+                    viewBox={`0 0 ${1060} ${582}`}
                     xmlns="http://www.w3.org/2000/svg"
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     version="1.1"

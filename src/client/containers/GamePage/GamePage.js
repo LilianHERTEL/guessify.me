@@ -156,8 +156,8 @@ const GamePage = (props) => {
 
   return (
     <Box height={1} padding={2} >
-      <Grid container className="fullHeight">
-        <Grid item lg={9}>
+      <Grid container spacing={1} className="fullHeight">
+        <Grid item md={9} xs={12}>
           <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
             <Box display="flex" justifyContent="center" alignItems="center">
               <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
@@ -181,10 +181,11 @@ const GamePage = (props) => {
             </Box>
           </Box>
         </Grid>
-        <Grid item lg={3}>
-          <Box ml={1} display="flex" height={1} flexDirection="column">
+        <Grid item md={3} xs={12}>
+          <Box display="flex" height={1} flexDirection="column">
             <Leaderboard listPlayer={listPlayer} />
-            <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
+            <Box mt={1}/>
+            <Chat chat={chatArray} enterKey={_handleKeyDown}/>
           </Box>
         </Grid>
       </Grid>

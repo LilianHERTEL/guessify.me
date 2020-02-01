@@ -50,7 +50,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         console.log("DrawingArea MOUNTED");
         // Sets the initial drawing area size
         const w = document.getElementById('svgArea').clientWidth;
-        const h = w / 1110 * 582;
+        const h = w / 1060 * 582;
         setSvgBoxHeight(h);
     }, []);
 
@@ -59,7 +59,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      */
     window.onresize = () => {
         const newWidth = document.getElementById('svgArea').clientWidth;
-        const newHeight = newWidth / 1110 * 582;
+        const newHeight = newWidth / 1060 * 582;
         setSvgBoxHeight(newHeight);
     }
     /****************************************************************************/
@@ -188,7 +188,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
                     onMouseDown={(e) => onMouseDown(e)}
                     onMouseUp={(e) => onMouseUp(e)}
                     onMouseLeave={(e) => onMouseLeave(e)}
-                    viewBox={`0 0 ${1110} ${582}`}
+                    viewBox={`0 0 ${1060} ${582}`}
                     xmlns="http://www.w3.org/2000/svg"
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     version="1.1"

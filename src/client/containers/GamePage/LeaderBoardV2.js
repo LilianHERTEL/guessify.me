@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Grid, Box, Container, List,ListItem,ListItemAvatar,ListItemText,Avatar, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Grid, Box, Container, List, ListItem, ListItemAvatar, ListItemText, Avatar, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 function PlayerList(props) {
   return (
@@ -36,14 +36,14 @@ function TabPanel(props) {
   );
 }
 
-function LeaderBoard({listPlayer}) {
+function LeaderBoard({ listPlayer }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-    return (
-      <Paper>
+  return (
+    <Paper>
       <AppBar position="static">
         <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
           <Tab label="Players" />
@@ -70,7 +70,7 @@ function LeaderBoard({listPlayer}) {
         <Grid item>Draw Order</Grid>
       </Grid>
     </Paper>
-    )
+  )
 }
 
 export default LeaderBoard;

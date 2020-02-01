@@ -11,7 +11,7 @@ function Chat(prop) {
   React.useEffect(scrollToBottom, [prop.chat]);
 
   return (
-    <Box flexGrow={1} mt={1}>
+    <Box flexGrow={1} height={1}>
       <Paper className="fullHeight">
         <Box height={1}>
           <Box display="flex" flexDirection="column" height={1}>
