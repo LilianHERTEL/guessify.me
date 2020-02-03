@@ -49,7 +49,7 @@ sockets.start = function (io) {
           lobby.currentDrawer);
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
           io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
-
+          console.log("hi5")
           
         }
     });
