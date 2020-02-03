@@ -44,6 +44,7 @@ sockets.start = function (io) {
           console.log("hi3")
           io.to(socket.lobby.id).emit("announcement",
           "La partie va commencer!")
+          console.log("hi4")
           io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
