@@ -44,12 +44,14 @@ sockets.start = function (io) {
           console.log("hi3")
           io.to(socket.lobby.id).emit("announcement",
           "La partie va commencer!")
-          console.log("hi4")
+          
           io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
+          console.log("hi4")
           lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
-          io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
           console.log("hi5")
+          io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
+          
           
         }
     });
