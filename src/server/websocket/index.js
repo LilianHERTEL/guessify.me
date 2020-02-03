@@ -41,6 +41,7 @@ sockets.start = function (io) {
           console.log("hi2")
           lobby.started = true;
           lobby.getNextDrawer();
+          console.log("hi3")
           io.to(socket.lobby.id).emit("announcement",
           "La partie va commencer!")
           io.to(socket.lobby.id).emit("drawer",
