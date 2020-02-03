@@ -120,11 +120,11 @@ function LeaderBoard({listPlayer,socketID,order}) {
    */
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = event => {
+  const handleSettingsClick = event => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleSettingsClose = () => {
     setAnchorEl(null);
   };
 
@@ -147,14 +147,14 @@ function LeaderBoard({listPlayer,socketID,order}) {
           </Typography>
 
           <div>
-            <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleClick}>
+            <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleSettingsClick}>
               <SettingsIcon fontSize="small" />
             </IconButton>
             <Popover
               id={id}
               open={open}
               anchorEl={anchorEl}
-              onClose={handleClose}
+              onClose={handleSettingsClose}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
