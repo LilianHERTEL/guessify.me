@@ -35,6 +35,7 @@ const GamePage = (props) => {
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
+  const [currentWord, setCurrentWord] = useState(null);
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -95,6 +96,7 @@ const GamePage = (props) => {
     });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, "The word is " + data + " !"])
+      setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
       setChat(chat => [...chat, data.username + " is drawing!"])
@@ -154,19 +156,41 @@ const GamePage = (props) => {
   if (!props.location.state)
     return (<Redirect to="/" />)
 
+  function Underscored_Word() {
+    let underscored_word = "";
+    for (let i = 0; i < currentWord.length; i++) {
+      underscored_word += "_ ";
+    }
+    return (
+      <Typography variant="h4" align="center">{underscored_word}</Typography>
+    );
+  }
+
+  function TurnInfo(props) {
+    return (
+      <Box mb={1} className="fullWidth">
+        <Box display="flex" justifyContent="center">
+        <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
+        <Box ml={2}>
+          <Underscored_Word />
+        </Box>
+        </Box>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box height={1} padding={2} >
       <Grid container spacing={1} className="fullHeight">
         <Grid item md={9} xs={12}>
           <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
             <Box display="flex" justifyContent="center" alignItems="center">
-              <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
-              <Box mx={1}></Box>
-              <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
+              {
+                currentWord == null ? null : <TurnInfo />
+              }
             </Box>
-            <LinearProgress />
-
-            <Box mt={1}>
+            <Box>
               {
                 drawing ?
                   ( // drawer view
@@ -184,8 +208,8 @@ const GamePage = (props) => {
         <Grid item md={3} xs={12}>
           <Box display="flex" height={1} flexDirection="column">
             <Leaderboard listPlayer={listPlayer} />
-            <Box mt={1}/>
-            <Chat chat={chatArray} enterKey={_handleKeyDown}/>
+            <Box mt={1} />
+            <Chat chat={chatArray} enterKey={_handleKeyDown} />
           </Box>
         </Grid>
       </Grid>
