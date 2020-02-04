@@ -47,10 +47,8 @@ sockets.start = function (io) {
           
           io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
-          console.log("hi4")
           // lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
           lobby.currentWord = "hi"
-          console.log("hi5")
           io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
           
           
