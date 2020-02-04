@@ -46,8 +46,8 @@ sockets.start = function (io) {
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
-        // lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
-        lobby.currentWord = "hi"
+        lobby.currentWord = Dictionnary.tirerMots();
+        // lobby.currentWord = "hi"
 
         //sends the underscored word to the lobby for all players
         io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
@@ -71,7 +71,7 @@ sockets.start = function (io) {
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
-        lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
+        lobby.currentWord = Dictionnary.tirerMots();
 
         //sends the underscored word to the lobby for all players
         io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
