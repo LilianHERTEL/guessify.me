@@ -5,7 +5,7 @@
 */
 import React, { useState, useEffect, useReducer,useRef } from 'react';
 import './style.css';
-import { Box, LinearProgress, Typography, Grid } from '@material-ui/core';
+import { Box, LinearProgress, Typography, Grid,withStyles ,lighten,useTheme,useMediaQuery } from '@material-ui/core';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
@@ -82,7 +82,7 @@ const GamePage = (props) => {
       console.error(data)
     });
     socket.on('joinedGame', function (data) {
-      setChat(chat => [...chat, "Connected to Lobby " + data.lobby.id])
+    setChat(chat => [...chat, (<Typography variant="button" align="center" display="block">Connected to Lobby {data.lobby.id}</Typography>)])
       sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
@@ -90,17 +90,26 @@ const GamePage = (props) => {
       var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
       setOrder( PlayerOrder ? PlayerOrder.order : "...");
     });
-    socket.on('receiveChat', function (data) {
-      setChat(chat => [...chat, data])
+    socket.on('receiveChat', function (username,msg) {
+      setChat(chat => [...chat, (<Typography variant="body2"><b>{username}</b> : {msg}</Typography>)])
     });
     socket.on('announcement', function (data) {
-      setChat(chat => [...chat, data])
+      setChat(chat => [...chat, (<Typography variant="subtitle2" align="center" display="block">{data}</Typography>)])
+    });
+    socket.on('closeGuess', function (data) {
+      setChat(chat => [...chat, (<Typography variant="subtitle2" display="block" color="secondary">Your guess was close!</Typography>)])
+    });
+    socket.on('notAllowedToEnterAnswer', function (data) {
+      setChat(chat => [...chat, (<Typography variant="subtitle2" display="block" color="error">You are not allowed to enter the answer!</Typography>)])
+    });
+    socket.on('peopleJoin', function (username) {
+      setChat(chat => [...chat, (<Typography variant="overline" align="center" display="block"><b>{username}</b> joined the lobby</Typography>)])
     });
     socket.on('draw', function (data) {
       setChat(chat => [...chat, data])
     });
     socket.on('wordToBeDrawn', function (data) {
-      setChat(chat => [...chat, "The word is " + data + " !"])
+      setChat(chat => [...chat, (<Typography variant="body2" align="center" display="block">The word is <b>{data}</b>!</Typography>)])
       console.log("RECEIVED word");
       setCurrentWord(data);
     });
@@ -110,7 +119,7 @@ const GamePage = (props) => {
     });
     socket.on('drawer', function (data) {
       socket.emit('requestListPlayer',null);
-      setChat(chat => [...chat, data.username + " is drawing!"])
+      setChat(chat => [...chat, (<Typography variant="overline" align="center" display="block"><b>{data.username}</b> is drawing!</Typography>)])
       setCurrentDrawerName(data.username);
       isDrawing = data.socketID == socket.id;
       setDrawing(data.socketID == socket.id);
@@ -164,6 +173,18 @@ const GamePage = (props) => {
   if (!props.location.state)
     return (<Redirect to="/" />)
 
+    const BorderLinearProgress = withStyles({
+      root: {
+        height: 10,
+        marginTop:5,
+        backgroundColor: lighten('#ff6c5c', 0.5),
+      },
+      bar: {
+        borderRadius: 20,
+        backgroundColor: '#ff6c5c',
+      },
+    })(LinearProgress);
+
 
 
   /**
@@ -181,13 +202,9 @@ const GamePage = (props) => {
   function TurnInfo() {
     if (currentWord == null)
       return (
-        <Box mb={1} className="fullWidth">
-          <Typography variant="h5" align="center">Waiting for other players...</Typography>
-          <LinearProgress />
-        </Box>
+          <Typography variant="h5"  align="center">Waiting for other players...</Typography>
       );
     return (
-      <Box mb={1} className="fullWidth">
         <Box display="flex" justifyContent="space-evenly">
           {
             currentWord.charAt(0) == "_" ?
@@ -202,18 +219,28 @@ const GamePage = (props) => {
               <Typography variant="h5" align="center">It's your turn ! The word is "{currentWord}"</Typography>
           }
         </Box>
-        <LinearProgress />
-      </Box>
     );
   }
+
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
     <Box height={1} padding={2} >
       <Grid container spacing={1} className="fullHeight">
         <Grid item md={9} xs={12}>
-          <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
+          <Box display="flex" height={1} flexDirection="column"  flexGrow={4}>
             <Box display="flex" justifyContent="center" alignItems="center">
-              <TurnInfo />
+            <Box mb={1} className="fullWidth">
+            <TurnInfo />
+            <BorderLinearProgress
+        variant="determinate"
+        color="secondary"
+        value={50}
+      />
+        </Box>
+              
+              
             </Box>
             <Box>
               {
@@ -231,7 +258,7 @@ const GamePage = (props) => {
           </Box>
         </Grid>
         <Grid item md={3} xs={12}>
-          <Box display="flex" height={1} flexDirection="column">
+          <Box display="flex" height={1} flexDirection={matches? "column" : "column-reverse"}>
             <Leaderboard listPlayer={listPlayer} order={order}/>
             <Box mt={1} />
             <Chat chat={chatArray} enterKey={_handleKeyDown} />

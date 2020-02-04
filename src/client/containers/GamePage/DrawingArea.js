@@ -183,7 +183,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
                 <svg
                     id="mySvg"
                     className="drawingArea"
-
+                    onTouchMove={(e) => onMouseMove(e)}
                     onMouseMove={(e) => onMouseMove(e)}
                     onMouseDown={(e) => onMouseDown(e)}
                     onMouseUp={(e) => onMouseUp(e)}

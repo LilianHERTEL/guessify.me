@@ -9,7 +9,7 @@ function Chat(prop) {
   }
 
   React.useEffect(scrollToBottom, [prop.chat]);
-
+console.log(prop.chat)
   return (
     <Box flexGrow={1} height={1}>
       <Paper className="fullHeight">
@@ -17,9 +17,9 @@ function Chat(prop) {
           <Box display="flex" flexDirection="column" height={1}>
             <Box overflow="auto" mx={1} mt={1} height="10em" flexGrow={1} className="borderBottomPrimary">
               {
-                prop.chat.map((value, key) => (
-                  <Typography className="overflowWrap-breakWord" variant="body2" key={key}>{value}</Typography>
-                ))
+                prop.chat.map((value, key) => <div key={key}>
+                  {value}
+                </div>)
               }
               <div ref={messagesEndRef} />
             </Box>
