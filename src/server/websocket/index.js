@@ -45,15 +45,12 @@ sockets.start = function (io) {
           lobby.currentDrawer);
         lobby.currentWord = Dictionnary.tirerMots("en-US");
         // lobby.currentWord = "hi"
-
-        //sends the underscored word to the lobby for all players
-        io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
-
-        //sends the full word only to the drawer
-        io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn", lobby.currentWord);
-
-
       }
+      //sends the underscored word to the lobby for all players
+      io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
+
+      //sends the full word only to the drawer
+      io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn", lobby.currentWord);
     });
 
     socket.on('sendChat', async function (msg) {

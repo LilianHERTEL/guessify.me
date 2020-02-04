@@ -211,7 +211,8 @@ const GamePage = (props) => {
               <React.Fragment>
                 <Box display="flex" flexDirection="row">
                   <Typography variant="h5" align="center" color="primary">{currentDrawerName}</Typography>
-                  <Typography variant="h5" align="center"> is drawing...</Typography>
+                  <Box mr={1}/>
+                  <Typography variant="h5" align="center">is drawing...</Typography>
                 </Box>
                 <Typography variant="h5" align="center">{currentWord}</Typography>
               </React.Fragment>

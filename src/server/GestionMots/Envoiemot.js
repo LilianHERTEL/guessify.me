@@ -26,9 +26,12 @@ const tirerMots = (lang) => {
 }
 
 const underscoreWordToBeDrawn = (word) => {
+    if ((typeof word) !== 'string') return "";
     let underscored_word = "";
+    let currLetter = "";
     for (let i = 0; i < word.length; i++) {
-        underscored_word += "_ ";
+        currLetter = word.charAt(i);
+        currLetter === "-" || currLetter === " " ? underscored_word += currLetter + "\xa0" : underscored_word += "_\xa0"; // \xa0 stands for a no-break space
     }
     return underscored_word;
 }
