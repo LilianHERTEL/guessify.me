@@ -46,8 +46,8 @@ sockets.start = function (io) {
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
-        // lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
-        lobby.currentWord = "hi"
+        lobby.currentWord = Dictionnary.tirerMots();
+        // lobby.currentWord = "hi"
 
         //sends the underscored word to the lobby for all players
         io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
@@ -62,7 +62,7 @@ sockets.start = function (io) {
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit("receiveChat", msg)
-      if(Algo.calculateLev(msg,socket.lobby.currentWord) < 3)
+      if(msg == socket.lobby.currentWord)
       {
         io.to(socket.lobby.id).emit("announcement",socket.username+" guessed it!")
         lobby.addPoint(socket.id,1);
@@ -71,7 +71,7 @@ sockets.start = function (io) {
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
-        lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
+        lobby.currentWord = Dictionnary.tirerMots();
 
         //sends the underscored word to the lobby for all players
         io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
