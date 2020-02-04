@@ -37,6 +37,7 @@ const GamePage = (props) => {
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
+  const [order,setOrder] = useState("...");
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -75,6 +76,7 @@ const displayPathsArray = async () => {
 
 
   const connect = (username) => {
+    
     socket.on('connect', function () {
       socket.emit("findGame", username)
     });
@@ -86,7 +88,9 @@ const displayPathsArray = async () => {
       sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
-      setListPlayer(data.listPlayer)
+      setListPlayer(data.listPlayer);
+      var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
+      setOrder( PlayerOrder ? PlayerOrder.order : "...");
     });
     socket.on('receiveChat', function (data) {
       setChat(chat => [...chat, data])
@@ -101,6 +105,7 @@ const displayPathsArray = async () => {
       setChat(chat => [...chat, "The word is " + data + " !"])
     });
     socket.on('drawer', function (data) {
+      socket.emit('requestListPlayer',null);
       setChat(chat => [...chat, data.username + " is drawing!"])
       setCurrentDrawerName(data.username);
       setDrawing(data.socketID == socket.id);
@@ -175,7 +180,7 @@ const displayPathsArray = async () => {
         }
       </Box>
       <Box display="flex" height={1} flexDirection="column">
-        <Leaderboard listPlayer={listPlayer} socketID={sockid} order={listPlayer.find(player => player.socketID === sockid.current)}/>
+        <Leaderboard listPlayer={listPlayer} order={order} socketID={sockid ? sockid : ""}/>
         <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
       </Box>
     </Box>

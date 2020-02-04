@@ -83,5 +83,4 @@ websocket.start(io);
 // Start your app.
 https.listen(port, function(){
   logger.appStarted(port, prettyHost);
-  
 });

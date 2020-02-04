@@ -63,7 +63,7 @@ function PlayerList(props) {
         <ListItemText primary={props.username} secondary={props.score + " points"} />
         <Crown index={props.index} score={props.score}/>
         <ListItemSecondaryAction>
-          #{props.index + 1}#{props.order}
+          #{props.index + 1}
         </ListItemSecondaryAction>
       </ListItem>
       <Divider variant="inset" component="li" />
@@ -87,7 +87,7 @@ function TabPanel(props) {
   );
 }
 
-function LeaderBoard({listPlayer,socketID,order}) {
+function LeaderBoard({listPlayer,order}) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -97,23 +97,6 @@ function LeaderBoard({listPlayer,socketID,order}) {
     console.log("COMPARE : " + a.pointsTotal + " " + b.pointsTotal);
     return b.pointsTotal - a.pointsTotal;
   }
-
-  /*
-
-      <AppBar position="static">
-        <Tabs aria-label="simple tabs example" onChange={handleChange} value={value} variant="fullWidth">
-          <Tab label="Players" />
-          <Tab label="Statistics" />
-        </Tabs>
-      </AppBar>
-      <Box minHeight="250px"> 
-        <TabPanel className={classes.list} value={value} index={0}>
-          
-        </TabPanel>
-        <TabPanel value={value} index={1}><SettingsIcon/></TabPanel>
-      </Box>
-   
-   */
 
   /**
    * Settings popover utils
@@ -136,6 +119,7 @@ function LeaderBoard({listPlayer,socketID,order}) {
 
   }
 
+  //construction des styles
   const classes = useStyles();
 
   return (
@@ -178,7 +162,12 @@ function LeaderBoard({listPlayer,socketID,order}) {
             }
         </List>
       <Grid container alignItems="center" justify="center" align="center" className={classes.bottom}>
-          <span className={classes.botContent}>You will draw in <span className={classes.position}>3</span> rounds.</span>
+        {order === 0 ? (
+            <span className={classes.botContent}> You are drawing !</span>
+          ) : (
+            <span className={classes.botContent}>You will draw in <span className={classes.position}>{order}</span> rounds.</span>
+          )
+        }
       </Grid>
     </Paper>
     );
