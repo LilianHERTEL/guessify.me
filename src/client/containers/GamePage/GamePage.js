@@ -3,18 +3,15 @@
 *
 * List all the features
 */
-import React, { useState, useRef, useEffect,useReducer } from 'react';
+import React, { useState, useEffect, useReducer,useRef } from 'react';
 import './style.css';
-import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Toolbar, IconButton, Menu, MenuItem, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { Box, LinearProgress, Typography, Grid } from '@material-ui/core';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
-import DrawingArea from './DrawingArea';
 import Leaderboard from './LeaderBoardV2.js';
 import RenderAreaV2 from './RenderAreaV2';
 import { Redirect } from 'react-router-dom';
-import DrawingTools from './DrawingTools';
 import DrawerArea from './DrawerArea';
-import blue from '@material-ui/core/colors/blue';
 import MyPath from './MyPath';
 
 
@@ -22,11 +19,11 @@ const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-
 var socket;
 var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
+var isDrawing = false;
 
 /*****************************
  * THE COMPONENT STARTS HERE *
@@ -38,42 +35,43 @@ const GamePage = (props) => {
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
   const [order,setOrder] = useState("...");
+  const [currentWord, setCurrentWord] = useState(null);
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const sockid = useRef(null);
 
+  const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
 
-
-const fctQuiAjouteUnParUn = (myPath) => {
+  const fctQuiAjouteUnParUn = (myPath) => {
 
     var { x, y } = myPath.points.shift();
     setListPath(listpath => {
-        if (listpath.length === 0) return [];
-        listpath[listpath.length - 1].points.push({ x, y });
-        return listpath;
+      if (listpath.length === 0) return [];
+      listpath[listpath.length - 1].points.push({ x, y });
+      return listpath;
     });
     forceUpdate();
 
-}
+  }
 
-const displayPathsArray = async () => {
+  const displayPathsArray = async () => {
     isRendering = true;
     while (pathsArray.length > 0) {
-        let time = pathsArray[0].time;
-        let nbPoints = pathsArray[0].points.length;
-        for (var i = 0; i < nbPoints; i++) {
-            fctQuiAjouteUnParUn(pathsArray[0]);
+      let time = pathsArray[0].time;
+      let nbPoints = pathsArray[0].points.length;
+      for (var i = 0; i < nbPoints; i++) {
+        fctQuiAjouteUnParUn(pathsArray[0]);
 
-            await sleep((time * 1000) / nbPoints);
+        await sleep((time * 1000) / nbPoints);
 
-        }
-        pathsArray.shift();
+      }
+      pathsArray.shift();
     }
     isRendering = false;
-}
-
-
+  }
 
   const connect = (username) => {
     
@@ -103,49 +101,52 @@ const displayPathsArray = async () => {
     });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, "The word is " + data + " !"])
+      setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
       socket.emit('requestListPlayer',null);
       setChat(chat => [...chat, data.username + " is drawing!"])
       setCurrentDrawerName(data.username);
+      isDrawing = data.socketID == socket.id;
       setDrawing(data.socketID == socket.id);
       //On vide la listPath à chaque fois 
       setListPath([]);
     });
     socket.on('drawCmd', async function (data) {
-      if(drawing) return;
+      if (drawing) return;
       pathsArray = [...pathsArray, data];
       console.log("//////// VIEWER DATA : " + JSON.stringify(data));
       setListPath(path => {
-          if (path.length == 0 || path[path.length - 1].id != data.id) {
-              if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
-              return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
-          }
-          else {
-              console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
-              return [...path];
+        if (path.length == 0 || path[path.length - 1].id != data.id) {
+          if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
+          return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
 
-          }
+        }
+        else {
+          console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
+          return [...path];
+
+        }
       });
 
       if (!isRendering)
-          await displayPathsArray();
+        await displayPathsArray();
       else
-          console.log("IS RENDERING : TRUE");
-  });
-  socket.on('clearDrawing', () => {
-    console.log("CLEARING DrawingRenderArea");
-    setListPath([]);
-});
+        console.log("IS RENDERING : TRUE");
+    });
+    socket.on('clearDrawing', () => {
+      console.log("CLEARING DrawingRenderArea");
+      setListPath([]);
+    });
     socket.on('disconnect', function () { });
   }
 
   useEffect(() => {
     if (!props.location.state) return;
-    if(window.location.hostname == "guessify.me")
-    socket = openSocket('http://guessify.me/');
+    if (window.location.hostname == "guessify.me")
+      socket = openSocket('http://guessify.me/');
     else
-    socket = openSocket('http://'+window.location.hostname+':8880/');
+      socket = openSocket('http://' + window.location.hostname + ':8880/');
     connect(props.location.state.username);
   }, []);
 
@@ -160,29 +161,63 @@ const displayPathsArray = async () => {
   if (!props.location.state)
     return (<Redirect to="/" />)
 
-  return (
-    <Box display="flex" height={1} padding={2} >
-      <Box display="flex" height={1} flexDirection="column" flexGrow={4} id="svgArea">
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
-          <Box mx={1}></Box>
-          <Typography variant="h4" align="center">_ _ _ _ _ _ _ _</Typography>
+  function Underscored_Word() {
+    let underscored_word = "";
+    for (let i = 0; i < currentWord.length; i++) {
+      underscored_word += "_ ";
+    }
+    return (
+      <Typography variant="h4" align="center">{underscored_word}</Typography>
+    );
+  }
+
+  function TurnInfo(props) {
+    return (
+      <Box mb={1} className="fullWidth">
+        <Box display="flex" justifyContent="center">
+        <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
+        <Box ml={2}>
+          <Underscored_Word />
+        </Box>
         </Box>
         <LinearProgress />
-        {
-          drawing ?
-            ( // drawer view
-              <DrawerArea socket={socket} />
-            ) :
-            ( // guesser view
-              <RenderAreaV2 listPath={listPath} />
-            )
-        }
       </Box>
-      <Box display="flex" height={1} flexDirection="column">
-        <Leaderboard listPlayer={listPlayer} order={order} socketID={sockid ? sockid : ""}/>
-        <Chat chat={chatArray} enterKey={_handleKeyDown} flexGrow={1} />
-      </Box>
+    );
+  }
+
+  return (
+    <Box height={1} padding={2} >
+      <Grid container spacing={1} className="fullHeight">
+        <Grid item md={9} xs={12}>
+          <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              {
+                currentWord == null ? null : <TurnInfo />
+              }
+            </Box>
+            <Box>
+              {
+                drawing ?
+                  ( // drawer view
+                    <DrawerArea socket={socket} />
+                  ) :
+                  ( // guesser view
+                    <Box id="svgArea">
+                      <RenderAreaV2 listPath={listPath} />
+                    </Box>
+                  )
+              }
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item md={3} xs={12}>
+          <Box display="flex" height={1} flexDirection="column">
+            <Leaderboard listPlayer={listPlayer} order={order}/>
+            <Box mt={1} />
+            <Chat chat={chatArray} enterKey={_handleKeyDown} />
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

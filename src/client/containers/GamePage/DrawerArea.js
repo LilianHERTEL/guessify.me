@@ -1,29 +1,61 @@
 import React from 'react';
 import DrawingArea from './DrawingArea';
-import DrawingTools from './DrawingTools';
+import DrawingToolsVertical from './DrawingToolsVertical';
+import { Box } from '@material-ui/core';
+import DrawingToolsHorizontal from './DrawingToolsHorizontal';
+
+const MAX_OLD_COLORS = 10;
 
 const DrawerArea = ({ socket }) => {
     const [brushSize, setBrushSize] = React.useState(20);
     const [brushColor, setBrushColor] = React.useState("#1266db");
-    const [rgbBrushColor, setRgbBrushColor] = React.useState({r:18, g:102, b:219});
+    const [oldColors, setOldColors] = React.useState([brushColor]);
+    const [rgbBrushColor, setRgbBrushColor] = React.useState({ r: 18, g: 102, b: 219 });
     const [brushMode, setBrushMode] = React.useState("Draw"); // 'draw' || 'erase'
     const [brushShape, setBrushShape] = React.useState("round"); // WIP (circle, rectangle, etc. ?)
 
+    const updateOldColors = () => {
+        if (!oldColors.includes(brushColor)) {
+            setOldColors(oldColors => {
+                if (oldColors.length < MAX_OLD_COLORS) {
+                    return [...oldColors, brushColor];
+                }
+                else {
+                    const arrTemp = oldColors;
+                    arrTemp.shift();
+                    arrTemp.push(brushColor);
+                    console.log(arrTemp.length);
+                    return arrTemp;
+                }
+            });
+        }
+    }
+
     return (
-        <React.Fragment>
-            <DrawingArea
-                socket={socket}
-                brushSize={brushSize}
-                brushColor={brushColor}
-                brushMode={brushMode}
-            />
-            <DrawingTools
+        <Box display="flex" flexDirection="row">
+            <DrawingToolsVertical
                 socket={socket}
                 brushSize={brushSize} setBrushSize={setBrushSize}
                 brushColor={brushColor} setBrushColor={setBrushColor} rgbBrushColor={rgbBrushColor} setRgbBrushColor={setRgbBrushColor}
                 brushMode={brushMode} setBrushMode={setBrushMode}
             />
-        </React.Fragment>
+            <Box ml={1} display="flex" height={1} flexDirection="column" flexGrow="1" id="svgArea">
+                <DrawingArea
+                    socket={socket}
+                    brushSize={brushSize}
+                    brushColor={brushColor}
+                    brushMode={brushMode}
+                    updateOldColors={updateOldColors}
+                />
+                <DrawingToolsHorizontal
+                    socket={socket}
+                    brushSize={brushSize} setBrushSize={setBrushSize}
+                    brushColor={brushColor} setBrushColor={setBrushColor} rgbBrushColor={rgbBrushColor} setRgbBrushColor={setRgbBrushColor}
+                    brushMode={brushMode} setBrushMode={setBrushMode}
+                    oldColors={oldColors} setOldColors={setOldColors}
+                />
+            </Box>
+        </Box>
     );
 }
 

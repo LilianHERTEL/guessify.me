@@ -58,7 +58,7 @@
 }
 .guessifySliderPointer {
   width: 9px !important;
-  height: 18px !important;
+  height: 28px !important;
   border: 2px solid white !important;
   box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12) !important;
   transform: translate(-50%, -1px) !important;
@@ -83,13 +83,6 @@
   overflow: visible !important;
 }
 
-::selection {
-  background: transparent !important;
-}
-::-moz-selection {
-  background: transparent !important;
-}
-
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -98,6 +91,16 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Opera and Firefox */
+}
+
+.currentColorIcon {
+  transform: translate(-5px, -5px);
+  width: 30px;
+  height: 0;
+}
+
+.drawing-tools-horizontal {
+  /*transform: translateY(10px);*/
 }
 
 /*
@@ -122,3 +125,11 @@
   max-height: 200px;
 }
 */
+
+.overflowWrap-breakWord {
+  overflow-wrap: break-word;
+}
+
+.height-maxContent {
+  height: max-content;
+}

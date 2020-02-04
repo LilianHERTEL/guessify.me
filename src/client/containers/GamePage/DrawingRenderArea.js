@@ -1,3 +1,25 @@
+/********************************************************************/
+/********************************************************************/
+/* IMPORTANT : CE COMPOSANT EST OBSOLETE : NE PAS MODIFIER CE COMPOSANT, MODIFIER RenderAreaV2 A LA PLACE
+/********************************************************************/
+/********************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';

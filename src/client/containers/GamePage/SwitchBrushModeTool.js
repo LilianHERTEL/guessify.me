@@ -62,16 +62,15 @@ const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode, rgbBrushColo
 
     return (
         <Box display="flex" flexDirection="column" justifyContent="space-between" alignContent="center" alignItems="center" width={1}>
-            <Box display="flex" flexDirection="row">
+            <Box display="flex" flexDirection="column">
                 <IconButton onClick={onDrawModeClick} size="small" className={brushMode === 'Draw' ? classes.modeSelected : null}>
                     <Icon icon={brushIcon} color={brushColor} width="2em" />
                 </IconButton>
-                <Box marginLeft={1} marginRight={1}></Box>
                 <IconButton onClick={onEraseModeClick} size="small" className={brushMode === 'Erase' ? classes.modeSelected : null}>
                     <Icon icon={eraserIcon} color="grey" width="2em" />
                 </IconButton>
             </Box>
-            <Typography className="noselect" variant="caption">{brushMode} mode</Typography>
+            <Typography className="noselect" variant="caption">Mode</Typography>
         </Box>
     )
 }
