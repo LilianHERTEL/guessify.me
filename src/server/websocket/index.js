@@ -35,18 +35,22 @@ sockets.start = function (io) {
       socket.emit("joinedGame", {lobby})
       io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer})
      io.to(socket.lobby.id).emit("announcement", socket.username + " joined the lobby")
+     console.log("hi1")
         if(!lobby.started && lobby.listPlayer.length > 1)
         {
+          console.log("hi2")
           lobby.started = true;
           lobby.getNextDrawer();
+          console.log("hi3")
           io.to(socket.lobby.id).emit("announcement",
           "La partie va commencer!")
           await sleep(2000);
           io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
-          lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
+          // lobby.currentWord = Dictionnary.tirerMots(global.dictionnaire)[0];
+          lobby.currentWord = "hi"
           io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn",lobby.currentWord);
-
+          
           
         }
     });
