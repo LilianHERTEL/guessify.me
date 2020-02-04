@@ -1,16 +1,13 @@
-function tirerMots(dictionnaire){
-    var dictionnaire = global.dictionnaire;
-    var tabmot=[];
-    var indexs=[];
-    for (let i=0; i<3;i++){
-        let random;
-        random=Math.floor(Math.random() * Math.floor(dictionnaire.length));
-        while(indexs.indexOf(random)!=-1){
-            random=Math.floor(Math.random() * Math.floor(dictionnaire.length));
-        }
-        indexs.push(random);
-        tabmot.push(dictionnaire[random]);
-    }
-    return tabmot;
+const fs = require('fs');
+var dictionnaire = [];
+
+fs.readFile(__dirname+'/../Dictionnaires/fr-FR.txt','utf8',function(err,data){
+    if(err) throw err;
+    dictionnaire = data.toString().split("\r\n");
+});
+
+function tirerMots(){
+    random=Math.floor(Math.random() * Math.floor(dictionnaire.length))
+    return dictionnaire[random];
 }
 module.exports.tirerMots = tirerMots;
