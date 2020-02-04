@@ -3,7 +3,7 @@ var dictionnaire = [];
 
 fs.readFile(__dirname+'/../Dictionnaires/en-US.txt','utf8',function(err,data){
     if(err) throw err;
-    dictionnaire = data.toString().split("\r\n");
+    dictionnaire = data.toString().split("\n");
     console.log(dictionnaire.length)
 });
 
