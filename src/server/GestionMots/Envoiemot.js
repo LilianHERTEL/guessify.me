@@ -1,7 +1,7 @@
 const fs = require('fs');
 var dictionnaire = [];
 
-fs.readFile(__dirname+'/../Dictionnaires/fr-FR.txt','utf8',function(err,data){
+fs.readFile(__dirname+'/../Dictionnaires/en-US.txt','utf8',function(err,data){
     if(err) throw err;
     dictionnaire = data.toString().split("\r\n");
 });
