@@ -96,6 +96,11 @@ const GamePage = (props) => {
     });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, "The word is " + data + " !"])
+      console.log("RECEIVED word");
+      setCurrentWord(data);
+    });
+    socket.on('wordToBeDrawn_Underscored', function (data) {
+      console.log("RECEIVED _ _ _");
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
@@ -114,12 +119,10 @@ const GamePage = (props) => {
         if (path.length == 0 || path[path.length - 1].id != data.id) {
           if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
           return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
-
         }
         else {
           console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
           return [...path];
-
         }
       });
 
@@ -156,24 +159,42 @@ const GamePage = (props) => {
   if (!props.location.state)
     return (<Redirect to="/" />)
 
-  function Underscored_Word() {
-    let underscored_word = "";
-    for (let i = 0; i < currentWord.length; i++) {
-      underscored_word += "_ ";
-    }
+
+
+  /**
+   * The component used to display the word to be drawn as a string composed of "_" characters
+   */
+  function CurrentWord() {
     return (
-      <Typography variant="h4" align="center">{underscored_word}</Typography>
+      <Typography variant="h4" align="center">{currentWord}</Typography>
     );
   }
 
-  function TurnInfo(props) {
+  /**
+   * The components that displays the name of the drawer and the hidden word, or the full word for the drawer
+   */
+  function TurnInfo() {
+    if (currentWord == null)
+      return (
+        <Box mb={1} className="fullWidth">
+          <Typography variant="h5" align="center">Waiting for other players...</Typography>
+          <LinearProgress />
+        </Box>
+      );
     return (
       <Box mb={1} className="fullWidth">
         <Box display="flex" justifyContent="center">
-          <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
-          <Box ml={2}>
-            <Underscored_Word />
-          </Box>
+          {
+            currentWord.charAt(0) == "_" ?
+              <React.Fragment>
+                <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
+                <Box ml={2}>
+                  <CurrentWord />
+                </Box>
+              </React.Fragment>
+              :
+              <Typography variant="h5" align="center">It's your turn ! The word is "{currentWord}"</Typography>
+          }
         </Box>
         <LinearProgress />
       </Box>
@@ -186,9 +207,7 @@ const GamePage = (props) => {
         <Grid item md={9} xs={12}>
           <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
             <Box display="flex" justifyContent="center" alignItems="center">
-              {
-                currentWord == null ? null : <TurnInfo />
-              }
+              <TurnInfo />
             </Box>
             <Box>
               {

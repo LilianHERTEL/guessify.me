@@ -13,4 +13,14 @@ function tirerMots(dictionnaire){
     }
     return tabmot;
 }
+
+function underscoreWordToBeDrawn(word) {
+    let underscored_word = "";
+    for (let i = 0; i < word.length; i++) {
+      underscored_word += "_ ";
+    }
+    return underscored_word;
+}
+
 module.exports.tirerMots = tirerMots;
+module.exports.underscoreWordToBeDrawn = underscoreWordToBeDrawn;
