@@ -3,7 +3,7 @@
 *
 * List all the features
 */
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer,useRef } from 'react';
 import './style.css';
 import { Box, LinearProgress, Typography, Grid } from '@material-ui/core';
 import Chat from './Chat'
@@ -20,7 +20,6 @@ const sleep = (milliseconds) => {
 }
 
 var socket;
-
 var pathsArray = [];
 class Point { x = 0; y = 0; }
 var isRendering = false;
@@ -35,10 +34,12 @@ const GamePage = (props) => {
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
+  const [order,setOrder] = useState("...");
   const [currentWord, setCurrentWord] = useState(null);
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const sockid = useRef(null);
 
   const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -73,6 +74,7 @@ const GamePage = (props) => {
   }
 
   const connect = (username) => {
+    
     socket.on('connect', function () {
       socket.emit("findGame", username)
     });
@@ -81,9 +83,12 @@ const GamePage = (props) => {
     });
     socket.on('joinedGame', function (data) {
       setChat(chat => [...chat, "Connected to Lobby " + data.lobby.id])
+      sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
-      setListPlayer(data.listPlayer)
+      setListPlayer(data.listPlayer);
+      var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
+      setOrder( PlayerOrder ? PlayerOrder.order : "...");
     });
     socket.on('receiveChat', function (data) {
       setChat(chat => [...chat, data])
@@ -104,6 +109,7 @@ const GamePage = (props) => {
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
+      socket.emit('requestListPlayer',null);
       setChat(chat => [...chat, data.username + " is drawing!"])
       setCurrentDrawerName(data.username);
       isDrawing = data.socketID == socket.id;
@@ -145,7 +151,6 @@ const GamePage = (props) => {
     else
       socket = openSocket('http://' + window.location.hostname + ':8880/');
     connect(props.location.state.username);
-
   }, []);
 
   const _handleKeyDown = (e) => {
@@ -227,7 +232,7 @@ const GamePage = (props) => {
         </Grid>
         <Grid item md={3} xs={12}>
           <Box display="flex" height={1} flexDirection="column">
-            <Leaderboard listPlayer={listPlayer} />
+            <Leaderboard listPlayer={listPlayer} order={order}/>
             <Box mt={1} />
             <Chat chat={chatArray} enterKey={_handleKeyDown} />
           </Box>

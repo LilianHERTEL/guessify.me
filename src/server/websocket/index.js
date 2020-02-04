@@ -58,15 +58,16 @@ sockets.start = function (io) {
 
       }
     });
+
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit("receiveChat", msg)
-      if (msg == socket.lobby.currentWord) {
-        io.to(socket.lobby.id).emit("announcement",
-          socket.username + " guessed it!")
-        lobby.addPoint(socket.id, 1);
-        io.to(socket.lobby.id).emit("updateLobby", { lobby, listPlayer: lobby.listPlayer })
+      if(msg == socket.lobby.currentWord)
+      {
+        io.to(socket.lobby.id).emit("announcement",socket.username+" guessed it!")
+        lobby.addPoint(socket.id,1);
         lobby.getNextDrawer();
+        io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
         await sleep(2000);
         io.to(socket.lobby.id).emit("drawer",
           lobby.currentDrawer);
@@ -93,13 +94,15 @@ sockets.start = function (io) {
 
     socket.on('requestListPlayer', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
-      io.to(socket.lobby.id).emit('listPlayer', socket.lobby);
+      io.to(socket.lobby.id).emit('listPlayer', {listPlayer : socket.lobby.listPlayer});
     });
 
+    /*
     socket.on('requestListPlayer', function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit('listPlayer', socket.lobby);
     });
+    */
 
     socket.on('disconnect', function () {
 
@@ -112,7 +115,7 @@ sockets.start = function (io) {
         { lobby: socket.lobby, listPlayer: socket.lobby.listPlayer })
       if (socket.lobby.listPlayer.length < 2) {
         io.to(socket.lobby.id).emit("announcement",
-          "Not enough players! Gmae resetted. Waiting for a second player...")
+        "Not enough players! Game resetted. Waiting for a second player...");
         socket.lobby.resetGame();
       }
     });
