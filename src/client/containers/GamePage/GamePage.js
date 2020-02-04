@@ -170,10 +170,10 @@ const GamePage = (props) => {
     return (
       <Box mb={1} className="fullWidth">
         <Box display="flex" justifyContent="center">
-        <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
-        <Box ml={2}>
-          <Underscored_Word />
-        </Box>
+          <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
+          <Box ml={2}>
+            <Underscored_Word />
+          </Box>
         </Box>
         <LinearProgress />
       </Box>
