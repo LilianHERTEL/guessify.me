@@ -183,14 +183,15 @@ const GamePage = (props) => {
       );
     return (
       <Box mb={1} className="fullWidth">
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="space-evenly">
           {
             currentWord.charAt(0) == "_" ?
               <React.Fragment>
-                <Typography variant="h5" align="center">{currentDrawerName} is drawing...</Typography>
-                <Box ml={2}>
-                  <CurrentWord />
+                <Box display="flex" flexDirection="row">
+                  <Typography variant="h5" align="center" color="primary">{currentDrawerName}</Typography>
+                  <Typography variant="h5" align="center"> is drawing...</Typography>
                 </Box>
+                <Typography variant="h5" align="center">{currentWord}</Typography>
               </React.Fragment>
               :
               <Typography variant="h5" align="center">It's your turn ! The word is "{currentWord}"</Typography>
