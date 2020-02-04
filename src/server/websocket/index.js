@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var Lobby = require("../Schema/Lobby")
 var sockets = {};
 var Dictionnary = require("../GestionMots/Envoiemot");
-
+var Algo = require("../util/levestein")
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -62,7 +62,7 @@ sockets.start = function (io) {
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit("receiveChat", msg)
-      if(msg == socket.lobby.currentWord)
+      if(Algo.calculateLev(msg,socket.lobby.currentWord) < 3)
       {
         io.to(socket.lobby.id).emit("announcement",socket.username+" guessed it!")
         lobby.addPoint(socket.id,1);

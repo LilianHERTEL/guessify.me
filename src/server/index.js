@@ -9,7 +9,7 @@ const argv = require('./util/argv');
 const port = require('./util//port');
 const websocket = require('./websocket');
 const mongoose = require('mongoose') //Pris
-const fs = require('fs');
+
 const app = express();
 // const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
 // const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
@@ -26,10 +26,7 @@ var loginRoute = require('./routes/login.js');
 
 console.log(__dirname);
 
-fs.readFile(__dirname+'/Dictionnaires/ENdic.txt','utf8',function(err,data){
-    if(err) throw err;
-    global.dictionnaire = data.toString().split("\r\n");
-});
+
 
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
