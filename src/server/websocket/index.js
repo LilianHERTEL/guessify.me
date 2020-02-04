@@ -62,7 +62,7 @@ sockets.start = function (io) {
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
       io.to(socket.lobby.id).emit("receiveChat", msg)
-      if(Algo.calculateLev(msg,socket.lobby.currentWord) < 3)
+      if(msg == socket.lobby.currentWord)
       {
         io.to(socket.lobby.id).emit("announcement",socket.username+" guessed it!")
         lobby.addPoint(socket.id,1);

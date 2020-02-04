@@ -4,7 +4,9 @@ var dictionnaire = [];
 fs.readFile(__dirname+'/../Dictionnaires/en-US.txt','utf8',function(err,data){
     if(err) throw err;
     dictionnaire = data.toString().split("\r\n");
+    console.log(dictionnaire.length)
 });
+
 
 function tirerMots(){
     random=Math.floor(Math.random() * Math.floor(dictionnaire.length))
