@@ -7,6 +7,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import { Icon, InlineIcon } from '@iconify/react';
 import crownIcon from '@iconify/icons-fa-solid/crown';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -51,7 +53,7 @@ function Crown(props) {
     case 1:
     case 2:
     case 3:
-      return <Icon icon={crownIcon} color={colors[props.index]} height="1.5rem" />;
+      return <Icon icon={crownIcon} color={colors[props.index]} height="20" />;
       break;
     default:
       return "";
@@ -95,7 +97,7 @@ function TabPanel(props) {
   );
 }
 
-function LeaderBoard({listPlayer,order}) {
+function LeaderBoard({listPlayer,order,handleSocketClose}) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -147,11 +149,12 @@ function LeaderBoard({listPlayer,order}) {
           <Typography variant="h6" className={classes.title}>
             LEADERBOARD
           </Typography>
-
+          
           <div>
             <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleSettingsClick}>
               <SettingsIcon fontSize="small" />
             </IconButton>
+            
             <Popover
               id={id}
               open={open}
@@ -170,7 +173,7 @@ function LeaderBoard({listPlayer,order}) {
                 color="primary"
                 className={classes.button}
                 onClick={handleStatsClick}
-                endIcon={<EqualizerIcon />}
+                startIcon={<EqualizerIcon />}
               >
                 Statistics
               </Button>
@@ -200,8 +203,23 @@ function LeaderBoard({listPlayer,order}) {
                 </Fade>
               </Modal>
 
+<div>
+<Link to="/" onClick={(e)=>{handleSocketClose()}}>
+<Button
+                color="secondary"
+                className={classes.button}
+                startIcon={<ExitToAppIcon />}
+              >
+                Leave game
+              </Button>
+                </Link>
+
+</div>
             </Popover>
+          
           </div>
+          
+          
 
         </Toolbar>
       </AppBar>

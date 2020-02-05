@@ -7,7 +7,7 @@ import DrawingToolsHorizontal from './DrawingToolsHorizontal';
 const MAX_OLD_COLORS = 10;
 
 const DrawerArea = ({ socket }) => {
-    const [brushSize, setBrushSize] = React.useState(20);
+    const [brushSize, setBrushSize] = React.useState(10);
     const [brushColor, setBrushColor] = React.useState("#1266db");
     const [oldColors, setOldColors] = React.useState([brushColor]);
     const [rgbBrushColor, setRgbBrushColor] = React.useState({ r: 18, g: 102, b: 219 });

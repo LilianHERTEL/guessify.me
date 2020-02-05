@@ -8,7 +8,11 @@ function sleep(ms) {
 }
 
 
+
 sockets.start = function (io) {
+  
+  var delayTimeout;
+  
   const findLobby = () => {
     var arr = Array.from(io.lobby.values());
     var freeLobbies = arr.filter((lobby) => lobby.listPlayer.length < lobby.maxPlayer);
@@ -24,6 +28,24 @@ sockets.start = function (io) {
   }
   io.lobby = new Map();
   io.on('connection', function (socket) {
+    const generateTimeout = (time,callback) => setTimeout(callback,time*1000)
+    const goNextTurn = () => {
+      socket.lobby.clearGuessedPlayer()
+      socket.lobby.getNextDrawer();
+      if(!lobby.currentDrawer) return;
+      io.to(socket.lobby.id).emit("drawer",
+      socket.lobby.currentDrawer);
+            socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
+          socket.lobby.guessed = false;
+        io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
+  
+        //sends the full word only to the drawer
+        io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
+        io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "Everyone have 2 minutes to guess the word!");
+        io.to(socket.lobby.id).emit("startTimer", 120);
+        clearInterval(delayTimeout)
+          delayTimeout=generateTimeout(120,goNextTurn)
+    }
     socket.isInGame = false;
     socket.on('findGame', async function (username) {
       var lobby = findLobby(io);
@@ -37,32 +59,32 @@ sockets.start = function (io) {
       io.to(socket.lobby.id).emit("peopleJoin", socket.username)
       if (!lobby.started && lobby.listPlayer.length > 1) {
         lobby.started = true;
-        lobby.getNextDrawer();
+        
         io.to(socket.lobby.id).emit("announcement",
-          "La partie va commencer!")
-        await sleep(2000);
-        io.to(socket.lobby.id).emit("drawer",
-          lobby.currentDrawer);
-        lobby.currentWord = Dictionnary.tirerMots("en-US");
-        // lobby.currentWord = "hi"
-              //sends the underscored word to the lobby for all players
-      io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
-
-      //sends the full word only to the drawer
-      io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn", lobby.currentWord);
+          "La partie va commencer dans 5 seconds!")
+          io.to(socket.lobby.id).emit("startTimer",
+          4.5)
+          clearInterval(delayTimeout)
+          delayTimeout=generateTimeout(5,goNextTurn)
+        ;
       }
 
     });
 
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!"); 
+      if(!socket.lobby.started)
+      {
+        io.to(socket.lobby.id).emit("receiveChat", socket.username,msg);
+        return;
+      }
       
-      if(socket.id == socket.lobby.currentDrawer.socketID && msg == socket.lobby.currentWord)
+      if((socket.id == socket.lobby.currentDrawer.socketID && msg == socket.lobby.currentWord) || socket.lobby.containsGuessedPlayer(socket.id))
       {
         socket.emit("notAllowedToEnterAnswer");
         return; 
       }
-      io.to(socket.lobby.id).emit("receiveChat", socket.username,msg)
+      
       
 
       if(Algo.compareString(msg,socket.lobby.currentWord) > 0.8 && msg != socket.lobby.currentWord)
@@ -71,20 +93,27 @@ sockets.start = function (io) {
       }
       if(msg == socket.lobby.currentWord)
       {
-        io.to(socket.lobby.id).emit("announcement",socket.username+" guessed it!")
-        lobby.addPoint(socket.id,1);
-        lobby.getNextDrawer();
+        io.to(socket.lobby.id).emit("guessedPlayer",socket.username)
+
+        socket.lobby.addPoint(socket.id,1);
+        socket.lobby.addGuessedPlayer(socket.id)
         io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
-        await sleep(2000);
-        io.to(socket.lobby.id).emit("drawer",
-          lobby.currentDrawer);
-        lobby.currentWord = Dictionnary.tirerMots("en-US");
+        
+        if(socket.lobby.guessed) return;
+        if(socket.lobby.listPlayer.length -1 == socket.lobby.guessedPlayer.length )
+        {
+          goNextTurn();
+          return;
+        }
+        io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds")
+        io.to(socket.lobby.id).emit("startTimer", 20);
+        socket.lobby.guessed = true;
+        clearInterval(delayTimeout)
+        delayTimeout= generateTimeout(20,goNextTurn)
 
-        //sends the underscored word to the lobby for all players
-        io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
-
-        //sends the full word only to the drawer
-        io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn", lobby.currentWord);
+      }
+      else{
+        io.to(socket.lobby.id).emit("receiveChat", socket.username,msg)
       }
       
 
@@ -127,20 +156,7 @@ sockets.start = function (io) {
           socket.lobby.resetGame();
           return;
         }
-      if(socket.id == socket.lobby.currentDrawer.socketID)
-      {
-        lobby.getNextDrawer();
-        if(!lobby.currentDrawer) return;
-        io.to(socket.lobby.id).emit("drawer",
-          lobby.currentDrawer);
-        lobby.currentWord = Dictionnary.tirerMots("en-US");
-
-        //sends the underscored word to the lobby for all players
-        io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(lobby.currentWord));
-
-        //sends the full word only to the drawer
-        io.to(lobby.currentDrawer.socketID).emit("wordToBeDrawn", lobby.currentWord);
-      }
+      if(socket.id == socket.lobby.currentDrawer.socketID) goNextTurn(io,socket)
       
     });
 

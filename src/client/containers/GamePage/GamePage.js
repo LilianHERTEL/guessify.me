@@ -3,9 +3,9 @@
 *
 * List all the features
 */
-import React, { useState, useEffect, useReducer,useRef } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import './style.css';
-import { Box, LinearProgress, Typography, Grid,withStyles ,lighten,useTheme,useMediaQuery } from '@material-ui/core';
+import { Box, LinearProgress, Typography, Grid, withStyles, lighten, useTheme, useMediaQuery } from '@material-ui/core';
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
@@ -18,7 +18,7 @@ import MyPath from './MyPath';
 const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
-
+var interval;
 var socket;
 var pathsArray = [];
 class Point { x = 0; y = 0; }
@@ -34,13 +34,33 @@ const GamePage = (props) => {
   const [listPlayer, setListPlayer] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
-  const [order,setOrder] = useState("...");
+  const [order, setOrder] = useState("...");
   const [currentWord, setCurrentWord] = useState(null);
+  const [progressBarValue, setProgressBarValue] = useState(0);
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const sockid = useRef(null);
-
+  const startTimer = (time) => {
+    if(interval != null)
+    
+    {
+      clearInterval(interval);
+      interval = null;
+    }
+    var curTime = time * 10;
+    interval = setInterval(() => {
+      var percent = curTime / (time * 10) * 100
+      setProgressBarValue(percent)
+      curTime--
+      if (curTime == 0) 
+      {
+        clearInterval(interval)
+        interval = null;
+      }
+      
+    }, 100)
+  }
   const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
@@ -74,24 +94,31 @@ const GamePage = (props) => {
   }
 
   const connect = (username) => {
-    
+
     socket.on('connect', function () {
       socket.emit("findGame", username)
     });
     socket.on('Unauthorized', function (data) {
       console.error(data)
     });
+    socket.on('startTimer', function (time) {
+      startTimer(time)
+    });
     socket.on('joinedGame', function (data) {
-    setChat(chat => [...chat, (<Typography variant="button" align="center" display="block">Connected to Lobby {data.lobby.id}</Typography>)])
+
+      setChat(chat => [...chat, (<Typography variant="button" align="center" display="block">Connected to Lobby {data.lobby.id}</Typography>)])
       sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
       setListPlayer(data.listPlayer);
       var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
-      setOrder( PlayerOrder ? PlayerOrder.order : "...");
+      setOrder(PlayerOrder ? PlayerOrder.order : "...");
     });
-    socket.on('receiveChat', function (username,msg) {
+    socket.on('receiveChat', function (username, msg) {
       setChat(chat => [...chat, (<Typography variant="body2"><b>{username}</b> : {msg}</Typography>)])
+    });
+    socket.on('guessedPlayer', function (username) {
+      setChat(chat => [...chat, (<Typography variant="body2" style={{color:"green"}}><b>{username}</b> guessed the word!</Typography>)])
     });
     socket.on('announcement', function (data) {
       setChat(chat => [...chat, (<Typography variant="subtitle2" align="center" display="block">{data}</Typography>)])
@@ -118,7 +145,7 @@ const GamePage = (props) => {
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
-      socket.emit('requestListPlayer',null);
+      socket.emit('requestListPlayer', null);
       setChat(chat => [...chat, (<Typography variant="overline" align="center" display="block"><b>{data.username}</b> is drawing!</Typography>)])
       setCurrentDrawerName(data.username);
       isDrawing = data.socketID == socket.id;
@@ -173,17 +200,17 @@ const GamePage = (props) => {
   if (!props.location.state)
     return (<Redirect to="/" />)
 
-    const BorderLinearProgress = withStyles({
-      root: {
-        height: 10,
-        marginTop:5,
-        backgroundColor: lighten('#ff6c5c', 0.5),
-      },
-      bar: {
-        borderRadius: 20,
-        backgroundColor: '#ff6c5c',
-      },
-    })(LinearProgress);
+  const BorderLinearProgress = withStyles({
+    root: {
+      height: 10,
+      marginTop: 5,
+      backgroundColor: lighten('#ff6c5c', 0.5),
+    },
+    bar: {
+      borderRadius: 20,
+      backgroundColor: '#ff6c5c',
+    },
+  })(LinearProgress);
 
 
 
@@ -202,46 +229,50 @@ const GamePage = (props) => {
   function TurnInfo() {
     if (currentWord == null)
       return (
-          <Typography variant="h5"  align="center">Waiting for other players...</Typography>
+        <Typography variant="h5" align="center">Waiting for other players...</Typography>
       );
     return (
-        <Box display="flex" justifyContent="space-evenly">
-          {
-            currentWord.charAt(0) == "_" ?
-              <React.Fragment>
-                <Box display="flex" flexDirection="row">
-                  <Typography variant="h5" align="center" color="primary">{currentDrawerName}</Typography>
-                  <Box mr={1}/>
-                  <Typography variant="h5" align="center">is drawing...</Typography>
-                </Box>
-                <Typography variant="h5" align="center">{currentWord}</Typography>
-              </React.Fragment>
-              :
-              <Typography variant="h5" align="center">It's your turn ! The word is "{currentWord}"</Typography>
-          }
-        </Box>
+      <Box display="flex" justifyContent="space-evenly">
+        {
+          currentWord.charAt(0) == "_" ?
+            <React.Fragment>
+              <Box display="flex" flexDirection="row">
+                <Typography variant="h5" align="center" color="primary">{currentDrawerName}</Typography>
+                <Box mr={1} />
+                <Typography variant="h5" align="center">is drawing...</Typography>
+              </Box>
+              <Typography variant="h5" align="center">{currentWord}</Typography>
+            </React.Fragment>
+            :
+            <Typography variant="h5" align="center">It's your turn ! The word is "{currentWord}"</Typography>
+        }
+      </Box>
     );
   }
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('md'));
+  const handleSocketClose = () => {
+    console.log("Closing socket");
+    socket.disconnect();
+  };
 
   return (
     <Box height={1} padding={2} >
       <Grid container spacing={1} className="fullHeight">
         <Grid item md={9} xs={12}>
-          <Box display="flex" height={1} flexDirection="column"  flexGrow={4}>
+          <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
             <Box display="flex" justifyContent="center" alignItems="center">
-            <Box mb={1} className="fullWidth">
-            <TurnInfo />
-            <BorderLinearProgress
-        variant="determinate"
-        color="secondary"
-        value={50}
-      />
-        </Box>
-              
-              
+              <Box mb={1} className="fullWidth">
+                <TurnInfo />
+                <BorderLinearProgress
+                  variant="determinate"
+                  color="primary"
+                  value={progressBarValue}
+                />
+              </Box>
+
+
             </Box>
             <Box>
               {
@@ -259,8 +290,8 @@ const GamePage = (props) => {
           </Box>
         </Grid>
         <Grid item md={3} xs={12}>
-          <Box display="flex" height={1} flexDirection={matches? "column" : "column-reverse"}>
-            <Leaderboard listPlayer={listPlayer} order={order}/>
+          <Box display="flex" height={1} flexDirection={matches ? "column" : "column-reverse"}>
+            <Leaderboard listPlayer={listPlayer} order={order} handleSocketClose={handleSocketClose} />
             <Box mt={1} />
             <Chat chat={chatArray} enterKey={_handleKeyDown} />
           </Box>

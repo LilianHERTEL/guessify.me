@@ -7,6 +7,7 @@ class Lobby {
     this.maxPlayer = 10;
     this.inGame = false;
     this.listPlayer = [];
+    this.guessedPlayer=[];
     this.started = false;
     this.currentDrawerIndex = null;
     this.currentDrawer = null;
@@ -19,6 +20,21 @@ class Lobby {
       pointsTotal: 0,
       order : this.listPlayer.length
     });
+  }
+
+  containsGuessedPlayer(socketID)
+  {
+    return this.guessedPlayer.includes(socketID);
+  }
+
+  addGuessedPlayer(socketID)
+  {
+    this.guessedPlayer.push(socketID);
+  }
+
+  clearGuessedPlayer()
+  {
+    this.guessedPlayer = []
   }
 
   /**
