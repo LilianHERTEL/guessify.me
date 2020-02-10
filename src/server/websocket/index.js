@@ -33,7 +33,7 @@ sockets.start = function (io) {
     }
     const goNextTurn = () => {
       if(socket.lobby.currentWord)
-      io.to(socket.lobby.id).emit("announcement", "The word was" +socket.lobby.currentWord);
+      io.to(socket.lobby.id).emit("announcement", "The word was : " +socket.lobby.currentWord);
       socket.lobby.clearGuessedPlayer()
       socket.lobby.getNextDrawer();
       if(!lobby.currentDrawer) return;
@@ -45,7 +45,7 @@ sockets.start = function (io) {
   
         //sends the full word only to the drawer
         io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
-        io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "Everyone has 2 minutes to guess the word!");
+        io.to(socket.lobby.id).emit("announcement", "Everyone has 2 minutes to guess the word!");
         io.to(socket.lobby.id).emit("startTimer", 120);
         clearInterval(delayTimeout)
           delayTimeout=generateTimeout(120,goNextTurn)
