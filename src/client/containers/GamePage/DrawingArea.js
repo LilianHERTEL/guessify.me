@@ -102,7 +102,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      */
     function secondCheck(socket) {
 
-        console.log('This will run every second!');
+        //console.log('This will run every second!');
         if (!isDrawing.current) return;
         emitPathToServ(socket);
     }
@@ -112,22 +112,24 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      */
     function emitPathToServ(socket) {
         if (workingPath.current === null || workingPath.current.points.length === 0) return;
-        console.log("First emit : " + workingPath.current.points.length);
+        //console.log("First emit : " + workingPath.current.points.length);
         var tmp = new Date(Date.now() - timePassed.current);
         workingPath.current.time = tmp.getTime() / 1000;
         timePassed.current = Date.now();
-        console.log("emitting !");
+        //console.log("emitting !");
         // On désyncronise l'envoie des informations de dessin car sinon ça bloque l'algorithme 
         let promis = new Promise(function (resolve, reject) {
-            console.log("emit promise");
+            //console.log("emit promise");
+            console.log("EMITTING id : " + workingPath.current.id);
             socket.emit('draw', workingPath.current);
         });
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
-
+        
     }
 
 
     function onMouseMove(event) {
+        //console.log("OnMouseMove");
         var svg = document.getElementById("mySvg");
         var pt = svg.createSVGPoint();
         pt.x = event.clientX;
@@ -145,14 +147,14 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         if (((((Date.now() - ancienTemps) > ecartTemps) && distance > distanceMiniAvantCreation)) && dessine) {
             ancienTemps = Date.now();
             setAncienPoint({ x: svgP.x, y: svgP.y });
-
             listPath[listPath.length - 1].points.push({ x: actuelPoint.x, y: actuelPoint.y });
-            setListPath(listPath);
             workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
+            setListPath(listPath);
         }
     }
 
     function onMouseDown(event) {
+        console.log("OnMouseDown");
         updateOldColors(); // adds the current color to color history
         isDrawing.current = true;
         timePassed.current = Date.now();
@@ -161,6 +163,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         endPath.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         setListPath([...listPath, endPath]);
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? 'white' : brushColor, brushSize, 1, (workingPath.current.id == null) ? 0 : workingPath.current.id + 1);
+        console.log("ON MOUSE DOWN CREATION id : " + workingPath.current.id);
         // push the same point twice because a path needs at least 2 points
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
         workingPath.current.points.push({ x: actuelPoint.x, y: actuelPoint.y });
@@ -168,12 +171,13 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
     function onMouseUp(event) {
         isDrawing.current = false;
-        console.log("ON MOUSE UP");
+        console.log("OnMouseUp");
         emitPathToServ(socket);
         setDessine(false);
     }
 
     function onMouseLeave(event) {
+        console.log("OnMouseLeave");
         setDessine(false);
     }
 
