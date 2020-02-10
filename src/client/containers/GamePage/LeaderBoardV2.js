@@ -142,6 +142,7 @@ function LeaderBoard({listPlayer,order,handleSocketClose}) {
   //construction des styles
   const classes = useStyles();
 
+  
   return (
     <Paper>
       <AppBar position="static" className={classes.header}>
@@ -150,7 +151,7 @@ function LeaderBoard({listPlayer,order,handleSocketClose}) {
             LEADERBOARD
           </Typography>
           
-          
+
           <div>
             <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleSettingsClick}>
               <SettingsIcon fontSize="small" />
