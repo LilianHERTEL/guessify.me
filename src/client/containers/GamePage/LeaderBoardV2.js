@@ -22,6 +22,10 @@ const useStyles = makeStyles(theme => ({
     borderTopLeftRadius: "inherit",
     borderTopRightRadius: "inherit",
     boxShadow: "none",
+    minHeight: "44px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
   },
   bottom: {
     backgroundColor: "#3f51b5",

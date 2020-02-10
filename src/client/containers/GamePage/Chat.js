@@ -9,6 +9,10 @@ const useStyles = makeStyles(theme => ({
     borderTopLeftRadius: "inherit",
     borderTopRightRadius: "inherit",
     boxShadow: "none",
+    minHeight: "44px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
   },
   bottom: {
     backgroundColor: "#3f51b5",
@@ -34,11 +38,11 @@ function Chat(prop) {
     <Box flexGrow={1} height={1}>
       <Paper>
         <AppBar position="static" className={classes.header}>
-          <Toolbar>
+          <Box display="flex" alignItems="center" ml={2}>
             <Typography variant="h6" className={classes.title}>
               LEADERBOARD
             </Typography>
-          </Toolbar>
+          </Box>
         </AppBar>
         <Box height={1}>
           <Box display="flex" flexDirection="column" height={1}>
