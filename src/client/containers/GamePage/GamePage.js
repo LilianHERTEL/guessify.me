@@ -211,17 +211,7 @@ const GamePage = (props) => {
       backgroundColor: '#ff6c5c',
     },
   })(LinearProgress);
-
-
-
-  /**
-   * The component used to display the word to be drawn as a string composed of "_" characters
-   */
-  function CurrentWord() {
-    return (
-      <Typography variant="h4" align="center">{currentWord}</Typography>
-    );
-  }
+  
 
   /**
    * The components that displays the name of the drawer and the hidden word, or the full word for the drawer
