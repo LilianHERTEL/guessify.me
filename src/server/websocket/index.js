@@ -77,17 +77,17 @@ sockets.start = function (io) {
 
     socket.on('sendChat', async function (msg) {
       if (!socket.isInGame ) return socket.emit("Unauthorized", "You are not allowed to send this command!"); 
-      
-      if(!socket.lobby.started)
-      {
-        io.to(socket.lobby.id).emit("receiveChat", socket.username,msg);
-        return;
-      }
       if((msg == socket.lobby.currentWord && socket.lobby.containsGuessedPlayer(socket.id)) || socket.id == socket.lobby.currentDrawer.socketID )
       {
         socket.emit("notAllowedToEnterAnswer");
         return; 
       }
+      if(!socket.lobby.started)
+      {
+        io.to(socket.lobby.id).emit("receiveChat", socket.username,msg);
+        return;
+      }
+
       
       
 
