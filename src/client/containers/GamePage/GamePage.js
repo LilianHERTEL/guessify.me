@@ -70,7 +70,8 @@ const GamePage = (props) => {
     var { x, y } = myPath.points.shift();
     setListPath(listpath => {
       if (listpath.length === 0) return [];
-      (listpath.find((path) => path.id === myPath.id)).points.push({ x, y });
+      var pathTMP = (listpath.find((path) => path.id === myPath.id));
+      if(pathTMP != undefined) pathTMP.points.push({ x, y });
       return listpath;
     });
     forceUpdate();
