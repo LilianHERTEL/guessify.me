@@ -150,6 +150,7 @@ function LeaderBoard({listPlayer,order,handleSocketClose}) {
             LEADERBOARD
           </Typography>
           
+          
           <div>
             <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleSettingsClick}>
               <SettingsIcon fontSize="small" />
