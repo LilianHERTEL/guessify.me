@@ -3,7 +3,7 @@ var router = express.Router();
 const { exec } = require("child_process");
 
 router.post('/trigger', function(req, res){
-    exec("pwd", (error, stdout, stderr) => {
+    exec("sh ../../deploy.sh", (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
             return;
