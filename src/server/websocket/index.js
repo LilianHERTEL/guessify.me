@@ -33,7 +33,7 @@ sockets.start = function (io) {
     }
     const goNextTurn = () => {
       if(socket.lobby.currentWord)
-      io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "The word was" +socket.lobby.currentWord);
+      io.to(socket.lobby.id).emit("announcement", "The word was" +socket.lobby.currentWord);
       socket.lobby.clearGuessedPlayer()
       socket.lobby.getNextDrawer();
       if(!lobby.currentDrawer) return;
