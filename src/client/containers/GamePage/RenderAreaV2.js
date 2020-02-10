@@ -93,7 +93,7 @@ const RenderAreaV2 = (props) => {
         const y = current.y + Math.sin(angle) * length;
 
         if (x < 20 && y < 20) {
-            console.log("x = " + x + " y = " + y);
+            //console.log("x = " + x + " y = " + y);
         }
 
         return [x, y];

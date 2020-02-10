@@ -70,7 +70,7 @@ const GamePage = (props) => {
     var { x, y } = myPath.points.shift();
     setListPath(listpath => {
       if (listpath.length === 0) return [];
-      listpath[listpath.length - 1].points.push({ x, y });
+      (listpath.find((path) => path.id === myPath.id)).points.push({ x, y });
       return listpath;
     });
     forceUpdate();
@@ -156,22 +156,22 @@ const GamePage = (props) => {
     socket.on('drawCmd', async function (data) {
       if (drawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      console.log("//////// VIEWER DATA : " + JSON.stringify(data.id));
       setListPath(path => {
         if (path.length == 0 || path[path.length - 1].id != data.id) {
-          if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
+          //if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
           return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
         }
         else {
-          console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
+          //console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
           return [...path];
         }
       });
 
       if (!isRendering)
         await displayPathsArray();
-      else
-        console.log("IS RENDERING : TRUE");
+      // else
+      //   //console.log("IS RENDERING : TRUE");
     });
     socket.on('clearDrawing', () => {
       console.log("CLEARING DrawingRenderArea");
