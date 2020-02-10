@@ -177,6 +177,10 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         setDessine(false);
     }
 
+    function disableDrag(event) {
+        event.preventDefault();
+    }
+
     return (
         <Box height={svgBoxHeight} mb={1}>
             <Paper className="fullHeight">
@@ -196,11 +200,12 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     version="1.1"
                     baseProfile="full"
-                    preserveAspectRatio="xMidYMid">
+                    preserveAspectRatio="xMidYMid"
+                    onDragStart={disableDrag}>
                     {
-                        listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+                        listPath.map((MyPath, index) => <path onDragStart={disableDrag} d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
-                    {mousep !== null ? <circle cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
+                    {mousep !== null ? <circle onDragStart={disableDrag} cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
                 </svg>
             </Paper>
         </Box>
