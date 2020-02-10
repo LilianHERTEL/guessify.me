@@ -41,7 +41,7 @@ sockets.start = function (io) {
   
         //sends the full word only to the drawer
         io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
-        io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "Everyone have 2 minutes to guess the word!");
+        io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "Everyone has 2 minutes to guess the word!");
         io.to(socket.lobby.id).emit("startTimer", 120);
         clearInterval(delayTimeout)
           delayTimeout=generateTimeout(120,goNextTurn)
@@ -61,7 +61,7 @@ sockets.start = function (io) {
         lobby.started = true;
         
         io.to(socket.lobby.id).emit("announcement",
-          "La partie va commencer dans 5 seconds!")
+          "The game will start in 5 seconds!")
           io.to(socket.lobby.id).emit("startTimer",
           4.5)
           clearInterval(delayTimeout)
@@ -72,7 +72,7 @@ sockets.start = function (io) {
     });
 
     socket.on('sendChat', async function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!"); 
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!"); 
       if(!socket.lobby.started)
       {
         io.to(socket.lobby.id).emit("receiveChat", socket.username,msg);
@@ -120,23 +120,23 @@ sockets.start = function (io) {
     });
 
     socket.on('draw', function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
       io.to(socket.lobby.id).emit('drawCmd', msg);
     });
 
     socket.on('clearDrawing', function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
       io.to(socket.lobby.id).emit('clearDrawing', msg);
     });
 
     socket.on('requestListPlayer', function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
       io.to(socket.lobby.id).emit('listPlayer', {listPlayer : socket.lobby.listPlayer});
     });
 
     /*
     socket.on('requestListPlayer', function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
       io.to(socket.lobby.id).emit('listPlayer', socket.lobby);
     });
     */
@@ -161,12 +161,12 @@ sockets.start = function (io) {
     });
 
     socket.on('sendWordList', function (wordlist) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
       io.to(socket.lobby.id).emit('receiveWordList', wordlist);
     });
 
     socket.on('drawingSideOption', function (option) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed send this command!");
+      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
       io.to(socket.lobby.id).emit('viewerSideOption', option);
       console.log(JSON.stringify(option));
     });
