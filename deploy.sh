@@ -23,4 +23,4 @@ curl -X POST -H "Content-Type: multipart/form-data" -F "content=$PROJECT_NAME - 
 pm2 reload $PM2_NAME --update-env
 
 
-curl -X POST -H "Content-Type: multipart/form-data" -F "content=$PROJECT_NAME - Deploy finished" "https://discordapp.com/api/webhooks/398475587829760001/OyQXYgh2pa3E5sDwVRMRIpGBSONnxtdkmfDd-9ovdcffh4LrbKePMqBrBpqjjaqbZ_tU"
+curl -X POST -H "Content-Type: multipart/form-data" -F "content=$PROJECT_NAME - Deploy finished" "$discord_url"
