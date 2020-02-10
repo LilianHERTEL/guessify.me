@@ -4,7 +4,7 @@ const express = require('express');
 
 const { resolve } = require('path');
 const logger = require('./util//logger');
-
+const path = require("path")
 const argv = require('./util/argv');
 const port = require('./util//port');
 const websocket = require('./websocket');
@@ -23,6 +23,7 @@ const app = express();
 var https = require('http').createServer(app);
 var io = require('socket.io')(https);
 var loginRoute = require('./routes/login.js');
+var deployRoute = require('./routes/deploy.js');
 
 console.log(__dirname);
 
@@ -39,7 +40,7 @@ app.use(express.json());
 app.use(express.static(__dirname+"/../../dist", { dotfiles: 'allow' } ));
 // In production we need to pass these values in instead of relying on webpack
 //Pris 
-launchDataBase(app,io);
+
 
 passport.serializeUser(function(user, done) {
   user.password = null
@@ -71,6 +72,7 @@ passport.use(new LocalStrategy(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/api/auth', loginRoute);
+app.use('/deploy', deployRoute);
 app.get('*', (req,res) =>{
   res.sendFile(path.join(__dirname+"/../../dist/index.html"))
 });
@@ -83,3 +85,4 @@ websocket.start(io);
 https.listen(port, function(){
   logger.appStarted(port, prettyHost);
 });
+launchDataBase(app,io);

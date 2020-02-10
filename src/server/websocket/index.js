@@ -28,8 +28,12 @@ sockets.start = function (io) {
   }
   io.lobby = new Map();
   io.on('connection', function (socket) {
-    const generateTimeout = (time,callback) => setTimeout(callback,time*1000)
+    const generateTimeout = (time,callback) => {
+      setTimeout(callback,time*1000)
+    }
     const goNextTurn = () => {
+      if(socket.lobby.currentWord)
+      io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "The word was" +socket.lobby.currentWord);
       socket.lobby.clearGuessedPlayer()
       socket.lobby.getNextDrawer();
       if(!lobby.currentDrawer) return;
@@ -72,18 +76,18 @@ sockets.start = function (io) {
     });
 
     socket.on('sendChat', async function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!"); 
+      if (!socket.isInGame ) return socket.emit("Unauthorized", "You are not allowed to send this command!"); 
+      if((msg == socket.lobby.currentWord && socket.lobby.containsGuessedPlayer(socket.id)) || socket.id == socket.lobby.currentDrawer.socketID )
+      {
+        socket.emit("notAllowedToEnterAnswer");
+        return; 
+      }
       if(!socket.lobby.started)
       {
         io.to(socket.lobby.id).emit("receiveChat", socket.username,msg);
         return;
       }
-      
-      if((socket.id == socket.lobby.currentDrawer.socketID && msg == socket.lobby.currentWord) || socket.lobby.containsGuessedPlayer(socket.id))
-      {
-        socket.emit("notAllowedToEnterAnswer");
-        return; 
-      }
+
       
       
 
