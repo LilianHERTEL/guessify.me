@@ -189,10 +189,10 @@ const GamePage = (props) => {
     connect(props.location.state.username);
   }, []);
 
-  const _handleKeyDown = (e) => {
+  const _handleKeyDown = (e,username) => {
     if (e.key === 'Enter') {
       if (e.target.value == "") return
-      socket.emit("sendChat", e.target.value)
+      socket.emit("sendChat",username + e.target.value)
       e.target.value = ""
     }
   }
