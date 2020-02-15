@@ -104,11 +104,6 @@ sockets.start = function (io) {
         io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
         
         if(socket.lobby.guessed) return;
-        if(socket.lobby.listPlayer.length -1 == socket.lobby.guessedPlayer.length )
-        {
-          goNextTurn();
-          return;
-        }
         io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds")
         io.to(socket.lobby.id).emit("startTimer", 20);
         socket.lobby.guessed = true;
