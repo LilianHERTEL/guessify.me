@@ -129,7 +129,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
 
     function onMouseMove(event) {
-        //console.log("OnMouseMove");
+        event.preventDefault();
         var svg = document.getElementById("mySvg");
         var pt = svg.createSVGPoint();
         pt.x = event.clientX;
@@ -154,6 +154,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     }
 
     function onMouseDown(event) {
+        event.preventDefault();
         console.log("OnMouseDown");
         updateOldColors(); // adds the current color to color history
         isDrawing.current = true;
@@ -185,20 +186,36 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         event.preventDefault();
     }
 
+
+    function onMyTouchEnd(event){
+        console.log("##############################################################");
+    }
+
+    /*
+    
+                    onTouchCancelCapture={(e) => onMouseUp(e)}
+                    onTouchEndCapture={(e) => onMouseUp(e)}
+                    onTouchStartCapture={(e) => onMouseDown(e)}
+                    onTouchMoveCapture={(e) => onMouseMove(e)}
+
+                    onMouseUp={(e) => onMouseUp(e)}
+                    onTouchMove={(e) => onMouseMove(e)}
+    */
     return (
         <Box height={svgBoxHeight} mb={1}>
             <Paper className="fullHeight">
                 <svg
                     id="mySvg"
                     className="drawingArea"
-                    onTouchCancelCapture={(e) => onMouseUp(e)}
-                    onTouchEndCapture={(e) => onMouseUp(e)}
-                    onTouchStartCapture={(e) => onMouseDown(e)}
-                    onTouchMoveCapture={(e) => onMouseMove(e)}
-                    onMouseMove={(e) => onMouseMove(e)}
-                    onMouseDown={(e) => onMouseDown(e)}
-                    onMouseUp={(e) => onMouseUp(e)}
-                    onMouseLeave={(e) => onMouseLeave(e)}
+                    onTouchEnd={(e)=>onMyTouchEnd(e)}
+                    onTouchStart={(e)=>onMyTouchEnd(e)}
+                    onPointerUp ={(e) => onMouseUp(e)}
+                    onPointerStart ={(e) => onMouseDown(e)}
+                    onPointerMove ={(e) => onMouseMove(e)}
+                    onPointerDown ={(e) => onMouseDown(e)}
+                    onPointerLeave ={(e) => onMouseLeave(e)}
+                    onPointerOut = {(e)=>console.log("##ON POINTER OUT")}
+
                     viewBox={`0 0 ${1060} ${582}`}
                     xmlns="http://www.w3.org/2000/svg"
                     xmlnsXlink="http://www.w3.org/1999/xlink"
