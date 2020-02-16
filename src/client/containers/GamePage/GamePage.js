@@ -269,7 +269,7 @@ const GamePage = (props) => {
               {
                 drawing ?
                   ( // drawer view
-                    <DrawerArea socket={socket} />
+                    <DrawerArea socket={socket} onTouchStart={(e)=>false}/>
                   ) :
                   ( // guesser view
                     <Box id="svgArea">

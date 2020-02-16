@@ -47,30 +47,27 @@ sockets.start = function (io) {
         io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
         io.to(socket.lobby.id).emit("announcement", "Everyone has 2 minutes to guess the word!");
         io.to(socket.lobby.id).emit("startTimer", 120);
-        clearInterval(delayTimeout)
-          delayTimeout=generateTimeout(120,goNextTurn)
+        clearInterval(delayTimeout);
+        delayTimeout=generateTimeout(120,goNextTurn);
     }
     socket.isInGame = false;
     socket.on('findGame', async function (username) {
       var lobby = findLobby(io);
-      lobby.join(socket.id, username)
+      lobby.join(socket.id, username);
       socket.username = username;
       socket.lobby = lobby;
       socket.join(lobby.id);
       socket.isInGame = true;
-      socket.emit("joinedGame", { lobby })
-      io.to(socket.lobby.id).emit("updateLobby", { lobby, listPlayer: lobby.listPlayer })
-      io.to(socket.lobby.id).emit("peopleJoin", socket.username)
+      socket.emit("joinedGame", { lobby });
+      io.to(socket.lobby.id).emit("updateLobby", { lobby, listPlayer: lobby.listPlayer });
+      io.to(socket.lobby.id).emit("peopleJoin", socket.username);
+
       if (!lobby.started && lobby.listPlayer.length > 1) {
         lobby.started = true;
-        
-        io.to(socket.lobby.id).emit("announcement",
-          "The game will start in 5 seconds!")
-          io.to(socket.lobby.id).emit("startTimer",
-          4.5)
-          clearInterval(delayTimeout)
-          delayTimeout=generateTimeout(5,goNextTurn)
-        ;
+        io.to(socket.lobby.id).emit("announcement","The game will start in 5 seconds!");
+        io.to(socket.lobby.id).emit("startTimer",4.5);
+        clearInterval(delayTimeout);
+        delayTimeout=generateTimeout(5,goNextTurn);
       }
 
     });

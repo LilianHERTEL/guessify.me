@@ -4,6 +4,8 @@ import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
 import { estPointAZero, distanceBtw, svgPath, bezierCommand } from './BezierTools';
+import CanvasDraw from "react-canvas-draw";
+
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
@@ -84,10 +86,10 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     }, [socket]);
     /************************************/
 
-    var distanceMiniAvantCreation = 3;
+    var distanceMiniAvantCreation = 1;
     var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
-    var ecartTemps = 20;
+    var ecartTemps = 5;
 
     React.useEffect(() => {
         timePassed.current;
@@ -130,6 +132,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
     function onMouseMove(event) {
         event.preventDefault();
+        event.stopPropagation();
         var svg = document.getElementById("mySvg");
         var pt = svg.createSVGPoint();
         pt.x = event.clientX;
@@ -155,6 +158,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
     function onMouseDown(event) {
         event.preventDefault();
+        event.stopPropagation();
         console.log("OnMouseDown");
         updateOldColors(); // adds the current color to color history
         isDrawing.current = true;
@@ -184,15 +188,16 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
     function disableDrag(event) {
         event.preventDefault();
+        event.stopPropagation();
     }
 
 
     function onMyTouchEnd(event){
+        return false;
         console.log("##############################################################");
     }
 
     /*
-    
                     onTouchCancelCapture={(e) => onMouseUp(e)}
                     onTouchEndCapture={(e) => onMouseUp(e)}
                     onTouchStartCapture={(e) => onMouseDown(e)}
@@ -202,11 +207,16 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
                     onTouchMove={(e) => onMouseMove(e)}
     */
     return (
-        <Box height={svgBoxHeight} mb={1}>
-            <Paper className="fullHeight">
-                <svg
-                    id="mySvg"
-                    className="drawingArea"
+        <Box height={svgBoxHeight} mb={1} onTouchStart={(e)=>onMyTouchEnd(e)}>
+            <Paper className="fullHeight" onTouchStart={(e)=>onMyTouchEnd(e)}>
+                <CanvasDraw className="drawingArea" viewBox={`0 0 ${1060} ${582}`}/>
+            </Paper>
+        </Box>
+    );
+}
+
+/*
+<canvas 
                     onTouchEnd={(e)=>onMyTouchEnd(e)}
                     onTouchStart={(e)=>onMyTouchEnd(e)}
                     onPointerUp ={(e) => onMouseUp(e)}
@@ -215,22 +225,24 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
                     onPointerDown ={(e) => onMouseDown(e)}
                     onPointerLeave ={(e) => onMouseLeave(e)}
                     onPointerOut = {(e)=>console.log("##ON POINTER OUT")}
+                >
+                    <svg
+                        id="mySvg"
+                        className="drawingArea"
+                        viewBox={`0 0 ${1060} ${582}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlnsXlink="http://www.w3.org/1999/xlink"
+                        version="1.1"
+                        baseProfile="full"
+                        preserveAspectRatio="xMidYMid"
+                        onDragStart={disableDrag}>
+                        {
+                            listPath.map((MyPath, index) => <path onDragStart={disableDrag} d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+                        }
+                        {mousep !== null ? <circle onDragStart={disableDrag} cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
+                    </svg>
+                </canvas>
 
-                    viewBox={`0 0 ${1060} ${582}`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlnsXlink="http://www.w3.org/1999/xlink"
-                    version="1.1"
-                    baseProfile="full"
-                    preserveAspectRatio="xMidYMid"
-                    onDragStart={disableDrag}>
-                    {
-                        listPath.map((MyPath, index) => <path onDragStart={disableDrag} d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
-                    }
-                    {mousep !== null ? <circle onDragStart={disableDrag} cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
-                </svg>
-            </Paper>
-        </Box>
-    );
-}
 
+*/
 export default DrawingArea;
