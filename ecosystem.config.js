@@ -2,7 +2,7 @@ module.exports = {
   "apps": [{
       "name": "guessify.me",
       "instances": 1,
-      "script": "index.js",
+      "script": "src/server/index.js",
       "args": [],
       "watch": false,
       "node_args": "",
