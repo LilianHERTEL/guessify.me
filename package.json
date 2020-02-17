@@ -19,6 +19,7 @@
     "babel-polyfill": "^6.26.0",
     "bcrypt": "3.0.6",
     "connect-mongo": "^3.2.0",
+    "dotenv": "^8.2.0",
     "express": "^4.16.3",
     "express-session": "^1.17.0",
     "js-cookie": "^2.2.1",

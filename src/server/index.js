@@ -1,6 +1,9 @@
-/* eslint consistent-return:0 */
-console.log(__dirname+"/../../dist")
+
 const express = require('express');
+if(process.env.NODE_ENV != "production")
+{
+  require('dotenv').config()
+}
 
 const { resolve } = require('path');
 const logger = require('./util//logger');
@@ -12,16 +15,22 @@ const websocket = require('./websocket');
 const mongoose = require('mongoose') //Pris
 
 const app = express();
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
 
-const credentials = {
-	key: privateKey,
-	cert: certificate,
-	ca: ca
-};
-var https = require('https').createServer(credentials,app);
+if(process.env.NODE_ENV == "production")
+{
+  const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
+  const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
+  const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
+  
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+  };
+  var https = require('https').createServer(credentials,app);
+}
+else
+var https = require('http').createServer(app);
 var io = require('socket.io')(https);
 var loginRoute = require('./routes/login.js');
 var deployRoute = require('./routes/deploy.js');
