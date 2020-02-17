@@ -35,6 +35,7 @@ const GamePage = (props) => {
   const [drawing, setDrawing] = useState(false);
   const [currentDrawerName, setCurrentDrawerName] = useState(null);
   const [order, setOrder] = useState("...");
+  const [previousWord, setPreviousWord] = useState(null);
   const [currentWord, setCurrentWord] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
   //drawing rendering :
@@ -146,6 +147,11 @@ const GamePage = (props) => {
     });
     socket.on('drawer', function (data) {
       socket.emit('requestListPlayer', null);
+      if(previousWord!=null){
+        setChat(chat => [...chat, (<Typography variant="overline" align="center" display="block">The previous word was: <b>{data.previousWord}</b>!</Typography>)])
+      }
+      var previousWord
+      previousWord=currentWord
       setChat(chat => [...chat, (<Typography variant="overline" align="center" display="block"><b>{data.username}</b> is drawing!</Typography>)])
       setCurrentDrawerName(data.username);
       isDrawing = data.socketID == socket.id;
@@ -189,10 +195,10 @@ const GamePage = (props) => {
     connect(props.location.state.username);
   }, []);
 
-  const _handleKeyDown = (e,username) => {
+  const _handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       if (e.target.value == "") return
-      socket.emit("sendChat",username + e.target.value)
+      socket.emit("sendChat",e.target.value)
       e.target.value = ""
     }
   }
@@ -257,6 +263,11 @@ const GamePage = (props) => {
     socket.disconnect();
   };
 
+  function endTurn(){
+    return(
+      <Typography variant="h5" align="center">end of the turn! The word was: "{currentWord}"</Typography>
+    );
+  }
   return (
     <Box height={1} padding={2} >
       <Grid container spacing={1} className="fullHeight">

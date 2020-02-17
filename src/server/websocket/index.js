@@ -108,8 +108,11 @@ sockets.start = function (io) {
         io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds")
         io.to(socket.lobby.id).emit("startTimer", 20);
         socket.lobby.guessed = true;
+        
         clearInterval(delayTimeout)
+        
         delayTimeout= generateTimeout(20,goNextTurn)
+        
 
       }
       else{
