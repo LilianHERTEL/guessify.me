@@ -31,6 +31,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     const workingPath = React.useRef(new MyPath([], "#000000", 5));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
+    const drawingZoneRef = React.useRef(null);
 
 
     /****************************************************************************/
@@ -40,7 +41,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      * Used to initialize and update responsive svg area size (height)
      */
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
-
+    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
     /**
      * (Hook version of "componentDidMount" lifecycle method)
      * **
@@ -54,6 +55,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         const w = document.getElementById('svgArea').clientWidth;
         const h = w / 1060 * 582;
         setSvgBoxHeight(h);
+        setSvgBoxWidth(w);
     }, []);
 
     /**
@@ -63,6 +65,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         const newWidth = document.getElementById('svgArea').clientWidth;
         const newHeight = newWidth / 1060 * 582;
         setSvgBoxHeight(newHeight);
+        setSvgBoxWidth(newWidth);
     }
     /****************************************************************************/
     /****************************************************************************/
@@ -90,6 +93,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
     var ecartTemps = 5;
+    var saveableCanvas = null;
 
     React.useEffect(() => {
         timePassed.current;
@@ -105,7 +109,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     function secondCheck(socket) {
 
         //console.log('This will run every second!');
-        if (!isDrawing.current) return;
+        //if (!isDrawing.current) return;
         emitPathToServ(socket);
     }
 
@@ -113,7 +117,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket) {
-        if (workingPath.current === null || workingPath.current.points.length === 0) return;
+        //if (workingPath.current === null || workingPath.current.points.length === 0) return;
         //console.log("First emit : " + workingPath.current.points.length);
         var tmp = new Date(Date.now() - timePassed.current);
         workingPath.current.time = tmp.getTime() / 1000;
@@ -123,7 +127,9 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         let promis = new Promise(function (resolve, reject) {
             //console.log("emit promise");
             console.log("EMITTING id : " + workingPath.current.id);
-            socket.emit('draw', workingPath.current);
+            //socket.emit('draw', workingPath.current);
+            //if(drawingZoneRef.current != null) console.log("DATA TO EMMIT : " + JSON.stringify(drawingZoneRef.current.getSaveData()));
+            if(drawingZoneRef.current != null) socket.emit('draw',drawingZoneRef.current.getSaveData());
         });
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
         
@@ -209,7 +215,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     return (
         <Box height={svgBoxHeight} mb={1} onTouchStart={(e)=>onMyTouchEnd(e)}>
             <Paper className="fullHeight" onTouchStart={(e)=>onMyTouchEnd(e)}>
-                <CanvasDraw className="drawingArea" viewBox={`0 0 ${1060} ${582}`}/>
+                <CanvasDraw ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
             </Paper>
         </Box>
     );

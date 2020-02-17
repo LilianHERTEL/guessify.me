@@ -38,7 +38,7 @@ const GamePage = (props) => {
   const [currentWord, setCurrentWord] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
   //drawing rendering :
-  const [listPath, setListPath] = React.useState([]);
+  const [listPath, setListPath] = React.useState("");
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const sockid = useRef(null);
   const startTimer = (time) => {
@@ -152,12 +152,14 @@ const GamePage = (props) => {
       isDrawing = data.socketID == socket.id;
       setDrawing(data.socketID == socket.id);
       //On vide la listPath à chaque fois 
-      setListPath([]);
+      setListPath("");
     });
     socket.on('drawCmd', async function (data) {
       if (drawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("//////// VIEWER DATA : " + JSON.stringify(data.id));
+      console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      setListPath(data);
+      /*
       setListPath(path => {
         if (path.length == 0 || path[path.length - 1].id != data.id) {
           //if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
@@ -168,15 +170,14 @@ const GamePage = (props) => {
           return [...path];
         }
       });
-
+      
       if (!isRendering)
         await displayPathsArray();
-      // else
-      //   //console.log("IS RENDERING : TRUE");
+      */
     });
     socket.on('clearDrawing', () => {
       console.log("CLEARING DrawingRenderArea");
-      setListPath([]);
+      setListPath("");
     });
     socket.on('disconnect', function () { });
   }

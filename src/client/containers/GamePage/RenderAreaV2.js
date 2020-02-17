@@ -2,8 +2,8 @@ import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 import MyPath from './MyPath';
-//import {controlPoint,line,bezierCommand,svgPath} from './BezierTools';
-//var BezierTools =  import('./BezierTools');
+import CanvasDraw from "react-canvas-draw";
+
 var path;
 var ancienTemps = Date.now();
 var pathsArray = [];
@@ -11,7 +11,7 @@ class Point { x = 0; y = 0; }
 var isRendering = false;
 
 const RenderAreaV2 = (props) => {
-
+    const drawingZoneRef = React.useRef(null);
     /****************************************************************************/
     /****************************************************************************/
     /* SVG AREA SIZING UTILS
@@ -19,7 +19,7 @@ const RenderAreaV2 = (props) => {
      * Used to initialize and update responsive svg area size (height)
      */
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
-
+    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
     /**
      * (Hook version of "componentDidMount" lifecycle method)
      * **
@@ -33,6 +33,7 @@ const RenderAreaV2 = (props) => {
         const w = document.getElementById('svgArea').clientWidth;
         const h = w / 1060 * 582;
         setSvgBoxHeight(h);
+        setSvgBoxWidth(w);
     }, []);
 
     /**
@@ -42,6 +43,7 @@ const RenderAreaV2 = (props) => {
         const newWidth = document.getElementById('svgArea').clientWidth;
         const newHeight = newWidth / 1060 * 582;
         setSvgBoxHeight(newHeight);
+        setSvgBoxWidth(newWidth);
     }
     /****************************************************************************/
     /****************************************************************************/
@@ -134,6 +136,14 @@ const RenderAreaV2 = (props) => {
     return (
         <Box height={svgBoxHeight}>
             <Paper>
+                <CanvasDraw disabled={true} saveData={props.listPath} ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+            </Paper>
+        </Box>
+    );
+}
+
+
+/*
                 <svg
                     id="mySvg"
                     className="drawingRenderArea"
@@ -147,9 +157,5 @@ const RenderAreaV2 = (props) => {
                         props.listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
                 </svg>
-            </Paper>
-        </Box>
-    );
-}
-
+*/
 export default RenderAreaV2;
