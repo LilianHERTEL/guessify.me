@@ -49,6 +49,12 @@ const useStyles = makeStyles(theme => ({
   button: {
     width: "100%",
     justifyContent: "space-between",
+  },
+  leaderboardPaper: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
   }
 }));
 
@@ -149,123 +155,125 @@ function LeaderBoard({ listPlayer, order, handleSocketClose }) {
   const classes = useStyles();
 
   return (
-    <Box flexGrow={1} height={1}>
-    <Paper>
-      <AppBar position="static" className={classes.header}>
-        <Box display="flex" alignItems="center" ml={2}>
-          <Typography variant="h6" className={classes.title}>
-            LEADERBOARD
-          </Typography>
-
-          <div>
-            <IconButton
-              color="inherit"
-              aria-label="menu"
-              aria-describedby={id}
-              onClick={handleSettingsClick}
-            >
-              <SettingsIcon fontSize="small" />
-            </IconButton>
-
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleSettingsClose}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-            >
-              <Button
-                color="primary"
-                className={classes.button}
-                onClick={handleStatsClick}
-                startIcon={<EqualizerIcon />}
-              >
-                Statistics
-              </Button>
-              <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                className={classes.modal}
-                open={openStats}
-                onClose={handleStatsClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                  timeout: 500
-                }}
-              >
-                <Fade in={openStats}>
-                  <Box justify="center">
-                    <Typography variant="h6" className={classes.colorWhite}>
-                      Game statistics
-                    </Typography>
-                    <Paper>
-                      <Box px={1}>
-                        <Divider />
-                        <Typography>{listPlayer.length} players</Typography>
-                        <Typography>WIP</Typography>
-                      </Box>
-                    </Paper>
-                  </Box>
-                </Fade>
-              </Modal>
+    <Box flexGrow={1} height={0.7}>
+      <Paper className={classes.leaderboardPaper}>
+        <Box>
+          <AppBar position="static" className={classes.header}>
+            <Box display="flex" alignItems="center" ml={2}>
+              <Typography variant="h6" className={classes.title}>
+                LEADERBOARD
+              </Typography>
 
               <div>
-                <Link
-                  to="/"
-                  onClick={e => {
-                    handleSocketClose();
+                <IconButton
+                  color="inherit"
+                  aria-label="menu"
+                  aria-describedby={id}
+                  onClick={handleSettingsClick}
+                >
+                  <SettingsIcon fontSize="small" />
+                </IconButton>
+
+                <Popover
+                  id={id}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleSettingsClose}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
                   }}
                 >
                   <Button
-                    color="secondary"
+                    color="primary"
                     className={classes.button}
-                    startIcon={<ExitToAppIcon />}
+                    onClick={handleStatsClick}
+                    startIcon={<EqualizerIcon />}
                   >
-                    Leave game
+                    Statistics
                   </Button>
-                </Link>
+                  <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={openStats}
+                    onClose={handleStatsClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                      timeout: 500
+                    }}
+                  >
+                    <Fade in={openStats}>
+                      <Box justify="center">
+                        <Typography variant="h6" className={classes.colorWhite}>
+                          Game statistics
+                        </Typography>
+                        <Paper>
+                          <Box px={1}>
+                            <Divider />
+                            <Typography>{listPlayer.length} players</Typography>
+                            <Typography>WIP</Typography>
+                          </Box>
+                        </Paper>
+                      </Box>
+                    </Fade>
+                  </Modal>
+
+                  <div>
+                    <Link
+                      to="/"
+                      onClick={e => {
+                        handleSocketClose();
+                      }}
+                    >
+                      <Button
+                        color="secondary"
+                        className={classes.button}
+                        startIcon={<ExitToAppIcon />}
+                      >
+                        Leave game
+                      </Button>
+                    </Link>
+                  </div>
+                </Popover>
               </div>
-            </Popover>
-          </div>
+            </Box>
+          </AppBar>
+          <List disablePadding className={classes.list}>
+            {listPlayer.sort(sortPlayers).map((player, index) => (
+              <PlayerList
+                key={index}
+                index={index}
+                order={player.order}
+                username={player.username}
+                id={player.socketID}
+                score={player.pointsTotal}
+              />
+            ))}
+          </List>
         </Box>
-      </AppBar>
-      <List disablePadding className={classes.list}>
-        {listPlayer.sort(sortPlayers).map((player, index) => (
-          <PlayerList
-            key={index}
-            index={index}
-            order={player.order}
-            username={player.username}
-            id={player.socketID}
-            score={player.pointsTotal}
-          />
-        ))}
-      </List>
-      <Grid
-        container
-        alignItems="center"
-        justify="center"
-        align="center"
-        className={classes.bottom}
-      >
-        {order === 0 ? (
-          <span> You are drawing !</span>
-        ) : (
-          <span>
-            You will draw in <span className={classes.position}>{order}</span>{" "}
-            rounds.
-          </span>
-        )}
-      </Grid>
-    </Paper>
+        <Grid
+          container
+          alignItems="center"
+          justify="center"
+          align="center"
+          className={classes.bottom}
+        >
+          {order === 0 ? (
+            <span> You are drawing !</span>
+          ) : (
+            <span>
+              You will draw in <span className={classes.position}>{order}</span>{" "}
+              rounds.
+            </span>
+          )}
+        </Grid>
+      </Paper>
     </Box>
   );
 }

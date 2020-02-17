@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: "44px",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   bottom: {
     backgroundColor: "#3f51b5",
@@ -20,11 +20,36 @@ const useStyles = makeStyles(theme => ({
     borderBottomLeftRadius: "inherit",
     borderBottomRightRadius: "inherit",
     paddingTop: ".5rem",
-    paddingBottom: ".5rem",
+    paddingBottom: ".5rem"
+  },
+  paper: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between"
+  },
+  chatArea: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column"
   },
 }));
 
 function Chat(prop) {
+  const [test, setTest] = React.useState(0);
+
+  React.useEffect(() => {
+    console.log("Chat MOUNTED");
+    // Sets the initial chat height
+    const h = document.getElementById("chatBox").clientHeight;
+    setTest(h);
+  }, []);
+
+  window.onresize = () => {
+    const newChatHeight = document.getElementById("chatBox").clientHeight;
+    setTest(newChatHeight);
+  }
+
   const messagesEndRef = React.useRef(null)
 
   const scrollToBottom = () => {
@@ -35,8 +60,8 @@ function Chat(prop) {
 
   const classes = useStyles();
   return (
-    <Box flexGrow={1} height={1}>
-      <Paper>
+    <Paper className={classes.paper}>
+      <Box className={classes.chatArea}>
         <AppBar position="static" className={classes.header}>
           <Box display="flex" alignItems="center" ml={2}>
             <Typography variant="h6" className={classes.title}>
@@ -44,41 +69,34 @@ function Chat(prop) {
             </Typography>
           </Box>
         </AppBar>
-        <Box height={1}>
-          <Box display="flex" flexDirection="column" height={1}>
-            <Box
-              overflow="auto"
-              mx={1}
-              mt={1}
-              height="10em"
-              flexGrow={1}
-              className="borderBottomPrimary"
-            >
+        <Box flexGrow={1}>
+          <Box display="flex" flexDirection="column" height={1} id="chatBox">
+            <Box overflow="auto" px={1} height={1} maxHeight={test}>
               {prop.chat.map((value, key) => (
                 <div key={key}>{value}</div>
               ))}
               <div ref={messagesEndRef} />
             </Box>
-            <Box margin={1}>
-              <TextField
-                fullWidth
-                placeholder="Chat here..."
-                onKeyPress={prop.enterKey}
-              ></TextField>
-            </Box>
           </Box>
         </Box>
-        <Grid
-          container
-          alignItems="center"
-          justify="center"
-          align="center"
-          className={classes.bottom}
-        >
-          HELLO
-        </Grid>
-      </Paper>
-    </Box>
+      </Box>
+      <Grid
+        container
+        alignItems="center"
+        justify="center"
+        align="center"
+        className={classes.bottom}
+      >
+        <Box width={1} px={1} className="textField">
+          <TextField
+            className="textField"
+            fullWidth
+            placeholder="Chat here..."
+            onKeyPress={prop.enterKey}
+          />
+        </Box>
+      </Grid>
+    </Paper>
   );
 }
 
