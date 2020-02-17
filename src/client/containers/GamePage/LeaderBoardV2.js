@@ -12,37 +12,53 @@ import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   list: {
-    overflow: 'auto',
-    maxHeight: 300,
-    height: 300
+    overflow: "auto",
+    maxHeight: 300
   },
   title: {
     flexGrow: 1
   },
   header: {
     borderTopLeftRadius: "inherit",
-    borderTopRightRadius: "inherit"
+    borderTopRightRadius: "inherit",
+    boxShadow: "none",
+    minHeight: "44px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
   },
   bottom: {
     backgroundColor: "#3f51b5",
     color: "white",
     borderBottomLeftRadius: "inherit",
-    borderBottomRightRadius: "inherit"
-  },
-  botContent: {
-    marginTop: ".5rem",
-    marginBottom: ".5rem"
+    borderBottomRightRadius: "inherit",
+    paddingTop: ".5rem",
+    paddingBottom: ".5rem"
   },
   position: {
     fontWeight: "bold"
   },
   modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
   colorWhite: {
-    color: "white",
+    color: "white"
+  },
+  button: {
+    width: "100%",
+    justifyContent: "space-between"
+  },
+  leaderboardPaper: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between"
+  },
+  top: {
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit"
   }
 }));
 
@@ -97,7 +113,7 @@ function TabPanel(props) {
   );
 }
 
-function LeaderBoard({listPlayer,order,handleSocketClose}) {
+function LeaderBoard({ listPlayer, order, handleSocketClose }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -144,101 +160,126 @@ function LeaderBoard({listPlayer,order,handleSocketClose}) {
 
   
   return (
-    <Paper>
-      <AppBar position="static" className={classes.header}>
-        <Toolbar>
-          <Typography variant="h6" className={classes.title}>
-            LEADERBOARD
-          </Typography>
-          
+    <Box flexGrow={1} height={0.7}>
+      <Paper className={classes.leaderboardPaper}>
+        <Box className={classes.top}>
+          <AppBar position="static" className={classes.header}>
+            <Box display="flex" alignItems="center" ml={2}>
+              <Typography variant="h6" className={classes.title}>
+                LEADERBOARD
+              </Typography>
 
-          <div>
-            <IconButton edge="end" maxHeight="20%" color="inherit" aria-label="menu" aria-describedby={id} onClick={handleSettingsClick}>
-              <SettingsIcon fontSize="small" />
-            </IconButton>
-            
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleSettingsClose}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <Button
-                color="primary"
-                className={classes.button}
-                onClick={handleStatsClick}
-                startIcon={<EqualizerIcon />}
-              >
-                Statistics
-              </Button>
-              <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                className={classes.modal}
-                open={openStats}
-                onClose={handleStatsClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                  timeout: 500,
-                }}
-              >
-                <Fade in={openStats}>
-                  <Box justify="center">
-                    <Typography variant="h6" className={classes.colorWhite}>Game statistics</Typography>
-                    <Paper>
-                      <Box px={1}>
-                        <Divider />
-                        <Typography>{listPlayer.length} players</Typography>
-                        <Typography>WIP</Typography>
+              <div>
+                <IconButton
+                  color="inherit"
+                  aria-label="menu"
+                  aria-describedby={id}
+                  onClick={handleSettingsClick}
+                >
+                  <SettingsIcon fontSize="small" />
+                </IconButton>
+
+                <Popover
+                  id={id}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleSettingsClose}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                >
+                  <Button
+                    color="primary"
+                    className={classes.button}
+                    onClick={handleStatsClick}
+                    startIcon={<EqualizerIcon />}
+                  >
+                    Statistics
+                  </Button>
+                  <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={openStats}
+                    onClose={handleStatsClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                      timeout: 500
+                    }}
+                  >
+                    <Fade in={openStats}>
+                      <Box justify="center">
+                        <Typography variant="h6" className={classes.colorWhite}>
+                          Game statistics
+                        </Typography>
+                        <Paper>
+                          <Box px={1}>
+                            <Divider />
+                            <Typography>{listPlayer.length} players</Typography>
+                            <Typography>WIP</Typography>
+                          </Box>
+                        </Paper>
                       </Box>
-                    </Paper>
-                  </Box>
-                </Fade>
-              </Modal>
+                    </Fade>
+                  </Modal>
 
-<div>
-<Link to="/" onClick={(e)=>{handleSocketClose()}}>
-<Button
-                color="secondary"
-                className={classes.button}
-                startIcon={<ExitToAppIcon />}
-              >
-                Leave game
-              </Button>
-                </Link>
-
-</div>
-            </Popover>
-          
-          </div>
-          
-          
-
-        </Toolbar>
-      </AppBar>
-      <List className={classes.list}>
-        {
-          listPlayer.sort(sortPlayers).map((player, index) => <PlayerList key={index} index={index} order={player.order} username={player.username} id={player.socketID} score={player.pointsTotal} />)
-        }
-      </List>
-      <Grid container alignItems="center" justify="center" align="center" className={classes.bottom}>
-        {order === 0 ? (
-            <span className={classes.botContent}> You are drawing !</span>
+                  <div>
+                    <Link
+                      to="/"
+                      onClick={e => {
+                        handleSocketClose();
+                      }}
+                    >
+                      <Button
+                        color="secondary"
+                        className={classes.button}
+                        startIcon={<ExitToAppIcon />}
+                      >
+                        Leave game
+                      </Button>
+                    </Link>
+                  </div>
+                </Popover>
+              </div>
+            </Box>
+          </AppBar>
+          <List disablePadding className={classes.list}>
+            {listPlayer.sort(sortPlayers).map((player, index) => (
+              <PlayerList
+                key={index}
+                index={index}
+                order={player.order}
+                username={player.username}
+                id={player.socketID}
+                score={player.pointsTotal}
+              />
+            ))}
+          </List>
+        </Box>
+        <Grid
+          container
+          alignItems="center"
+          justify="center"
+          align="center"
+          className={classes.bottom}
+        >
+          {order === 0 ? (
+            <span> You are drawing !</span>
           ) : (
-            <span className={classes.botContent}>You will draw in <span className={classes.position}>{order}</span> rounds.</span>
-          )
-        }
-      </Grid>
-    </Paper>
+            <span>
+              You will draw in <span className={classes.position}>{order}</span>{" "}
+              rounds.
+            </span>
+          )}
+        </Grid>
+      </Paper>
+    </Box>
   );
 }
 

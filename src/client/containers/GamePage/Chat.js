@@ -1,7 +1,60 @@
 import React from 'react';
-import { Box, TextField, Typography, Paper, Divider } from '@material-ui/core';
+import { Box, TextField, Typography, Paper, Divider, AppBar, Toolbar, makeStyles, Grid } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+  title: {
+    flexGrow: 1
+  },
+  header: {
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit",
+    boxShadow: "none",
+    minHeight: "44px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
+  },
+  bottom: {
+    backgroundColor: "#3f51b5",
+    color: "white",
+    borderBottomLeftRadius: "inherit",
+    borderBottomRightRadius: "inherit",
+    paddingTop: ".5rem",
+    paddingBottom: ".5rem"
+  },
+  paper: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between"
+  },
+  chatArea: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit"
+  },
+  textBreakWord: {
+    overflowWrap: "break-word"
+  }
+}));
 
 function Chat(prop) {
+  const [test, setTest] = React.useState(0);
+
+  React.useEffect(() => {
+    console.log("Chat MOUNTED");
+    // Sets the initial chat height
+    const h = document.getElementById("chatBox").clientHeight;
+    setTest(h);
+  }, []);
+
+  window.onresize = () => {
+    const newChatHeight = document.getElementById("chatBox").clientHeight;
+    setTest(newChatHeight);
+  }
+
   const messagesEndRef = React.useRef(null)
 
   const scrollToBottom = () => {
@@ -9,26 +62,46 @@ function Chat(prop) {
   }
 
   React.useEffect(scrollToBottom, [prop.chat]);
+
+  const classes = useStyles();
   return (
-    <Box flexGrow={1} height={1}>
-      <Paper className="fullHeight">
-        <Box height={1}>
-          <Box display="flex" flexDirection="column" height={1}>
-            <Box overflow="auto" mx={1} mt={1} height="10em" flexGrow={1} className="borderBottomPrimary">
-              {
-                prop.chat.map((value, key) => <div key={key}>
-                  {value}
-                </div>)
-              }
+    <Paper className={classes.paper}>
+      <Box className={classes.chatArea}>
+        <AppBar position="static" className={classes.header}>
+          <Box display="flex" alignItems="center" ml={2}>
+            <Typography variant="h6" className={classes.title}>
+              CHAT
+            </Typography>
+          </Box>
+        </AppBar>
+        <Box flexGrow={1}>
+          <Box display="flex" flexDirection="column" height={1} id="chatBox">
+            <Box overflow="auto" px={1} height={1} maxHeight={test} className={classes.textBreakWord}>
+              {prop.chat.map((value, key) => (
+                <div key={key}>{value}</div>
+              ))}
               <div ref={messagesEndRef} />
-            </Box>
-            <Box margin={1}>
-              <TextField fullWidth placeholder="Chat here..." onKeyPress={prop.enterKey}></TextField>
             </Box>
           </Box>
         </Box>
-      </Paper>
-    </Box>
+      </Box>
+      <Grid
+        container
+        alignItems="center"
+        justify="center"
+        align="center"
+        className={classes.bottom}
+      >
+        <Box width={1} px={1} className="textField">
+          <TextField
+            className="textField"
+            fullWidth
+            placeholder="Chat here..."
+            onKeyPress={prop.enterKey}
+          />
+        </Box>
+      </Grid>
+    </Paper>
   );
 }
 

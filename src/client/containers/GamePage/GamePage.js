@@ -249,7 +249,7 @@ const GamePage = (props) => {
   };
 
   return (
-    <Box height={1} padding={2} >
+    <Box height={1} padding={2}>
       <Grid container spacing={1} className="fullHeight">
         <Grid item md={9} xs={12}>
           <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
@@ -262,27 +262,31 @@ const GamePage = (props) => {
                   value={progressBarValue}
                 />
               </Box>
-
-
             </Box>
             <Box>
-              {
-                drawing ?
-                  ( // drawer view
-                    <DrawerArea socket={socket} />
-                  ) :
-                  ( // guesser view
-                    <Box id="svgArea">
-                      <RenderAreaV2 listPath={listPath} />
-                    </Box>
-                  )
-              }
+              {drawing ? (
+                // drawer view
+                <DrawerArea socket={socket} />
+              ) : (
+                // guesser view
+                <Box id="svgArea">
+                  <RenderAreaV2 listPath={listPath} />
+                </Box>
+              )}
             </Box>
           </Box>
         </Grid>
         <Grid item md={3} xs={12}>
-          <Box display="flex" height={1} flexDirection={matches ? "column" : "column-reverse"}>
-            <Leaderboard listPlayer={listPlayer} order={order} handleSocketClose={handleSocketClose} />
+          <Box
+            display="flex"
+            height={1}
+            flexDirection={matches ? "column" : "column-reverse"}
+          >
+            <Leaderboard
+              listPlayer={listPlayer}
+              order={order}
+              handleSocketClose={handleSocketClose}
+            />
             <Box mt={1} />
             <Chat chat={chatArray} enterKey={_handleKeyDown} />
           </Box>
