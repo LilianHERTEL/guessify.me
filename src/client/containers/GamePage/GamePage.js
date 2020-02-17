@@ -112,6 +112,7 @@ const GamePage = (props) => {
     socket.on('updateLobby', function (data) {
       setListPlayer(data.listPlayer);
       var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
+      console.log(PlayerOrder); //SLIMEPOINT
       setOrder(PlayerOrder ? PlayerOrder.order : "...");
     });
     socket.on('receiveChat', function (username, msg) {
@@ -137,11 +138,11 @@ const GamePage = (props) => {
     });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, (<Typography variant="body2" align="center" display="block">The word is <b>{data}</b>!</Typography>)])
-      console.log("RECEIVED word");
+      //console.log("RECEIVED word");
       setCurrentWord(data);
     });
     socket.on('wordToBeDrawn_Underscored', function (data) {
-      console.log("RECEIVED _ _ _");
+      //console.log("RECEIVED _ _ _");
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {

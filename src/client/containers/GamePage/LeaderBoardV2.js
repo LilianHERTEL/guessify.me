@@ -104,7 +104,7 @@ function LeaderBoard({listPlayer,order,handleSocketClose}) {
   };
 
   const sortPlayers = (a, b) => {
-    console.log("COMPARE : " + a.pointsTotal + " " + b.pointsTotal);
+    //console.log("COMPARE : " + a.pointsTotal + " " + b.pointsTotal);
     return b.pointsTotal - a.pointsTotal;
   }
 

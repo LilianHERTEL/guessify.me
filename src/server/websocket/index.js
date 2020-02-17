@@ -30,6 +30,7 @@ sockets.start = function (io) {
   io.on('connection', function (socket) {
     const generateTimeout = (time,callback) => setTimeout(callback,time*1000)
     const goNextTurn = () => {
+      console.log("début goNextTurn()")
       socket.lobby.clearGuessedPlayer()
       socket.lobby.getNextDrawer();
       if(!lobby.currentDrawer) return;
@@ -97,7 +98,7 @@ sockets.start = function (io) {
 
         socket.lobby.addPoint(socket.id,1);
         socket.lobby.addGuessedPlayer(socket.id)
-        io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
+        //io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
         
         if(socket.lobby.guessed) return;
         if(socket.lobby.listPlayer.length -1 == socket.lobby.guessedPlayer.length )
@@ -108,6 +109,7 @@ sockets.start = function (io) {
         io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds")
         io.to(socket.lobby.id).emit("startTimer", 20);
         socket.lobby.guessed = true;
+        io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
         clearInterval(delayTimeout)
         delayTimeout= generateTimeout(20,goNextTurn)
 
