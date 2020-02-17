@@ -10,6 +10,7 @@ import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
 import RenderAreaV2 from './RenderAreaV2';
+import RenderAreaV3 from './RenderAreaV3';
 import { Redirect } from 'react-router-dom';
 import DrawerArea from './DrawerArea';
 import MyPath from './MyPath';
@@ -40,6 +41,9 @@ const GamePage = (props) => {
   //drawing rendering :
   const [listPath, setListPath] = React.useState("");
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const drawingComponent = React.useRef(null);
+
   const sockid = useRef(null);
   const startTimer = (time) => {
     if(interval != null)
@@ -157,8 +161,9 @@ const GamePage = (props) => {
     socket.on('drawCmd', async function (data) {
       if (drawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      //console.log("//////// VIEWER DATA : " + JSON.stringify(data));
       setListPath(data);
+      if(drawingComponent.current) drawingComponent.current.loadSaveData(data,false,false);
       /*
       setListPath(path => {
         if (path.length == 0 || path[path.length - 1].id != data.id) {
@@ -177,7 +182,9 @@ const GamePage = (props) => {
     });
     socket.on('clearDrawing', () => {
       console.log("CLEARING DrawingRenderArea");
-      setListPath("");
+      //setListPath("");
+      
+      if(drawingComponent.current) drawingComponent.current.clear();
     });
     socket.on('disconnect', function () { });
   }
@@ -274,7 +281,7 @@ const GamePage = (props) => {
                   ) :
                   ( // guesser view
                     <Box id="svgArea">
-                      <RenderAreaV2 listPath={listPath} />
+                      <RenderAreaV3 listPath={listPath} drawingRef={drawingComponent} />
                     </Box>
                   )
               }

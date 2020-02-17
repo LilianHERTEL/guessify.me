@@ -144,8 +144,4 @@ const RenderAreaV2 = (props) => {
     );
 }
 
-
-/*
-                
-*/
 export default RenderAreaV2;

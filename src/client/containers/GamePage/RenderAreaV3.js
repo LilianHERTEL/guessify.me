@@ -3,9 +3,9 @@ import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
 
 import CanvasDraw from "react-canvas-draw";
+import DrawingComponentv2 from './DrawingComponentV2';
 
-
-const RenderAreaV2 = (props) => {
+const RenderAreaV3 = (props) => {
     const drawingZoneRef = React.useRef(null);
     /****************************************************************************/
     /****************************************************************************/
@@ -46,10 +46,10 @@ const RenderAreaV2 = (props) => {
     return (
         <Box height={svgBoxHeight}>
             <Paper>
-                <CanvasDraw disabled={true} saveData={props.listPath} ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+                <DrawingComponentv2 ref={canvasDraw => props.drawingRef.current=canvasDraw} disabled={true} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
             </Paper>
         </Box>
     );
 }
 
-export default RenderAreaV2;
+export default RenderAreaV3;
