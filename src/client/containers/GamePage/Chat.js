@@ -31,8 +31,13 @@ const useStyles = makeStyles(theme => ({
   chatArea: {
     height: "100%",
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit"
   },
+  textBreakWord: {
+    overflowWrap: "break-word"
+  }
 }));
 
 function Chat(prop) {
@@ -65,13 +70,13 @@ function Chat(prop) {
         <AppBar position="static" className={classes.header}>
           <Box display="flex" alignItems="center" ml={2}>
             <Typography variant="h6" className={classes.title}>
-              LEADERBOARD
+              CHAT
             </Typography>
           </Box>
         </AppBar>
         <Box flexGrow={1}>
           <Box display="flex" flexDirection="column" height={1} id="chatBox">
-            <Box overflow="auto" px={1} height={1} maxHeight={test}>
+            <Box overflow="auto" px={1} height={1} maxHeight={test} className={classes.textBreakWord}>
               {prop.chat.map((value, key) => (
                 <div key={key}>{value}</div>
               ))}

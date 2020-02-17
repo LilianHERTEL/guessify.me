@@ -12,8 +12,8 @@ import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   list: {
-    overflow: 'auto',
-    maxHeight: 300,
+    overflow: "auto",
+    maxHeight: 300
   },
   title: {
     flexGrow: 1
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: "44px",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   bottom: {
     backgroundColor: "#3f51b5",
@@ -33,28 +33,32 @@ const useStyles = makeStyles(theme => ({
     borderBottomLeftRadius: "inherit",
     borderBottomRightRadius: "inherit",
     paddingTop: ".5rem",
-    paddingBottom: ".5rem",
+    paddingBottom: ".5rem"
   },
   position: {
     fontWeight: "bold"
   },
   modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
   colorWhite: {
-    color: "white",
+    color: "white"
   },
   button: {
     width: "100%",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   leaderboardPaper: {
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
+  },
+  top: {
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit"
   }
 }));
 
@@ -157,7 +161,7 @@ function LeaderBoard({ listPlayer, order, handleSocketClose }) {
   return (
     <Box flexGrow={1} height={0.7}>
       <Paper className={classes.leaderboardPaper}>
-        <Box>
+        <Box className={classes.top}>
           <AppBar position="static" className={classes.header}>
             <Box display="flex" alignItems="center" ml={2}>
               <Typography variant="h6" className={classes.title}>
