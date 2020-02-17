@@ -11,16 +11,16 @@ const websocket = require('./websocket');
 const mongoose = require('mongoose') //Pris
 
 const app = express();
-// const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
-// const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
-// const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
 
-// const credentials = {
-// 	key: privateKey,
-// 	cert: certificate,
-// 	ca: ca
-// };
-var https = require('http').createServer(app);
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+var https = require('https').createServer(credentials,app);
 var io = require('socket.io')(https);
 var loginRoute = require('./routes/login.js');
 var deployRoute = require('./routes/deploy.js');
