@@ -5,6 +5,7 @@ const express = require('express');
 const { resolve } = require('path');
 const logger = require('./util//logger');
 const path = require("path")
+const fs = require("fs")
 const argv = require('./util/argv');
 const port = require('./util//port');
 const websocket = require('./websocket');
