@@ -12,6 +12,13 @@ function sleep(ms) {
 sockets.start = function (io) {
   
   var delayTimeout;
+  var cpt;
+  var cptFind;
+  var pcr; //player count round
+  intervalID = setInterval(function(){
+    cpt--;
+    console.log(cpt);
+  },1000);
   
   const findLobby = () => {
     var arr = Array.from(io.lobby.values());
@@ -32,6 +39,11 @@ sockets.start = function (io) {
       setTimeout(callback,time*1000)
     }
     const goNextTurn = () => {
+
+      let intervalID=null;
+      pcr = lobby.listPlayer.length;
+      cpt=120;
+      cptFind=0;
       if(socket.lobby.currentWord)
       io.to(socket.lobby.id).emit("announcement", "The word was : " +socket.lobby.currentWord);
       socket.lobby.clearGuessedPlayer()
@@ -47,7 +59,9 @@ sockets.start = function (io) {
         io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
         io.to(socket.lobby.id).emit("announcement", "Everyone has 2 minutes to guess the word!");
         io.to(socket.lobby.id).emit("startTimer", 120);
-        clearInterval(delayTimeout)
+        
+
+        clearTimeout(delayTimeout)
           delayTimeout=generateTimeout(120,goNextTurn)
     }
     socket.isInGame = false;
@@ -68,7 +82,7 @@ sockets.start = function (io) {
           "The game will start in 5 seconds!")
           io.to(socket.lobby.id).emit("startTimer",
           4.5)
-          clearInterval(delayTimeout)
+          clearTimeout(delayTimeout)
           delayTimeout=generateTimeout(5,goNextTurn)
         ;
       }
@@ -97,19 +111,31 @@ sockets.start = function (io) {
       }
       if(msg == socket.lobby.currentWord)
       {
+        cptFind++;
         io.to(socket.lobby.id).emit("guessedPlayer",socket.username)
 
         socket.lobby.addPoint(socket.id,1);
-        socket.lobby.addGuessedPlayer(socket.id)
+        socket.lobby.addGuessedPlayer(socket.id);
         io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
         
-        if(socket.lobby.guessed) return;
-        io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds")
-        io.to(socket.lobby.id).emit("startTimer", 20);
-        socket.lobby.guessed = true;
-        clearInterval(delayTimeout)
-        delayTimeout= generateTimeout(20,goNextTurn)
-
+        //if(socket.lobby.guessed) return;
+        if(pcr != (cptFind+1)){
+          console.log("test:"+lobby.listPlayer.length+" et "+ (cptFind+1)) 
+          console.log(lobby.listPlayer.length != (cptFind+1))
+          if(cpt>20 && !socket.lobby.guessed){
+            io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds");
+            io.to(socket.lobby.id).emit("startTimer", 20);
+            socket.lobby.guessed = true;
+            clearTimeout(delayTimeout);
+            delayTimeout= generateTimeout(20,goNextTurn);
+          }
+        }
+        console.log("coucou!!")
+        if((pcr)==(cptFind+1)){
+          console.log("Ninja");
+          goNextTurn();
+        }
+        
       }
       else{
         io.to(socket.lobby.id).emit("receiveChat", socket.username,msg)
@@ -144,7 +170,7 @@ sockets.start = function (io) {
 
       if (!socket.lobby) return;
       socket.lobby.leave(socket.id)
-
+      pcr--;
       io.to(socket.lobby.id).emit("disconnectPlayer",
         "socket.username")
       io.to(socket.lobby.id).emit("updateLobby",
