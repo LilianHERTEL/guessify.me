@@ -36,9 +36,10 @@ sockets.start = function (io) {
       
       if(lobby==null)
         console.log("lobby null dans goNextTurn")
-      //io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer}); //SLIME MARK
 
       socket.lobby.getNextDrawer();
+      
+      io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer}); //SLIME MARK
       if(!lobby.currentDrawer) return;
       io.to(socket.lobby.id).emit("drawer",socket.lobby.currentDrawer);
       socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
