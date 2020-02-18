@@ -32,20 +32,25 @@ sockets.start = function (io) {
     const goNextTurn = () => {
       console.log("début goNextTurn()")
       socket.lobby.clearGuessedPlayer()
+      //insérer changement
+      
+      if(lobby==null)
+        console.log("lobby null dans goNextTurn")
+      //io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer}); //SLIME MARK
+
       socket.lobby.getNextDrawer();
       if(!lobby.currentDrawer) return;
-      io.to(socket.lobby.id).emit("drawer",
-      socket.lobby.currentDrawer);
-            socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
-          socket.lobby.guessed = false;
-        io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
+      io.to(socket.lobby.id).emit("drawer",socket.lobby.currentDrawer);
+      socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
+      socket.lobby.guessed = false;
+      io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
   
         //sends the full word only to the drawer
-        io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
-        io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "Everyone has 2 minutes to guess the word!");
-        io.to(socket.lobby.id).emit("startTimer", 120);
-        clearInterval(delayTimeout)
-          delayTimeout=generateTimeout(120,goNextTurn)
+      io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
+      io.to(socket.lobby.currentDrawer.socketID).emit("announcement", "Everyone has 2 minutes to guess the word!");
+      io.to(socket.lobby.id).emit("startTimer", 120);
+      clearInterval(delayTimeout)
+      delayTimeout=generateTimeout(120,goNextTurn)
     }
     socket.isInGame = false;
     socket.on('findGame', async function (username) {
@@ -109,7 +114,9 @@ sockets.start = function (io) {
         io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds")
         io.to(socket.lobby.id).emit("startTimer", 20);
         socket.lobby.guessed = true;
-        io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer});
+        if(lobby==null)
+          console.log("lobby null")
+        io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer}); //SLIME MARK
         clearInterval(delayTimeout)
         delayTimeout= generateTimeout(20,goNextTurn)
 
