@@ -22,7 +22,7 @@ fs.readdir(__dirname + '/../Dictionnaires/', function (err, files) {
 const tirerMots = (lang) => {
     const dictLang = dictionnaire.get(lang)
     var random = Math.floor(Math.random() * dictLang.length)
-    return dictLang[random];
+    return dictLang[random].toLowerCase();
 }
 
 const underscoreWordToBeDrawn = (word) => {
