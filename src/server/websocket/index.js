@@ -35,6 +35,7 @@ sockets.start = function (io) {
   io.lobby = new Map();
   io.on('connection', function (socket) {
     const generateTimeout = (time,callback) => {
+      console.log("Generated a timeout")
       setTimeout(callback,time*1000)
     }
     const goNextTurn = () => {
