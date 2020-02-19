@@ -47,13 +47,19 @@ sockets.start = function (io) {
       if(socket.lobby.currentWord)
       io.to(socket.lobby.id).emit("announcement", "The word was : " +socket.lobby.currentWord);
       socket.lobby.clearGuessedPlayer()
+      //insérer changement
+      
+      if(lobby==null)
+        console.log("lobby null dans goNextTurn")
+
       socket.lobby.getNextDrawer();
+      
+      io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer}); //SLIME MARK
       if(!lobby.currentDrawer) return;
-      io.to(socket.lobby.id).emit("drawer",
-      socket.lobby.currentDrawer);
-            socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
-          socket.lobby.guessed = false;
-        io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
+      io.to(socket.lobby.id).emit("drawer",socket.lobby.currentDrawer);
+      socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
+      socket.lobby.guessed = false;
+      io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
   
         //sends the full word only to the drawer
         io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);

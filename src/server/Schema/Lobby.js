@@ -20,6 +20,8 @@ class Lobby {
       pointsTotal: 0,
       order : this.listPlayer.length
     });
+    
+    console.log("un nouveau joueur : "+socketID+","+username);
   }
 
   containsGuessedPlayer(socketID)
@@ -97,7 +99,7 @@ class Lobby {
         this.listPlayer.splice(index,1);
       }
     }
-    //s'il y a pas de soucis, on décrémente l'ordre de jeux de tous les joueurs après celui uqi vient de quitter le lobby
+    //s'il y a pas de soucis, on décrémente l'ordre de jeu de tous les joueurs après celui qui vient de quitter le lobby
     if(order == null) return;
     this.listPlayer.forEach((player) => {
       if(player.order > order){
