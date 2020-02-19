@@ -66,7 +66,7 @@ sockets.start = function (io) {
         io.to(socket.lobby.id).emit("announcement", "Everyone has 2 minutes to guess the word!");
         io.to(socket.lobby.id).emit("startTimer", 120);
         
-
+        console.log("Resetting delayTimeout to 120")
         clearTimeout(delayTimeout)
           delayTimeout=generateTimeout(120,goNextTurn)
     }
@@ -132,6 +132,7 @@ sockets.start = function (io) {
             io.to(socket.lobby.id).emit("announcement","Time shortened to 20 seconds");
             io.to(socket.lobby.id).emit("startTimer", 20);
             socket.lobby.guessed = true;
+            console.log("Resetting to 20 and start")
             clearTimeout(delayTimeout);
             delayTimeout= generateTimeout(20,goNextTurn);
           }
