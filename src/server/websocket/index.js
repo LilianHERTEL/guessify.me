@@ -67,8 +67,10 @@ sockets.start = function (io) {
         io.to(socket.lobby.id).emit("startTimer", 120);
         
         console.log("Resetting delayTimeout to 120")
+        console.log("delayTImeoutID old: ",delayTimeout)
         clearTimeout(delayTimeout)
           delayTimeout=generateTimeout(120,goNextTurn)
+          console.log("delayTImeoutID new: ",delayTimeout)
     }
     socket.isInGame = false;
     socket.on('findGame', async function (username) {
