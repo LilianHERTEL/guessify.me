@@ -17,7 +17,6 @@ sockets.start = function (io) {
   var pcr; //player count round
   intervalID = setInterval(function(){
     cpt--;
-    console.log(cpt);
   },1000);
   
   const findLobby = () => {
@@ -57,7 +56,7 @@ sockets.start = function (io) {
       io.to(socket.lobby.id).emit("updateLobby", {lobby,listPlayer: lobby.listPlayer}); //SLIME MARK
       if(!lobby.currentDrawer) return;
       io.to(socket.lobby.id).emit("drawer",socket.lobby.currentDrawer);
-      socket.lobby.currentWord = Dictionnary.tirerMots("en-US");
+      socket.lobby.currentWord = Dictionnary.tirerMots("fr-FR");
       socket.lobby.guessed = false;
       io.to(socket.lobby.id).emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
   
