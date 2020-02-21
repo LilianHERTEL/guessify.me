@@ -168,13 +168,6 @@ sockets.start = function (io) {
       io.to(socket.lobby.id).emit('listPlayer', {listPlayer : socket.lobby.listPlayer});
     });
 
-    /*
-    socket.on('requestListPlayer', function (msg) {
-      if (!socket.isInGame) return socket.emit("Unauthorized", "You are not allowed to send this command!");
-      io.to(socket.lobby.id).emit('listPlayer', socket.lobby);
-    });
-    */
-
     socket.on('disconnect', function () {
 
       if (!socket.lobby) return;

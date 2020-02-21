@@ -566,7 +566,7 @@ Oignon
 Oiseau
 Olive
 Ongle
-ONU (Organisation des Nations unies)
+ONU
 Opticien
 Or
 Orange
@@ -817,7 +817,7 @@ Trou noir
 Trousse
 Truie
 Tuyau
-UE (Union européenne)
+Union européenne
 Ulysse
 Un Saint-Bernard
 Un, deux, trois, soleil
