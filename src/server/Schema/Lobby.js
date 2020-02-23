@@ -1,7 +1,29 @@
+/* eslint-disable class-methods-use-this */
 
-var uniqid = require('uniqid')
+const uniqid = require('uniqid');
+const Dictionnary = require('../GestionMots/Envoiemot')
+const Algo = require('../util/levestein')
 
+/**
+ *
+ * Convert a Socket Obect to JSON in order to able to transmit through Websocket
+ * @param {SocketIO.Socket} socket
+ * @returns {Object} parsedJSON
+ */
+const convertToJSON = (socket) => {
+  return {
+      socketID: socket.id,
+      username: socket.username,
+      pointsTotal: socket.pointsTotal
+    }
+  }
+  
 class Lobby {
+  /**
+   *Creates an instance of Lobby.
+   * @param {} handler
+   * @memberof Lobby
+   */
   constructor(handler) {
     this.id = uniqid();
     this.maxPlayer = 10;
@@ -13,101 +35,179 @@ class Lobby {
     this.timer = null;
     this.handler = handler;
   }
+
+
   // Socket related command
-  emitAll(event, data) {
-    io.to(socket.lobby.id).emit(event, data)
+  emitAll(event, ...data) {
+    this.handler.io.to(this.id).emit(event,...data);
   }
 
-  emitAllExceptSender(event, data) {
-    io.to(socket.lobby.id).emit(event, data)
+  emitAllExceptSender(event, ...data) {
+    this.handler.io.to(this.id).emit(event, ...data);
   }
 
 
+  /**
+   * Starts the game and count down of 5 sec
+   *
+   * @memberof Lobby
+   */
   startGame() {
     this.started = true;
-    this.emitAll("announcement", "The game will start in 5 seconds!")
-    this.startTimer(5)
+    this.emitAll('announcement', 'The game will start in 5 seconds!');
+    this.startTimer(5);
   }
 
+  /**
+   * Doing cleanups aftet a round/turn
+   *
+   * @memberof Lobby
+   */
   postRound() {
-    this.emitAll("announcement", "The word was : " + socket.lobby.currentWord);
-    socket.lobby.clearGuessedPlayer()
+    this.emitAll('announcement', `The word was : ${this.currentWord}`);
+    this.clearGuessedPlayer();
   }
 
+  /**
+   * Prepare the round to be started, draws the word, and send them to client
+   *
+   * @memberof Lobby
+   */
   preRound() {
     this.getNextDrawer();
-    this.emitAll("updateLobby", { lobby, listPlayer: lobby.listPlayer }); //SLIME MARK
-    this.emitAll("drawer", socket.lobby.currentDrawer);
-    this.currentWord = Dictionnary.tirerMots("fr-FR"); //TO-DO make 3 choices
-    this.io.emit("wordToBeDrawn_Underscored", Dictionnary.underscoreWordToBeDrawn(socket.lobby.currentWord));
+    this.updateLobby
+    this.emitAll('drawer', convertToJSON(this.currentDrawer));
+    this.currentWord = Dictionnary.tirerMots('fr-FR'); // TO-DO make 3 choices
+    this.emitAll('wordToBeDrawn_Underscored', Dictionnary.underscoreWordToBeDrawn(this.currentWord));
 
-    //sends the full word only to the drawer
-    io.to(socket.lobby.currentDrawer.socketID).emit("wordToBeDrawn", socket.lobby.currentWord);
-    io.to(socket.lobby.id).emit("announcement", "You have 2 minutes to guess the word!");
-    this.startTimer(120)
-
-
+    // sends the full word only to the drawer
+    this.currentDrawer.emit('wordToBeDrawn',this.currentWord);
+    this.emitAll('announcement', 'You have 2 minutes to guess the word!');
+    this.startTimer(120,this.goNextTurn,this);
   }
 
+  /**
+   * Removes the previous timer to shorten it to 15 seconds
+   *
+   * @param {Number} time
+   * @memberof Lobby
+   */
   shortenTime(time) {
-    this.emitAll.emit("announcement", "Time shortened to " + time + " seconds");
-    this.emitAll.emit("startTimer", time);
-    this.startTimer(time)
+    this.emitAll('announcement', `Time shortened to ${time} seconds`);
+    this.emitAll('startTimer', time);
+    this.startTimer(time,this.goNextTurn,this);
   }
 
+  /**
+   * Adds the player to the guessed player list and update the lobby
+   *
+   * @param {SocketIO.Socket} player
+   * @memberof Lobby
+   */
   addGuessedPlayer(player) {
-    this.emitAll("guessedPlayer", player.username)
-    socket.lobby.addPoint(socket.id, 1);
+    this.emitAll('guessedPlayer', player.username);
+    this.addPoint(player, 1);
     this.guessedPlayer.push(player);
-    io.to(socket.lobby.id).emit("updateLobby", { lobby, listPlayer: lobby.listPlayer });
-
-    this.shortenTime(15) // TO-DO add condition when the main timer is < 15
+    this.updateLobby();
+    this.guessed = true;
+   
   }
 
+
+  /**
+   * Send the updated lobby to all the client
+   *
+   * @memberof Lobby
+   */
+  updateLobby() {
+    const processed = this.listPlayer.map(element => convertToJSON(element));
+
+    this.emitAll('updateLobby', { listPlayer: processed });
+  }
+
+  /**
+   * Treat messages/guesses in order to perform serveral actions
+   *
+   * @param {SocketIO.Socket} player
+   * @param {String} msg
+   * @memberof Lobby
+   */
   sendChat(player, msg) {
     // Guessed player sending the answer or Drawing player typing anything
-    if ((msg == this.currentWord && this.containsGuessedPlayer(player)) || player == socket.lobby.currentDrawer)
-      return player.emit("notAllowedToEnterAnswer");
+    if ((msg == this.currentWord && this.containsGuessedPlayer(player)) || player == this.currentDrawer) return player.emit('notAllowedToEnterAnswer');
 
-    if (!socket.lobby.started) return this.emitAll("receiveChat", socket.username, msg);
+    if (!this.started) return this.emitAll('receiveChat', player.username, msg);
 
-    //Testing similarity
-    if (Algo.compareString(msg, socket.lobby.currentWord) > 0.8 && msg != socket.lobby.currentWord)
-      socket.emit("closeGuess");
+    // Testing similarity
+    if (Algo.compareString(msg, this.currentWord) > 0.8 && msg != this.currentWord) player.emit('closeGuess');
 
-    if (msg == this.currentWord && !this.containsGuessedPlayer(player) && player != this.currentDrawer)
-      this.addGuessedPlayer(player)
-    else
-      this.emitAll("receiveChat", socket.username, msg)
+    if (msg == this.currentWord && !this.containsGuessedPlayer(player) && player != this.currentDrawer) this.addGuessedPlayer(player);
+    
+    else this.emitAll('receiveChat', player.username, msg);
+    if(!this.guessed) this.shortenTime(15)
   }
 
-  startTimer(time, callback) {
-    this.emitAll("startTimer", time);
-    clearTimeout(this.timer)
-    this.timer = setTimeout(callback, time);
+  /**
+   * Utils method to start the timer , resets the previous one.
+   *
+   * @param {Number} time
+   * @param {Function} callback
+   * @param {*} args
+   * @memberof Lobby
+   */
+  startTimer(time, callback,...args) {
+    this.emitAll('startTimer', time);
+    clearTimeout(this.timer);
+    this.timer = setTimeout(callback, time*1000,...args);
   }
 
-  goNextTurn() {
-    this.postRound()
+  /**
+   * Perform Post action for previous and Prepare for next round. Resets game if not enough player
+   *
+   * @param {Lobby} lobby
+   * @returns
+   * @memberof Lobby
+   */
+  goNextTurn(lobby) {
+    console.log("Passing turns")
+    lobby.postRound();
     // Changement d'un round
-    if (this.listPlayer.length <= 1) return this.resetGame();
-    this.preRound()
-
+    if (lobby.listPlayer.length <= 1) return lobby.resetGame();
+    lobby.preRound();
   }
 
-  startTurn() {
-    if (this.listPlayer.length <= 1) return this.resetGame();
-    this.preRound()
+    /**
+   * Perform Pre action for next round. Resets game if not enough player
+   *
+   * @param {Lobby} lobby
+   * @returns
+   * @memberof Lobby
+   */
+  startTurn(lobby) {
+    if (lobby.listPlayer.length <= 1) return lobby.resetGame();
+    lobby.preRound();
   }
 
-  addPlayer(player) {
+  /**
+   * Adds a player to the lobby, verifies if the game is startable.
+   *
+   * @param {*} player
+   * @param {*} username
+   * @memberof Lobby
+   */
+  addPlayer(player,username) {
     this.listPlayer.push(player);
-    player.join(lobby.id);
+    player.join(this.id);
     player.isInGame = true;
-    player.emit("joinedGame", { lobby })
-    io.to(player.lobby.id).emit("updateLobby", { lobby, listPlayer: this.lobby.listPlayer })
-    io.to(player.lobby.id).emit("peopleJoin", socket.username)
-    this..lobby.verifyStartable();
+    player.pointsTotal = 0;
+    player.username = username
+
+    // player.emit('joinedGame', { lobby })
+    this.updateLobby();
+
+    this.emitAll('peopleJoin', player.username);
+    this.verifyStartable();
+    console.log("end adds")
   }
 
   containsGuessedPlayer(socketID) {
@@ -115,71 +215,91 @@ class Lobby {
   }
 
   verifyStartable() {
-    if (this.started || lobby.listPlayer.length <= 1) return; // Lobby not startable
-    lobby.started = true;
+    if (this.started || this.listPlayer.length <= 1) return; // Lobby not startable or lobby started
+    this.started = true;
 
-    this.emitAll("announcement",
-      "The game will start in 5 seconds!")
-    this.startTimer(5, this.startTurn);
-    ;
-
+    this.emitAll('announcement', 'The game will start in 5 seconds!');
+    this.startTimer(5, this.startTurn,this);
   }
 
 
+  /**
+   * Register all the events that are inside the lobby
+   *
+   * @param {SocketIO.Socket} player
+   * @memberof Lobby
+   */
   registerEvents(player) {
-    
+    player.on('sendChat', (msg) => {
+      this.sendChat(player, msg);
+    });
+    player.on('draw', (data) => {
+      this.emitAll('drawCmd', data);
+    });
+    player.on('clearDrawing', () => {
+      this.emitAll('clearDrawing');
+    });
+    player.on('requestListPlayer', () => {
+      this.emitAll('listPlayer', { listPlayer: this.listPlayer.map(element => convertToJSON(element)) });
+    });
 
+    player.on('drawingSideOption', (option) => {
+      this.emitAll('viewerSideOption', option);
+    });
+    player.on('disconnect', () => {
+      this.disconnectPlayer(player);
+    });
   }
 
 
   clearGuessedPlayer() {
-    this.guessedPlayer = []
+    this.guessedPlayer = [];
   }
 
   /**
-   * Permet de réinitialiser un lobby
+   * Resets the whole lobby and performs cleanup
+   *
+   * @memberof Lobby
    */
   resetGame() {
+    // TO-DO need more logic here
     this.started = false;
     this.currentDrawer = null;
     this.currentDrawerIndex = null;
   }
 
   /**
-   * Permet de passer au dessinateur suivant.
+   * Selects the next drawer, made with listPlayer in mind
+   *
+   * @memberof Lobby
    */
   getNextDrawer() {
     if (this.currentDrawer == null) {
       this.currentDrawer = this.listPlayer[0];
-      this.currentDrawerIndex = 0;
-      return;
     } else {
-
-      this.listPlayer.forEach((e, index) => {
-        e.order -= 1;
-      });
-      this.currentDrawer.order = this.listPlayer.length - 1;
-      this.currentDrawer = this.listPlayer.find(e => e.order === 0);
+      const pos = this.getPlayerPos(this.currentDrawer);
+      this.currentDrawer = this.listPlayer[(pos + 1) % this.listPlayer.length];
     }
   }
 
 
+  /**
+   *
+   *
+   * @param {SocketIO.Socket} player
+   * @memberof Lobby
+   */
   disconnectPlayer(player) {
-    if (!socket.lobby) return;
-    this.leave(player)
-    io.to(socket.lobby.id).emit("disconnectPlayer", "socket.username")
-    io.to(socket.lobby.id).emit("updateLobby",
-        { lobby: socket.lobby, listPlayer: socket.lobby.listPlayer })
-    if (socket.lobby.listPlayer.length < 2) {
-        io.to(socket.lobby.id).emit("announcement",
-            "Not enough players! Game resetted. Waiting for a second player...");
-        socket.lobby.resetGame();
-        return;
+    this.leave(player);
+    this.emitAll('disconnectPlayer', player.username);
+    this.updateLobby();
+    if (this.listPlayer.length < 2) {
+      this.emitAll('announcement', 'Not enough players!\nGame resetted. Waiting for a second player...');
+      this.resetGame();
+      return;
     }
-    if (socket.id == socket.lobby.currentDrawer.socketID) goNextTurn(io, socket)
-}
-
-
+    if (player.id == this.currentDrawer.id) this.goNextTurn(this);
+  }
 
 
   /**
@@ -190,7 +310,7 @@ class Lobby {
    * @memberof Lobby
    */
   leave(player) {
-    var index = this.getPlayerPos(player)
+    const index = this.getPlayerPos(player);
     if (index > -1) {
       this.listPlayer.splice(index, 1);
       return true;
@@ -198,24 +318,19 @@ class Lobby {
     return false;
   }
 
-  getPlayerPos(player) {
-    return this.listPlayer.map(function (p) { return p.id; }).indexOf(player.id)
-  }
-
   /**
    * Permet d'ajouter des points au joueur possèdant le socketID, fonction appelé exclusivement par le serveur, sous réserve de victoire.
-   * @param {} socketID 
+   * @param {} socketID
    * @param {int} point : le nombre de points à ajouter
    */
-  addPoint(socketID, point) {
-    for (const player of this.listPlayer) {
-      if (player.socketID == socketID) {
-        player.pointsTotal++;
-      }
-    }
+  addPoint(player, point) {
+    player.pointsTotal += point;
+  }
+
+  getPlayerPos(player) {
+    return this.listPlayer.map(p => p.id).indexOf(player.id);
   }
 }
-
 
 
 module.exports = Lobby;
