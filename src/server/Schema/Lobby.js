@@ -77,7 +77,7 @@ class Lobby {
     this.getNextDrawer();
     this.updateLobby
     this.emitAll('drawer', convertToJSON(this.currentDrawer));
-    this.currentWord = Dictionnary.tirerMots('fr-FR'); // TO-DO make 3 choices
+    this.currentWord = Dictionnary.tirerMots('en-US'); // TO-DO make 3 choices
     this.emitAll('wordToBeDrawn_Underscored', Dictionnary.underscoreWordToBeDrawn(this.currentWord));
 
     // sends the full word only to the drawer
