@@ -111,6 +111,7 @@ const GamePage = (props) => {
       sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
+      console.log(data)
       setListPlayer(data.listPlayer);
       var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
       console.log(PlayerOrder); //SLIMEPOINT
