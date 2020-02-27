@@ -190,6 +190,10 @@ const GamePage = (props) => {
     else
       socket = openSocket('http://' + window.location.hostname + ':8880/');
     connect(props.location.state.username);
+    return function cleanup () {
+      console.log("Closing socket");
+     socket.disconnect();
+    }
   }, []);
 
   const _handleKeyDown = (e) => {
