@@ -3,7 +3,6 @@ import './style.css';
 import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
-import { estPointAZero, distanceBtw, svgPath, bezierCommand } from './BezierTools';
 import DrawingComponentV2 from './DrawingComponentV2';
 
 
@@ -23,14 +22,12 @@ const useStyles = makeStyles(theme => ({
 
 
 const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColors }) => {
-    const [ancienPoint, setAncienPoint] = React.useState(new Point());
-    const [actuelPoint, setActuelPoint] = React.useState(new Point());
-    const [mousep, setMouse] = React.useState(null);
-    const [dessine, setDessine] = React.useState(false);
-    const [distance, setDistance] = React.useState(0.0);
     const [listPath, setListPath] = React.useState([]);
     const workingPath = React.useRef(new MyPath([], "#000000", 5));
     const isDrawing = React.useRef(false);
+    const hasDrawn = React.useRef(false);
+
+
     const timePassed = React.useRef(0.0);
     const drawingZoneRef = React.useRef(null);
 
@@ -91,7 +88,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
         timePassed.current;
         const interval = setInterval(() => {
             secondCheck(socket);
-        }, 1000);
+        }, 500);
         return () => clearInterval(interval);
     }, [socket]);
 
@@ -100,7 +97,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
      */
     function secondCheck(socket) {
 
-        //console.log('This will run every second!');
+        //console.log('This will run every second!  : ' + isDrawing.current);
         if (isDrawing.current)
             emitPathToServ(socket);
     }
@@ -109,32 +106,29 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket) {
-        //if (workingPath.current === null || workingPath.current.points.length === 0) return;
-        //console.log("First emit : " + workingPath.current.points.length);
         var tmp = new Date(Date.now() - timePassed.current);
         workingPath.current.time = tmp.getTime() / 1000;
         timePassed.current = Date.now();
-        //console.log("emitting !");
+        
         // On désyncronise l'envoie des informations de dessin car sinon ça bloque l'algorithme 
         let promis = new Promise(function (resolve, reject) {
-            //console.log("emit promise");
-            console.log("EMITTING id : " + workingPath.current.id);
+            //console.log("EMITTING id : " + drawingZoneRef.current);
             //socket.emit('draw', workingPath.current);
             //if(drawingZoneRef.current != null) console.log("DATA TO EMMIT : " + JSON.stringify(drawingZoneRef.current.getSaveData()));
-            if(drawingZoneRef.current != null) socket.emit('draw',drawingZoneRef.current.getSaveData());
+            socket.emit('draw',drawingZoneRef.current.getSaveData());
         });
+
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
         
     }
 
-
-
-    function onTouchStart(event){
-        
+    function release(e){
+        //console.log("RELEASEEEEEEEEEEEEE ! ");
+        //emitPathToServ(socket);
     }
 
     function onMyTouchEnd(event){
-        console.log("############### coucou ");
+        isDrawing.current = false;
         return false;
     }
 
@@ -142,7 +136,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
     return (
         <Box height={svgBoxHeight} mb={1} onTouchStart={(e)=>onMyTouchEnd(e)}>
             <Paper className="fullHeight" onTouchStart={(e)=>onMyTouchEnd(e)}>
-                <DrawingComponentV2 ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+                <DrawingComponentV2 isDrawing={isDrawing} release={(e) => release(e)} ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
             </Paper>
         </Box>
     );

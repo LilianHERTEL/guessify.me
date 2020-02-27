@@ -161,7 +161,8 @@ const GamePage = (props) => {
     socket.on('drawCmd', async function (data) {
       if (drawing) return;
       pathsArray = [...pathsArray, data];
-      //console.log("//////// VIEWER DATA : " + JSON.stringify(data));
+      console.log("DATAS : " + JSON.stringify(data));
+      console.log("//////// VIEWER DATA : " + !!data + " /// isdrawing : " + isDrawing);
       setListPath(data);
       if(drawingComponent.current) drawingComponent.current.loadSaveData(data,false,false);
       /*

@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
-import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Box } from '@material-ui/core';
 
-import CanvasDraw from "react-canvas-draw";
 import DrawingComponentv2 from './DrawingComponentV2';
 
 const RenderAreaV3 = (props) => {

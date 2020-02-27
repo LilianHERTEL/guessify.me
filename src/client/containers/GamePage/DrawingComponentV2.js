@@ -43,6 +43,9 @@ const dimensionsPropTypes = PropTypes.oneOfType([
 
 export default class DrawingComponentV2 extends PureComponent {
   static propTypes = {
+    release : PropTypes.func,
+    onTouchStart: PropTypes.func,
+    onTouchEnd:PropTypes.func,
     onChange: PropTypes.func,
     loadTimeOffset: PropTypes.number,
     lazyRadius: PropTypes.number,
@@ -62,6 +65,9 @@ export default class DrawingComponentV2 extends PureComponent {
   };
 
   static defaultProps = {
+    release: null,
+    onTouchStart: null, // ajout pour gerer les events onTouchStart et onTouchEnd
+    onTouchEnd: null,
     onChange: null,
     loadTimeOffset: 5,
     lazyRadius: 12,
@@ -82,7 +88,7 @@ export default class DrawingComponentV2 extends PureComponent {
 
   constructor(props) {
     super(props);
-
+    this.avancement = 0;
     this.canvas = {};
     this.ctx = {};
 
@@ -95,6 +101,9 @@ export default class DrawingComponentV2 extends PureComponent {
     this.valuesChanged = true;
     this.isDrawing = false;
     this.isPressing = false;
+    //{points:[],brushColor: this.props.brushColor,brushRadius: this.props.brushRadius};
+    this.workingPath = {points : [], id : 0}; // stock juste les points et l'id de la workingPath
+    this.currentWorkingPathID = 0;
   }
 
   componentDidMount() {
@@ -180,18 +189,44 @@ export default class DrawingComponentV2 extends PureComponent {
 
   getSaveData = () => {
     // Construct and return the stringified saveData object
-    return JSON.stringify({
-      lines: this.lines,
+    //slice(this.avancement,this.lines.length)
+    //console.log("IN : " + JSON.stringify(this.lines));
+    //this.saveLine();
+    let linesTmp = null;
+    if(true){//this.lines.length == 0
+      console.log("####### LINE VIDE ###############");
+      console.log("workingpath : " + this.workingPath);
+      linesTmp = {points: this.workingPath,
+                  brushColor: this.props.brushColor,
+                  brushRadius: this.props.brushRadius};
+      
+      this.workingPath = [];
+
+      return JSON.stringify({
+        lines: [linesTmp],
+        width: this.props.canvasWidth,
+        height: this.props.canvasHeight,
+        id : this.currentWorkingPathID
+      });
+
+    }
+
+    var res = JSON.stringify({
+      lines: this.lines[this.lines.length-1],
       width: this.props.canvasWidth,
       height: this.props.canvasHeight
     });
+    this.avancement = this.lines.length;
+    return res;
+
   };
 
   loadSaveData = (saveData, immediate = this.props.immediateLoading, doClear = false) => {
     if (typeof saveData !== "string") {
       throw new Error("saveData needs to be of type string!");
     }
-
+    console.log("####### RECEPTION LIGNES ###############");
+    console.log(" : : " + saveData);
     const { lines, width, height } = JSON.parse(saveData);
 
     if (!lines || typeof lines.push !== "function") {
@@ -273,11 +308,24 @@ export default class DrawingComponentV2 extends PureComponent {
     });
   };
 
+  triggerOnTouchStart = () => {
+    //console.log(" ontouchStart : " + !!this.props.isDrawing);
+
+    this.props.isDrawing.current = true;
+  }
+  triggerOnTouchEnd = () => {
+    //console.log("444 ontouchEnd : " + !!this.props.isDrawing);
+    //console.log("RELEASE : " + !!this.props.release)
+    if(this.props.release)this.props.release(null);
+    
+    if(this.props.isDrawing) this.props.isDrawing.current = false;
+  }
+
   handleTouchStart = e => {
+    this.triggerOnTouchStart();
     const { x, y } = this.getPointerPos(e);
     this.lazy.update({ x, y }, { both: true });
     this.handleMouseDown(e);
-
     this.mouseHasMoved = true;
   };
 
@@ -287,15 +335,20 @@ export default class DrawingComponentV2 extends PureComponent {
     this.handlePointerMove(x, y);
   };
 
+  
+
   handleTouchEnd = e => {
     this.handleMouseUp(e);
+    this.triggerOnTouchEnd();
     const brush = this.lazy.getBrushCoordinates();
     this.lazy.update({ x: brush.x, y: brush.y }, { both: true });
     this.mouseHasMoved = true;
+    
   };
 
   handleMouseDown = e => {
     e.preventDefault();
+    this.triggerOnTouchStart();
     this.isPressing = true;
   };
 
@@ -306,10 +359,11 @@ export default class DrawingComponentV2 extends PureComponent {
 
   handleMouseUp = e => {
     e.preventDefault();
+    this.triggerOnTouchEnd();
     this.isDrawing = false;
     this.isPressing = false;
-
     this.saveLine();
+    this.currentWorkingPathID += 1;
   };
 
   handleCanvasResize = (entries, observer) => {
@@ -367,12 +421,13 @@ export default class DrawingComponentV2 extends PureComponent {
       // Start drawing and add point
       this.isDrawing = true;
       this.points.push(this.lazy.brush.toObject());
+      this.workingPath.push(this.lazy.brush.toObject());
     }
 
     if (this.isDrawing && (this.lazy.brushHasMoved() || isDisabled)) {
       // Add new point
       this.points.push(this.lazy.brush.toObject());
-
+      this.workingPath.push(this.lazy.brush.toObject());
       // Draw current points
       this.drawPoints({
         points: this.points,
