@@ -79,7 +79,7 @@ class Lobby {
     this.emitAll('drawer', convertToJSON(this.currentDrawer));
     this.currentWord = Dictionnary.tirerMots('en-US'); // TO-DO make 3 choices
     this.emitAll('wordToBeDrawn_Underscored', Dictionnary.underscoreWordToBeDrawn(this.currentWord));
-
+    this.guessed = false;
     // sends the full word only to the drawer
     this.currentDrawer.emit('wordToBeDrawn',this.currentWord);
     this.emitAll('announcement', 'You have 2 minutes to guess the word!');
@@ -141,10 +141,15 @@ class Lobby {
     // Testing similarity
     if (Algo.compareString(msg, this.currentWord) > 0.8 && msg != this.currentWord) player.emit('closeGuess');
 
-    if (msg == this.currentWord && !this.containsGuessedPlayer(player) && player != this.currentDrawer) this.addGuessedPlayer(player);
-    
+    if (msg == this.currentWord && !this.containsGuessedPlayer(player) && player != this.currentDrawer)
+    {
+      console.log(this.guessed)
+      if(!this.guessed) this.shortenTime(15)
+      this.addGuessedPlayer(player);
+      
+    } 
     else this.emitAll('receiveChat', player.username, msg);
-    if(!this.guessed) this.shortenTime(15)
+    
   }
 
   /**
