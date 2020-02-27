@@ -102,8 +102,9 @@ export default class DrawingComponentV2 extends PureComponent {
     this.isDrawing = false;
     this.isPressing = false;
     //{points:[],brushColor: this.props.brushColor,brushRadius: this.props.brushRadius};
+    this.lastPoint = null;
     this.workingPath = {points : [], id : 0}; // stock juste les points et l'id de la workingPath
-    this.currentWorkingPathID = 0;
+    this.currentWorkingPathID = null;
   }
 
   componentDidMount() {
@@ -227,13 +228,18 @@ export default class DrawingComponentV2 extends PureComponent {
     }
     console.log("####### RECEPTION LIGNES ###############");
     console.log(" : : " + saveData);
-    const { lines, width, height } = JSON.parse(saveData);
+    const { lines, width, height,id } = JSON.parse(saveData);
 
     if (!lines || typeof lines.push !== "function") {
       throw new Error("saveData.lines needs to be an array!");
     }
 
     if(doClear) this.clear();
+
+    // if(this.lastPoint == null) this.lastPoint = lines[0].points[lines[0].points.length -1];
+    // if(id != null && id == this.currentWorkingPathID) lines[0].points.unshift(this.lastPoint);
+    // this.currentWorkingPathID = id;
+    // this.lastPoint = lines[0].points[lines[0].points.length -1];
 
     if (
       width === this.props.canvasWidth &&
@@ -364,6 +370,7 @@ export default class DrawingComponentV2 extends PureComponent {
     this.isPressing = false;
     this.saveLine();
     this.currentWorkingPathID += 1;
+    this.workingPath = [];
   };
 
   handleCanvasResize = (entries, observer) => {
@@ -374,7 +381,6 @@ export default class DrawingComponentV2 extends PureComponent {
       this.setCanvasSize(this.canvas.drawing, width, height);
       this.setCanvasSize(this.canvas.temp, width, height);
       this.setCanvasSize(this.canvas.grid, width, height);
-
       this.drawGrid(this.ctx.grid);
       this.loop({ once: true });
     }
