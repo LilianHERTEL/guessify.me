@@ -533,7 +533,7 @@ export default class DrawingComponentV2 extends PureComponent {
       const pointer = this.lazy.getPointerCoordinates();
       const brush = this.lazy.getBrushCoordinates();
 
-      this.drawInterface(this.ctx.interface, pointer, brush);
+      if(!this.props.disabled) this.drawInterface(this.ctx.interface, pointer, brush);
       this.mouseHasMoved = false;
       this.valuesChanged = false;
     }
