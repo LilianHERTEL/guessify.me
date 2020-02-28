@@ -78,8 +78,10 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
     React.useEffect(() => {
         if (socket == null) return;
         socket.on('clearDrawing', () => {
-            console.log("CLEARING DrawingArea");
-            setListPath([]);
+            //console.log("CLEARING DrawingArea");
+            //setListPath([]); OLD MECANICS
+            
+            if(drawingZoneRef.current != null) drawingZoneRef.current.clear();
         });
     }, [socket]);
     /************************************/
@@ -118,7 +120,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
             socket.emit('draw',drawingZoneRef.current.getSaveData());
         });
 
-        workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
+        //workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
         
     }
 
@@ -131,7 +133,6 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
         isDrawing.current = false;
         return false;
     }
-
 
     return (
         <Box height={svgBoxHeight} mb={1} onTouchStart={(e)=>onMyTouchEnd(e)}>

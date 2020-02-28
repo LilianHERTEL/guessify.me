@@ -171,11 +171,8 @@ const GamePage = (props) => {
     socket.on('drawCmd', async function (data) {
       if (drawing) return;
       pathsArray = [...pathsArray, data];
-      //console.log("DATAS : " + JSON.stringify(data));
-      //console.log("//////// VIEWER DATA : " + !!data + " /// isdrawing : " + isDrawing);
       setListPath(data);
-      
-      /*
+      /* OLD MECANICS
       setListPath(path => {
         if (path.length == 0 || path[path.length - 1].id != data.id) {
           //if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
