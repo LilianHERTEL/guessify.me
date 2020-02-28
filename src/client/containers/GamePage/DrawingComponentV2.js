@@ -104,7 +104,7 @@ export default class DrawingComponentV2 extends PureComponent {
     //{points:[],brushColor: this.props.brushColor,brushRadius: this.props.brushRadius};
     this.lastPoint = null;
     this.workingPath = {points : [], id : 0}; // stock juste les points et l'id de la workingPath
-    this.currentWorkingPathID = null;
+    this.currentWorkingPathID = 0;
   }
 
   componentDidMount() {
@@ -235,11 +235,13 @@ export default class DrawingComponentV2 extends PureComponent {
     }
 
     if(doClear) this.clear();
-
-    // if(this.lastPoint == null) this.lastPoint = lines[0].points[lines[0].points.length -1];
-    // if(id != null && id == this.currentWorkingPathID) lines[0].points.unshift(this.lastPoint);
-    // this.currentWorkingPathID = id;
-    // this.lastPoint = lines[0].points[lines[0].points.length -1];
+    
+    if(this.lastPoint == null) this.lastPoint = lines[0].points[lines[0].points.length -1];
+    if(id != null && id == this.currentWorkingPathID) lines[0].points.unshift(this.lastPoint);
+    //console.log("old ID : " + this.currentWorkingPathID);
+    this.currentWorkingPathID = id;
+    //console.log("new ID : " + this.currentWorkingPathID);
+    this.lastPoint = lines[0].points[lines[0].points.length -1];
 
     if (
       width === this.props.canvasWidth &&
@@ -274,7 +276,7 @@ export default class DrawingComponentV2 extends PureComponent {
     // TODO use a generator
     let curTime = 0;
     let timeoutGap = immediate ? 0 : this.props.loadTimeOffset;
-
+    timeoutGap = 50;
     lines.forEach(line => {
       const { points, brushColor, brushRadius } = line;
 
@@ -293,6 +295,7 @@ export default class DrawingComponentV2 extends PureComponent {
         return;
       }
 
+      timeoutGap = 500/points.length;
       // Use timeout to draw
       for (let i = 1; i < points.length; i++) {
         curTime += timeoutGap;
@@ -310,7 +313,7 @@ export default class DrawingComponentV2 extends PureComponent {
         // Save this line with its props instead of this.props
         this.points = points;
         this.saveLine({ brushColor, brushRadius });
-      }, curTime);
+      }, curTime+5);
     });
   };
 
