@@ -123,8 +123,8 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
     }
 
     function release(e){
-        //console.log("RELEASEEEEEEEEEEEEE ! ");
-        //emitPathToServ(socket);
+        console.log("RELEASEEEEEEEEEEEEE ! ");
+        emitPathToServ(socket);
     }
 
     function onMyTouchEnd(event){

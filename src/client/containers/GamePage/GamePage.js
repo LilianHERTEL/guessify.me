@@ -97,6 +97,16 @@ const GamePage = (props) => {
     }
     isRendering = false;
   }
+  const loadSavedDataAsync = async () =>{
+    isRendering = true;
+    while(pathsArray.length > 0){
+      if(drawingComponent.current) drawingComponent.current.loadSaveData(pathsArray[0],false,false);
+      await sleep(500);
+      pathsArray.shift();
+    }
+    
+    isRendering = false;
+  }
 
   const connect = (username) => {
 
@@ -161,10 +171,10 @@ const GamePage = (props) => {
     socket.on('drawCmd', async function (data) {
       if (drawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("DATAS : " + JSON.stringify(data));
-      console.log("//////// VIEWER DATA : " + !!data + " /// isdrawing : " + isDrawing);
+      //console.log("DATAS : " + JSON.stringify(data));
+      //console.log("//////// VIEWER DATA : " + !!data + " /// isdrawing : " + isDrawing);
       setListPath(data);
-      if(drawingComponent.current) drawingComponent.current.loadSaveData(data,false,false);
+      
       /*
       setListPath(path => {
         if (path.length == 0 || path[path.length - 1].id != data.id) {
@@ -176,10 +186,10 @@ const GamePage = (props) => {
           return [...path];
         }
       });
-      
-      if (!isRendering)
-        await displayPathsArray();
       */
+      if (!isRendering)
+        await loadSavedDataAsync();
+      
     });
     socket.on('clearDrawing', () => {
       console.log("CLEARING DrawingRenderArea");
