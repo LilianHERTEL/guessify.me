@@ -14,11 +14,6 @@ class LobbyHandler {
   constructor(httpServer) {
     this.lobbies = new Map();
     this.io = require('socket.io')(httpServer);
-    this.io.use((socket, next) => {
-      const clientId = socket.handshake.headers['x-clientid'];
-      console.log(clientId);
-      return next();
-    });
     this.initConnect();
   }
 
@@ -33,7 +28,7 @@ class LobbyHandler {
     const freeLobbies = arr.filter(lobby => lobby.listPlayer.length < lobby.maxPlayer);
     let lobby;
     if (freeLobbies.length == 0) {
-      lobby = new Lobby(this);
+      lobby = new Lobby(this,"en-US");
       this.lobbies.set(lobby.id, lobby);
     } else {
       [lobby] = freeLobbies;

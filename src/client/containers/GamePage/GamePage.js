@@ -185,6 +185,7 @@ const GamePage = (props) => {
 
   useEffect(() => {
     if (!props.location.state) return;
+    console.log(props.location.state)
     if (process.env.NODE_ENV == "production")
       socket = openSocket('https://guessify.me/');
     else

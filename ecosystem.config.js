@@ -10,6 +10,7 @@ module.exports = {
       "log_date_format" : "YYYY-MM-DD HH:mm Z",
       "env": {
           "NODE_ENV": "production",
+          "MONGO_URL": "mongodb://guessify:pAI5v2#NQk#W@localhost/guessify"
       } 
   }]
 }

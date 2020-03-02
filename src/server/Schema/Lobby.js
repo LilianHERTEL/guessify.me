@@ -24,8 +24,9 @@ class Lobby {
    * @param {} handler
    * @memberof Lobby
    */
-  constructor(handler) {
+  constructor(handler,lang) {
     this.id = uniqid();
+    this.lang = lang
     this.maxPlayer = 10;
     this.inGame = false;
     this.listPlayer = [];
@@ -77,7 +78,7 @@ class Lobby {
     this.getNextDrawer();
     this.updateLobby
     this.emitAll('drawer', convertToJSON(this.currentDrawer));
-    this.currentWord = Dictionnary.tirerMots('en-US'); // TO-DO make 3 choices
+    this.currentWord = Dictionnary.tirerMots(this.lang); // TO-DO make 3 choices
     this.emitAll('wordToBeDrawn_Underscored', Dictionnary.underscoreWordToBeDrawn(this.currentWord));
     this.guessed = false;
     // sends the full word only to the drawer
