@@ -13,7 +13,8 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles(theme => ({
   list: {
     overflow: "auto",
-    maxHeight: 180
+    maxHeight: 180,
+    height: "15em"
   },
   title: {
     flexGrow: 1
