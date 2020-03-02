@@ -22,15 +22,46 @@ async function disconnect() {
     }
   }
 const UserView = ({user}) => {
-    return (<React.Fragment>
+    return (
+      <React.Fragment>
         <Typography variant="h6" align="center">
           Connected as {user.username}
         </Typography>
-        <Link to={{ pathname: '/game', state: { username: user.username, accountID: user._id } }}>
-    <Button id="guestPlayRedirectLink" variant="contained" size="medium" color="primary" fullWidth>Play</Button>
-    </Link>
+        <Link
+          to={{
+            pathname: "/game",
+            state: { username: user.username, accountID: user._id }
+          }}
+        >
+          <Button
+            id="guestPlayRedirectLink"
+            variant="contained"
+            size="medium"
+            color="primary"
+            fullWidth
+          >
+            Play
+          </Button>
+        </Link>
+        <Link
+          to={{
+            pathname: "/account",
+            state: { username: user.username, accountID: user._id }
+          }}
+        >
+          <Button
+            id="toAccountPageButton"
+            variant="contained"
+            size="medium"
+            color="primary"
+            fullWidth
+          >
+            My account
+          </Button>
+        </Link>
         <Button onClick={disconnect}>Deconnexion</Button>
-      </React.Fragment>)
+      </React.Fragment>
+    );
 }
 
 export default UserView;
