@@ -3,9 +3,9 @@
 var model = require('./Schema');
 var session = require('express-session')
 const MongoStore = require('connect-mongo')(session);
-function launchDataBase(app,io){
+function launchDataBase(app){
     const mongoose = require('mongoose');
-    mongoose.connect('mongodb://guessify:pAI5v2#NQk#W@localhost/guessify', {useNewUrlParser: true,useUnifiedTopology: true});
+    mongoose.connect('mongodb://guessify:pAI5v2#NQk#W@192.168.234.1/guessify', {useNewUrlParser: true,useUnifiedTopology: true});
     
     var db = mongoose.connection;
     global.MongoStore = new MongoStore({ mongooseConnection: db });

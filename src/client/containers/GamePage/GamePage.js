@@ -111,8 +111,10 @@ const GamePage = (props) => {
       sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
+      console.log(data)
       setListPlayer(data.listPlayer);
       var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
+      console.log(PlayerOrder); //SLIMEPOINT
       setOrder(PlayerOrder ? PlayerOrder.order : "...");
     });
     socket.on('receiveChat', function (username, msg) {
@@ -138,11 +140,11 @@ const GamePage = (props) => {
     });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, (<Typography variant="body2" align="center" display="block">The word is <b>{data}</b>!</Typography>)])
-      console.log("RECEIVED word");
+      //console.log("RECEIVED word");
       setCurrentWord(data);
     });
     socket.on('wordToBeDrawn_Underscored', function (data) {
-      console.log("RECEIVED _ _ _");
+      //console.log("RECEIVED _ _ _");
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
@@ -183,11 +185,16 @@ const GamePage = (props) => {
 
   useEffect(() => {
     if (!props.location.state) return;
+    console.log(props.location.state)
     if (process.env.NODE_ENV == "production")
       socket = openSocket('https://guessify.me/');
     else
       socket = openSocket('http://' + window.location.hostname + ':8880/');
     connect(props.location.state.username);
+    return function cleanup () {
+      console.log("Closing socket");
+     socket.disconnect();
+    }
   }, []);
 
   const _handleKeyDown = (e) => {
