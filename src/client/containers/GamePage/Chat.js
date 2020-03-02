@@ -65,7 +65,7 @@ function Chat(prop) {
 
   const classes = useStyles();
   return (
-    <Paper className={classes.paper}>
+    <Paper >
       <Box className={classes.chatArea}>
         <AppBar position="static" className={classes.header}>
           <Box display="flex" alignItems="center" ml={2}>
