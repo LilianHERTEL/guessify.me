@@ -12,8 +12,6 @@ Aiguille
 Ail
 Aile
 Air
-Albert Einstein
-Alice au pays des merveilles
 Allumette
 Amazone
 Ambulance
@@ -26,8 +24,6 @@ Anubis
 Aphrodite
 Apiculteur
 Apollon
-Appareil dentaire
-Appareil photographique
 Aquarium
 Araignée
 Arbre
@@ -49,7 +45,6 @@ Astronaute
 Astronomie
 Athéna
 Atterrir
-Au clair de la lune
 Aubergine
 Automne
 Autruche
@@ -60,12 +55,10 @@ Bâiller
 Balai
 Balançoire
 Baleine
-Baleine bleue
 Balle
 Ballon
 Banane
 Banc
-Bande dessinée
 Barbe
 Barque
 Barrette
@@ -76,13 +69,11 @@ Bavoir
 Bec
 Béquille
 Berger
-Berger allemand
 Bermuda
 Beurre
 Biberon
 Bibliothèque
 Bifteck
-Big Ben
 Bijou
 Bijoutier
 Bille
@@ -112,9 +103,7 @@ Bracelet
 Bras
 Bretelle
 Brocoli
-Brosse à dents
 Brouette
-Bugs Bunny
 Bureau
 Bus
 Cabane
@@ -134,7 +123,6 @@ Camping-car
 Canapé
 Canard
 Caniche
-Canne à pêche
 Car
 Caravane
 Carnaval
@@ -176,10 +164,7 @@ Chaussure
 Chauve-souris
 Chemise
 Chenille
-Chercheur d'or
 Cheval
-Cheval de Troie
-Chevaliers de la Table ronde
 Cheveu
 Cheville
 Chèvre
@@ -191,7 +176,6 @@ Chirurgien
 Chocolat
 Chou
 Chouette
-Christophe Colomb
 Chuchoter
 Cigogne
 Cil
@@ -217,7 +201,6 @@ Colorier
 Concombre
 Conduire
 Confiture
-Console de jeu
 Coq
 Coquelicot
 Coquillage
@@ -242,7 +225,6 @@ Crapaud
 Cravate
 Crayon
 Crèche
-Crème solaire
 Crêpe
 Creuser
 Crevette
@@ -278,7 +260,6 @@ Dionysos
 Doigt
 Domino
 Dompteur
-Donald Duck
 Dormir
 Dos
 Dragon
@@ -290,7 +271,6 @@ Eau
 Échecs
 Échelle
 École
-École maternelle
 Écran
 Écrire
 Écureuil
@@ -298,7 +278,6 @@ Eau
 Élastique
 Éléphant
 Elfe
-Empire State Building
 Endive
 Entonnoir
 Enveloppe
@@ -306,7 +285,6 @@ Enveloppe
 Épingle
 Épiphanie
 Éponge
-Escalier mécanique
 Escargot
 Escrime
 Espagne
@@ -314,32 +292,22 @@ Essence
 États-Unis
 Été
 Étoile
-Étoile de mer
-Étoile filante
 Everest
 Facteur
 Fantôme
 Farine
 Fauteuil
-Fauteuil roulant
 Fée
-Fer à repasser
 Ferme
 Fesse
-Fête de la musique
-Fête des grands-mères
-Fête des mères
-Fête des pères
 Feutre
 Fève
 Ficelle
 Fièvre
 Fil
 Fille
-Flamant rose
 Fleur
 Fleuriste
-Flûte traversière
 Football
 Forgeron
 Fossile
@@ -356,7 +324,6 @@ Fromage
 Front
 Fruit
 Fusée
-Fusée spatiale
 Gaïa
 Galère
 Galette
@@ -378,7 +345,6 @@ Gobelet
 Golf
 Gomme
 Gorille
-Grande Muraille de Chine
 Grèce
 Grenouille
 Griffe
@@ -395,7 +361,6 @@ Hadès
 Halloween
 Hamster
 Handball
-Haricot vert
 Hélicoptère
 Héphaïstos
 Héra
@@ -408,7 +373,6 @@ Hippocampe
 Hippopotame
 Hirondelle
 Hiver
-Hockey sur glace
 Hôpital
 Hoquet
 Horloge
@@ -427,42 +391,26 @@ Jambe
 Jambon
 Janus
 Japon
-Jeanne d'Arc
-Jolly Jumper
 Jongler
 Jongleur
 Joue
 Journaliste
-Journée internationale des femmes
 Judo
 Jumelles
 Jument
 Jupe
-Jus d'orange
 Kangourou
 Karaté
 Ketchup
 Kilt
 Kiwi
-La Reine des neiges
-La Schtroumpfette
 Lacet
 Lait
-Lancer du disque
 Langue
 Lapin
 Larme
-Las Vegas
 Lave-linge
-Le Capitaine Haddock
-Le Grand Schtroumpf
-Le Marsupilami
-Le Monde de Nemo
-Le Petit Prince
-Le Roi lion
-Le Schtroumpf à lunettes
 Léopard
-Les Schtroumpfs
 Lèvre
 Lèvres
 Lézard
@@ -479,23 +427,18 @@ Louche
 Loup
 Loupe
 Loup-Garou
-Lucky Luke
 Luge
 Lune
 Lunettes
-Lunettes de soleil
 Lutin
 Maçon
 Magicien
 Maillot
-Maillot de bain
 Main
 Maison
 Manège
-Mante religieuse
 Manteau
 Marguerite
-Marie Curie
 Marin
 Marionnette
 Marmotte
@@ -506,27 +449,21 @@ Médicament
 Méduse
 Melon
 Menton
-Merlin l'Enchanteur
 Métal
 Météorite
 Métro
 Mexique
-Mickey Mouse
 Microscope
 Mie
 Miel
 Mille-pattes
 Milou
-Minnie Mouse
 Minotaure
 Miroir
 Moineau
-Monstre du Loch Ness
-Mont Blanc
 Montagne
 Montgolfière
 Montre
-Morse (animal)
 Moteur
 Moto
 Mouche
@@ -546,7 +483,6 @@ Nain
 Nappe
 Nasique
 Navet
-Neil Armstrong
 Nez
 Nid
 Nil
@@ -554,7 +490,6 @@ Noël
 Noisette
 Noix
 Nombril
-Nouvel An Chinois
 Noyau
 Obélix
 Odin
@@ -580,7 +515,6 @@ Orteil
 Os
 Otarie
 Ours
-Ours blanc
 Oursin
 Ouvre-boîte
 Ouvrier
@@ -592,13 +526,11 @@ Panda
 Pansement
 Pantalon
 Panthère
-Papier alu
 Papillon
 Parapluie
 Parasol
 Paris
 Pâte
-Pâte à modeler
 Pâtes
 Pâtisserie
 Patte
@@ -616,7 +548,6 @@ Perle
 Perroquet
 Persil
 Pétanque
-Petit pois
 Pharmacie
 Phénix
 Phoque
@@ -632,7 +563,6 @@ Piquer
 Piqûre
 Pizza
 Planche
-Planche à découper
 Plastique
 Plâtre
 Pleurer
@@ -648,7 +578,6 @@ Poison
 Poisson
 Police
 Pomme
-Pomme de terre
 Pompier
 Poney
 Pont
@@ -671,13 +600,11 @@ Princesse
 Printemps
 Prométhée
 Prune
-Puissance 4
 Pull-over
 Purée
 Putois
 Puzzle
 Pyjama
-Pyramides d'Égypte
 Quetzalcoatl
 Queue
 Raclette
@@ -690,7 +617,6 @@ Raquette
 Rasoir
 Rat
 Râteau
-Raton laveur
 Rê
 Recette
 Réfrigérateur
@@ -705,18 +631,14 @@ Rideau
 Riz
 Robe
 Robinet
-Robinson Crusoé
 Robot
 Roi
-Roi Arthur
 Rome
 Roue
 Rouge-Gorge
-Rouleau à pâtisserie
 Sable
 Saint-Valentin
 Salade
-Salade de fruits
 Saladier
 Salière
 Sang
@@ -726,27 +648,18 @@ Sardine
 S'asseoir
 Satyre
 Saumon
-Saut à la perche
 Savon
 Scie
 Science
 Scooter
 Scorpion
-Se baisser
-Se coucher
-Se déshabiller
-Se laver
-Se maquiller
-Se moucher
 Seau
 Sein
 Sel
 Serpent
-Serpent de mer
 Serrure
 Serviette
 Shampooing
-Sherlock Holmes
 Shiva
 Singe
 Sirène
@@ -754,14 +667,12 @@ Ski
 Soleil
 Sonnette
 Sorcière
-Soucoupe volante
 Soupe
 Sourcil
 Souris
 Sous-marin
 Sphinx
 Squelette
-Statue de la Liberté
 Stéthoscope
 Stylo
 Sucre
@@ -775,7 +686,6 @@ Talon
 Tambour
 Tandem
 Tapis
-Tapis volant
 Tarte
 Tartine
 Tasse
@@ -783,7 +693,6 @@ Taupe
 Taureau
 Télécommande
 Téléphone
-Téléphone portable
 Télévision
 Tennis
 Tente
@@ -800,8 +709,6 @@ Toboggan
 Tomate
 Torchon
 Tortue
-Tour de Pise
-Tour Eiffel
 Tournevis
 Toutatis
 Tracteur
@@ -813,16 +720,10 @@ Tricycle
 Trompette
 Trône
 Trottinette
-Trou noir
 Trousse
 Truie
 Tuyau
-Union européenne
 Ulysse
-Un Saint-Bernard
-Un, deux, trois, soleil
-Une Laisse
-Une souris verte
 Univers
 Urine
 Usine
@@ -836,7 +737,6 @@ Veau
 Vélo
 Venise
 Ventre
-Ver de terre
 Verre
 Vétérinaire
 Viande
@@ -850,7 +750,6 @@ Volcan
 Volet
 Xylophone
 Yahourt
-Yangzi Jiang
 Yéti
 Zèbre
 Zeus
