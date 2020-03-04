@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import banner from '../../images/banner.png';
 import './style.css';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+
 const LoginForm = (props) => {
     const [usernameM, setUsernameM] = useState('');
     const [passwordM, setPasswordM] = useState('');
@@ -28,6 +29,7 @@ const LoginForm = (props) => {
         });
         if (response.ok) {
           var data = await response.json();
+          props.showAlert("Logined in successfully!","success")
           props.onLogin(data.msg)
         }
         else {
@@ -49,7 +51,6 @@ const LoginForm = (props) => {
     }
   }
     return (<React.Fragment>
-      
         <Typography component="h1" variant="h5" align="center" color="primary">Sign in</Typography>
         <Grid container spacing={2} justify="center" id="OtherConnections" style={{ marginTop: 10 }}>
           <Grid item title="Connect with Google">

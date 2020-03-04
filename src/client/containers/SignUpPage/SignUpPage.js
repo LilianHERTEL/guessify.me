@@ -16,6 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
 import {Link as RouterLink} from 'react-router-dom'; //aliased to avoid confusion with Mateeriel-UI Link component
+import { Snackbar } from '@material-ui/core';
 
 const styles = theme => ({
   '@global': {
@@ -130,6 +131,11 @@ class SignUpPage extends React.Component {
     const { classes } = this.props;
     return (
       <Container component="main" maxWidth="xs">
+         <Snackbar open={snackBarText != null} autoHideDuration={6000} onClose={handleClose} >
+        <Alert onClose={handleClose} severity={severity}>
+          {snackBarText}
+        </Alert>
+      </Snackbar>
         <div className={classes.paper}>
           <Grid item>
             <img id="banner" title="This is our awesome banner ! Cool huh ?" src="/src/client/images/banner.png" />

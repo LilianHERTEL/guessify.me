@@ -35,6 +35,7 @@ class Lobby {
     this.currentDrawer = null;
     this.timer = null;
     this.handler = handler;
+    this.drawing = []
   }
 
 
@@ -240,6 +241,7 @@ class Lobby {
       this.sendChat(player, msg);
     });
     player.on('draw', (data) => {
+      this.drawing.push(data)
       this.emitAll('drawCmd', data);
     });
     player.on('clearDrawing', () => {
@@ -248,13 +250,13 @@ class Lobby {
     player.on('requestListPlayer', () => {
       this.emitAll('listPlayer', { listPlayer: this.listPlayer.map(element => convertToJSON(element)) });
     });
-
     player.on('drawingSideOption', (option) => {
       this.emitAll('viewerSideOption', option);
     });
     player.on('disconnect', () => {
       this.disconnectPlayer(player);
     });
+    this.sendAllDrawing(player)
   }
 
 
@@ -262,6 +264,10 @@ class Lobby {
     this.guessedPlayer = [];
   }
 
+
+  sendAllDrawing(player){
+    this.drawing.forEach((point)=>player.emit("drawCmd",point))
+  }
   /**
    * Resets the whole lobby and performs cleanup
    *
@@ -269,6 +275,7 @@ class Lobby {
    */
   resetGame() {
     // TO-DO need more logic here
+    this.emitAll("resetGame")
     this.started = false;
     this.currentDrawer = null;
     this.currentDrawerIndex = null;
@@ -304,6 +311,7 @@ class Lobby {
       this.resetGame();
       return;
     }
+    if(this.started)
     if (player.id == this.currentDrawer.id) this.goNextTurn(this);
   }
 

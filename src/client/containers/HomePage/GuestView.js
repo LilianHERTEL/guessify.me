@@ -24,13 +24,13 @@ const GuestView = (props) => {
               <React.Fragment>
                 <Grid container spacing={3} justify="center" alignItems="center">
                   <Grid item xs={12} sm={5}>
-                    <QuickPlay />
+                      <QuickPlay />
                   </Grid>
                   <Grid item xs={12} sm={2}>
                     <Typography variant="h6" align="center">OR</Typography>
                   </Grid>
                   <Grid item xs={12} sm={5}>
-                          <LoginForm onLogin={props.onLogin} />
+                          <LoginForm onLogin={props.onLogin} {...props} />
                   </Grid>
                 </Grid>
               </React.Fragment>
