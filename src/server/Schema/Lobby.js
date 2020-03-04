@@ -77,6 +77,7 @@ class Lobby {
   preRound() {
     this.getNextDrawer();
     this.updateLobby
+    this.emitAll('announcement', '---------------------');
     this.emitAll('drawer', convertToJSON(this.currentDrawer));
     this.currentWord = Dictionnary.tirerMots(this.lang); // TO-DO make 3 choices
     this.emitAll('wordToBeDrawn_Underscored', Dictionnary.underscoreWordToBeDrawn(this.currentWord));
