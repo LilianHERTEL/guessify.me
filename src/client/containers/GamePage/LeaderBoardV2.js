@@ -161,8 +161,8 @@ function LeaderBoard({ listPlayer, order, handleSocketClose }) {
 
   
   return (
-    <Box flexGrow={1} height={0.7}>
-      <Paper className={classes.leaderboardPaper}>
+    <Box >
+      <Paper >
         <Box className={classes.top}>
           <AppBar position="static" className={classes.header}>
             <Box display="flex" alignItems="center" ml={2}>
