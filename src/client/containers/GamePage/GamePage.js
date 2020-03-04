@@ -138,6 +138,13 @@ const GamePage = (props) => {
     socket.on('draw', function (data) {
       setChat(chat => [...chat, data])
     });
+    socket.on('resetGame', function (data) {
+      setCurrentWord(null);
+      clearInterval(interval)
+      interval = null;
+      setDrawing(false)
+      setProgressBarValue(0)
+    });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, (<Typography variant="body2" align="center" display="block">The word is <b>{data}</b>!</Typography>)])
       //console.log("RECEIVED word");

@@ -15,7 +15,13 @@ import './style.css';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import GuestView from './GuestView';
 import UserView from './UserView';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 
 
@@ -31,7 +37,22 @@ const HomePage = (props) => {
 
 
   const [user, setUser] = useState(null);
+  const [snackBarText, setText] = useState(null)
+  const [severity,setSeverity] = useState("success")
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
+    setText(null)
+    setSeverity("success")
+  };
+
+  const showAlert = (text, severity) => {
+
+    setText(text)
+    setSeverity(severity)
+  };
 
 
 
@@ -43,11 +64,16 @@ const HomePage = (props) => {
 
   return (        <React.Fragment>
     <main className="maindiv">
+    <Snackbar open={snackBarText != null} autoHideDuration={6000} onClose={handleClose} >
+        <Alert onClose={handleClose} severity={severity}>
+          {snackBarText}
+        </Alert>
+      </Snackbar>
       <div>
         <img id="banner" title="This is our awesome banner ! Cool huh ?" src={banner} style={{ marginLeft: 125 }} />
       </div>
       <Paper className="paper">
-        {user ? (<UserView user={user} />):(<GuestView onLogin={(user) => setUser(user)} />) }
+        {user ? (<UserView user={user} />):(<GuestView onLogin={(user) => setUser(user)} showAlert={showAlert} />) }
       </Paper>
           </main>
         </React.Fragment>)
