@@ -28,15 +28,27 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     justifyContent: "space-between"
   },
-  chatArea: {
+  
+  textBreakWord: {
+    overflowWrap: "break-word"
+  },
+
+  chatBox: {
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    borderTopLeftRadius: "inherit",
-    borderTopRightRadius: "inherit"
   },
-  textBreakWord: {
-    overflowWrap: "break-word"
+  chatArea: {
+    borderTopLeftRadius: "inherit",
+    borderTopRightRadius: "inherit",
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+  },
+  chatPaper: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
   }
 }));
 
@@ -65,7 +77,7 @@ function Chat(prop) {
 
   const classes = useStyles();
   return (
-    <Paper >
+    <Paper className={classes.chatPaper}>
       <Box className={classes.chatArea}>
         <AppBar position="static" className={classes.header}>
           <Box display="flex" alignItems="center" ml={2}>
@@ -75,7 +87,7 @@ function Chat(prop) {
           </Box>
         </AppBar>
         <Box flexGrow={1}>
-          <Box display="flex" flexDirection="column" height={1} id="chatBox">
+          <Box display="flex" flexDirection="column" height={1} id="chatBox" className={classes.chatBox}>
             <Box overflow="auto" px={1} height={1} maxHeight={test} className={classes.textBreakWord}>
               {prop.chat.map((value, key) => (
                 <div key={key}>{value}</div>

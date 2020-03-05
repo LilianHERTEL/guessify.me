@@ -13,7 +13,8 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles(theme => ({
   list: {
     overflow: "auto",
-    maxHeight: 180
+    maxHeight: 180,
+    height: "15em"
   },
   title: {
     flexGrow: 1
@@ -160,8 +161,8 @@ function LeaderBoard({ listPlayer, order, handleSocketClose }) {
 
   
   return (
-    <Box flexGrow={1} height={0.7}>
-      <Paper className={classes.leaderboardPaper}>
+    <Box >
+      <Paper >
         <Box className={classes.top}>
           <AppBar position="static" className={classes.header}>
             <Box display="flex" alignItems="center" ml={2}>
