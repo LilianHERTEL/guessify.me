@@ -202,7 +202,6 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
     function onMyTouchEnd(event){
         return false;
-        console.log("##############################################################");
     }
 
     /*

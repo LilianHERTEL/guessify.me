@@ -1,5 +1,5 @@
 import React from 'react';
-import DrawingAreaV2 from './DrawingAreaV2';
+import DrawingArea from './DrawingArea';
 import DrawingToolsVertical from './DrawingToolsVertical';
 import { Box } from '@material-ui/core';
 import DrawingToolsHorizontal from './DrawingToolsHorizontal';
@@ -40,7 +40,7 @@ const DrawerArea = ({ socket }) => {
                 brushMode={brushMode} setBrushMode={setBrushMode}
             />
             <Box ml={1} display="flex" height={1} flexDirection="column" flexGrow="1" id="svgArea">
-                <DrawingAreaV2
+                <DrawingArea
                     socket={socket}
                     brushSize={brushSize}
                     brushColor={brushColor}

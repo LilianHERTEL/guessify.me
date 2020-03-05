@@ -133,3 +133,29 @@
 .height-maxContent {
   height: max-content;
 }
+
+.textField * {
+  color:white !important;
+}
+
+.textField *::before {
+  border-color:rgba(255,255,255,0.5) !important;
+}
+
+.textField *::after {
+  border-color:rgba(255,255,255,1) !important;
+}
+
+* {
+  scrollbar-width: thin !important;
+  scrollbar-color: lightgrey rgba(150, 150, 150, 0.1) !important;
+}
+
+*::-webkit-scrollbar {
+  width: 8px !important;
+  background-color: rgba(150,150,150,0.1) !important;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: lightgrey !important;
+}

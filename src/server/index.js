@@ -1,88 +1,97 @@
-/* eslint consistent-return:0 */
-console.log(__dirname+"/../../dist")
+
 const express = require('express');
 
-const { resolve } = require('path');
-const logger = require('./util//logger');
-const path = require("path")
+if (process.env.NODE_ENV != 'production') {
+  require('dotenv').config();
+}
+
+const app = express();
+const path = require('path');
+const fs = require('fs');
+const mongoose = require('mongoose'); // Pris
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+if (process.env.NODE_ENV == 'production') {
+  const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
+  const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
+  const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
+
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca
+  };
+  var https = require('https').createServer(credentials, app);
+} else var https = require('http').createServer(app);
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const argv = require('./util/argv');
 const port = require('./util//port');
 const websocket = require('./websocket');
-const mongoose = require('mongoose') //Pris
+const LobbyHandler = require('./Schema/LobbyHandler')
+new LobbyHandler(https)
 
-const app = express();
-// const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
-// const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');
-// const ca = fs.readFileSync('/etc/letsencrypt/live/guessify.me/chain.pem', 'utf8');
-
-// const credentials = {
-// 	key: privateKey,
-// 	cert: certificate,
-// 	ca: ca
-// };
-var https = require('http').createServer(app);
-var io = require('socket.io')(https);
-var loginRoute = require('./routes/login.js');
-var deployRoute = require('./routes/deploy.js');
+const loginRoute = require('./routes/login.js');
+const deployRoute = require('./routes/deploy.js');
 
 console.log(__dirname);
 
 
+const logger = require('./util//logger');
 
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
-
-var launchDataBase = require('./database.js');
+const launchDataBase = require('./database.js');
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 
-app.set('trust proxy', 1) // trust first proxy (autorise l'utilisation d'un proxy)
+app.set('trust proxy', 1); // trust first proxy (autorise l'utilisation d'un proxy)
 app.use(express.json());
-app.use(express.static(__dirname+"/../../dist", { dotfiles: 'allow' } ));
+app.use(express.static(`${__dirname}/../../dist`, { dotfiles: 'allow' }));
 // In production we need to pass these values in instead of relying on webpack
-//Pris 
+// Pris
 
 
-passport.serializeUser(function(user, done) {
-  user.password = null
-  
+passport.serializeUser((user, done) => {
+  user.password = null;
+
   done(null, user);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
 passport.use(new LocalStrategy(
-  function(username, password, done) {
-    var User = mongoose.model('User');
-    User.findOne({ username: username }, function(err, user) {
+  ((username, password, done) => {
+    const User = mongoose.model('User');
+    User.findOne({ username }, (err, user) => {
       if (err) { return done(err); }
       if (!user) {
         return done(null, false, { message: 'Incorrect username/password.' });
       }
-      user.comparePassword(password,(err,isMatch) => {
-        if(err) return done(null, false, { message: err })
-        if(!isMatch)  return done(null, false, { message: 'Incorrect username/password.' })
-         
+      user.comparePassword(password, (err, isMatch) => {
+        if (err) return done(null, false, { message: err });
+        if (!isMatch) return done(null, false, { message: 'Incorrect username/password.' });
+
         return done(null, user);
-    })
+      });
     });
-  }
+  })
 ));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/api/auth', loginRoute);
 app.use('/deploy', deployRoute);
-app.get('*', (req,res) =>{
-  res.sendFile(path.join(__dirname+"/../../dist/index.html"))
+app.get('*', (req, res) => {
+  res.sendFile(path.join(`${__dirname}/../../dist/index.html`));
 });
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = argv.host || process.env.HOST;
-const host = customHost || null; // Let http.Server use its default IPv6/4 host
 const prettyHost = customHost || 'localhost';
-websocket.start(io);
+
 // Start your app.
-https.listen(port, function(){
+https.listen(port, () => {
   logger.appStarted(port, prettyHost);
 });
-launchDataBase(app,io);
+launchDataBase(app);

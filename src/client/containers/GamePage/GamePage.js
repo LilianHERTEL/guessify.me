@@ -10,7 +10,6 @@ import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
 import RenderAreaV2 from './RenderAreaV2';
-import RenderAreaV3 from './RenderAreaV3';
 import { Redirect } from 'react-router-dom';
 import DrawerArea from './DrawerArea';
 import MyPath from './MyPath';
@@ -39,11 +38,8 @@ const GamePage = (props) => {
   const [currentWord, setCurrentWord] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
   //drawing rendering :
-  const [listPath, setListPath] = React.useState("");
+  const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-
-  const drawingComponent = React.useRef(null);
-
   const sockid = useRef(null);
   const startTimer = (time) => {
     if(interval != null)
@@ -108,10 +104,10 @@ const GamePage = (props) => {
     isRendering = false;
   }
 
-  const connect = (username) => {
+  const connect = (username,lang,accountID) => {
 
     socket.on('connect', function () {
-      socket.emit("findGame", username)
+      socket.emit("findGame", username,lang,accountID)
     });
     socket.on('Unauthorized', function (data) {
       console.error(data)
@@ -125,8 +121,10 @@ const GamePage = (props) => {
       sockid.current = socket.id;
     });
     socket.on('updateLobby', function (data) {
+      console.log(data)
       setListPlayer(data.listPlayer);
       var PlayerOrder = data.listPlayer.find(e => e.socketID === socket.id);
+      console.log(PlayerOrder); //SLIMEPOINT
       setOrder(PlayerOrder ? PlayerOrder.order : "...");
     });
     socket.on('receiveChat', function (username, msg) {
@@ -150,12 +148,20 @@ const GamePage = (props) => {
     socket.on('draw', function (data) {
       setChat(chat => [...chat, data])
     });
+    socket.on('resetGame', function (data) {
+      setCurrentWord(null);
+      clearInterval(interval)
+      interval = null;
+      setDrawing(false)
+      setProgressBarValue(0)
+    });
     socket.on('wordToBeDrawn', function (data) {
-      setChat(chat => [...chat, (<Typography variant="body2" align="center" display="block">The word is <b>{data}</b>!</Typography>)])
-      console.log("RECEIVED word");
+      setChat(chat => [...chat, (<Typography variant="body2" style={{color:"darkBlue"}} align="center" display="block">The word is <b>{data}</b>!</Typography>)])
+      //console.log("RECEIVED word");
       setCurrentWord(data);
     });
     socket.on('wordToBeDrawn_Underscored', function (data) {
+      //console.log("RECEIVED _ _ _");
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
@@ -165,7 +171,7 @@ const GamePage = (props) => {
       isDrawing = data.socketID == socket.id;
       setDrawing(data.socketID == socket.id);
       //On vide la listPath à chaque fois 
-      setListPath("");
+      setListPath([]);
       pathsArray = [];
     });
     socket.on('drawCmd', async function (data) {
@@ -189,22 +195,31 @@ const GamePage = (props) => {
         await loadSavedDataAsync();
       
     });
+
+      if (!isRendering)
+        await displayPathsArray();
+      // else
+      //   //console.log("IS RENDERING : TRUE");
+    });
     socket.on('clearDrawing', () => {
-      console.log("CLEARING in DrawingRenderArea component");
-      //setListPath("");
-      pathsArray = [];
-      if(drawingComponent.current) drawingComponent.current.clear();
+      console.log("CLEARING DrawingRenderArea");
+      setListPath([]);
     });
     socket.on('disconnect', function () { });
   }
 
   useEffect(() => {
     if (!props.location.state) return;
-    if (window.location.hostname == "guessify.me")
-      socket = openSocket('http://guessify.me/');
+    console.log(props.location.state)
+    if (process.env.NODE_ENV == "production")
+      socket = openSocket('https://guessify.me/');
     else
       socket = openSocket('http://' + window.location.hostname + ':8880/');
-    connect(props.location.state.username);
+    connect(props.location.state.username,props.location.state.lang,props.location.state.accountID);
+    return function cleanup () {
+      console.log("Closing socket");
+     socket.disconnect();
+    }
   }, []);
 
   const _handleKeyDown = (e) => {
@@ -266,7 +281,7 @@ const GamePage = (props) => {
   };
 
   return (
-    <Box height={1} padding={2} >
+    <Box height={1} padding={2}>
       <Grid container spacing={1} className="fullHeight">
         <Grid item md={9} xs={12}>
           <Box display="flex" height={1} flexDirection="column" flexGrow={4}>
@@ -279,27 +294,31 @@ const GamePage = (props) => {
                   value={progressBarValue}
                 />
               </Box>
-
-
             </Box>
             <Box>
-              {
-                drawing ?
-                  ( // drawer view
-                    <DrawerArea socket={socket} onTouchStart={(e)=>false}/>
-                  ) :
-                  ( // guesser view
-                    <Box id="svgArea">
-                      <RenderAreaV3 listPath={listPath} drawingRef={drawingComponent} />
-                    </Box>
-                  )
-              }
+              {drawing ? (
+                // drawer view
+                <DrawerArea socket={socket} />
+              ) : (
+                // guesser view
+                <Box id="svgArea">
+                  <RenderAreaV3 listPath={listPath} drawingRef={drawingComponent} />
+                </Box>
+              )}
             </Box>
           </Box>
         </Grid>
         <Grid item md={3} xs={12}>
-          <Box display="flex" height={1} flexDirection={matches ? "column" : "column-reverse"}>
-            <Leaderboard listPlayer={listPlayer} order={order} handleSocketClose={handleSocketClose} />
+          <Box
+            display="flex"
+            height={1}
+            flexDirection={matches ? "column" : "column-reverse"}
+          >
+            <Leaderboard
+              listPlayer={listPlayer}
+              order={order}
+              handleSocketClose={handleSocketClose}
+            />
             <Box mt={1} />
             <Chat chat={chatArray} enterKey={_handleKeyDown} />
           </Box>

@@ -44,7 +44,6 @@ router.post('/register' , function(req, res){
 
 router.get('/logout', function(req,res){
   req.logout();
-  req.session.userID=null;
   res.json({success:true,msg:"Logout sucessfull!"});
 });
 
