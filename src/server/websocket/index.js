@@ -45,7 +45,7 @@ sockets.start = function (io) {
 
       socket.lobby.getNextDrawer();
 
-      io.to(socket.lobby.id).emit('updateLobby', { lobby, listPlayer: lobby.listPlayer }); // SLIME MARK
+      io.to(socket.lobby.id).emit('updateLobby', { lobby, listPlayer: lobby.listPlayer });
       if (!lobby.currentDrawer) return;
       io.to(socket.lobby.id).emit('drawer', socket.lobby.currentDrawer);
       socket.lobby.currentWord = Dictionnary.tirerMots('fr-FR');
