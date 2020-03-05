@@ -60,7 +60,8 @@ export default class DrawingComponentV2 extends PureComponent {
     disabled: PropTypes.bool,
     saveData: PropTypes.string,
     immediateLoading: PropTypes.bool,
-    hideInterface: PropTypes.bool
+    hideInterface: PropTypes.bool,
+    isDrawing:PropTypes.bool
   };
 
   static defaultProps = {
@@ -81,7 +82,8 @@ export default class DrawingComponentV2 extends PureComponent {
     disabled: false,
     saveData: "",
     immediateLoading: false,
-    hideInterface: false
+    hideInterface: false,
+    isDrawing : false
   };
 
   constructor(props) {
@@ -262,7 +264,6 @@ export default class DrawingComponentV2 extends PureComponent {
 
   simulateDrawingLines = ({ lines, immediate }) => {
     // Simulate live-drawing of the loaded lines
-    // TODO use a generator
     let curTime = 0;
     let timeoutGap = immediate ? 0 : this.props.loadTimeOffset;
     timeoutGap = 50;

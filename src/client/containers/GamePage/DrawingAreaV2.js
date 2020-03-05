@@ -5,10 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
 import DrawingComponentV2 from './DrawingComponentV2';
 
-
 var ancienTemps = Date.now();
-
-class Point { x = 0; y = 0; }
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -19,20 +16,14 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-
-
 const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColors }) => {
     const [listPath, setListPath] = React.useState([]);
     const workingPath = React.useRef(new MyPath([], "#000000", 5));
     const isDrawing = React.useRef(false);
     const hasDrawn = React.useRef(false);
-
-
     const timePassed = React.useRef(0.0);
     const drawingZoneRef = React.useRef(null);
 
-
-    /****************************************************************************/
     /****************************************************************************/
     /* SVG AREA SIZING UTILS
      *
@@ -65,13 +56,9 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
         setSvgBoxHeight(newHeight);
         setSvgBoxWidth(newWidth);
     }
-    /****************************************************************************/
-    /****************************************************************************/
-
 
     /************************************
      * Handles the drawing clear effect
-     * **
      * Sets listPath empty
      * Sets clearer in gamePage to false (via handleAfterClear)
      */
@@ -80,7 +67,6 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
         socket.on('clearDrawing', () => {
             //console.log("CLEARING DrawingArea");
             //setListPath([]); OLD MECANICS
-            
             if(drawingZoneRef.current != null) drawingZoneRef.current.clear();
         });
     }, [socket]);
@@ -98,8 +84,6 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
      * secondCheck est une fonction appelée toutes les secondes, c'est ce qui est appelé
      */
     function secondCheck(socket) {
-
-        //console.log('This will run every second!  : ' + isDrawing.current);
         if (isDrawing.current)
             emitPathToServ(socket);
     }
@@ -108,35 +92,26 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket) {
-        var tmp = new Date(Date.now() - timePassed.current);
-        workingPath.current.time = tmp.getTime() / 1000;
-        timePassed.current = Date.now();
-        
         // On désyncronise l'envoie des informations de dessin car sinon ça bloque l'algorithme 
         let promis = new Promise(function (resolve, reject) {
-            //console.log("EMITTING id : " + drawingZoneRef.current);
-            //socket.emit('draw', workingPath.current);
-            //if(drawingZoneRef.current != null) console.log("DATA TO EMMIT : " + JSON.stringify(drawingZoneRef.current.getSaveData()));
             socket.emit('draw',drawingZoneRef.current.getSaveData());
         });
-
-        //workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
-        
     }
-
-    function release(e){
-        //console.log("RELEASEEEEEEEEEEEEE ! ");
-        emitPathToServ(socket);
-    }
+    /**
+     * Permet d'envoyer le reste du dessin lorsque l'on relache
+     * @param {event} e : l'événement de release de javascript 
+     */
+    function release(e){emitPathToServ(socket);}
 
     function onMyTouchEnd(event){
         isDrawing.current = false;
         return false;
     }
 
+    //onTouchStart={(e)=>onMyTouchEnd(e)}
     return (
-        <Box height={svgBoxHeight} mb={1} onTouchStart={(e)=>onMyTouchEnd(e)}>
-            <Paper className="fullHeight" onTouchStart={(e)=>onMyTouchEnd(e)}>
+        <Box height={svgBoxHeight} mb={1}>
+            <Paper className="fullHeight">
                 <DrawingComponentV2 isDrawing={isDrawing} release={(e) => release(e)} ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
             </Paper>
         </Box>
