@@ -3,7 +3,7 @@
 const uniqid = require('uniqid');
 const Dictionnary = require('../GestionMots/Envoiemot')
 const Algo = require('../util/levestein')
-
+const mongoose = require('mongoose');
 /**
  *
  * Convert a Socket Obect to JSON in order to able to transmit through Websocket
@@ -302,8 +302,15 @@ class Lobby {
    * @param {SocketIO.Socket} player
    * @memberof Lobby
    */
-  disconnectPlayer(player) {
+  async disconnectPlayer(player) {
     this.leave(player);
+    if(player.user)
+    {
+      var User = mongoose.model("User");
+      var user = await User.findOneAndUpdate({ _id: player.user._id }, { $inc: { 'pointTotal': player.pointsTotal } },{new:true});
+      console.log(user)
+    }
+
     this.emitAll('disconnectPlayer', player.username);
     this.updateLobby();
     if (this.listPlayer.length < 2) {

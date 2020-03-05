@@ -19,7 +19,11 @@ var MoyenConnexionSchema = new Schema({
       unique: true,
     },
     inGame: Boolean,
-    pointTotal: Number,
+    pointTotal: 
+    {
+      type:Number,
+      default:0
+    },
     listCo: [MoyenConnexionSchema]
   });
 

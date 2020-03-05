@@ -17,10 +17,11 @@ import GamePage from '../../containers/GamePage';
 import NotFoundPage from '../../containers/NotFoundPage';
 import './style.css';
 import '../../styles/global-styles.css';
+import { SnackbarProvider } from 'material-ui-snackbar-provider'
 
 const App = () => (
-  <React.Fragment>
-    <div className="app-wrapper">
+  <SnackbarProvider SnackbarProps={{ autoHideDuration: 4000 }}>
+ <div className="app-wrapper">
     
     <div className="app-content">
     <BrowserRouter>
@@ -36,8 +37,7 @@ const App = () => (
     </div>
     
     </div>
- 
-  </React.Fragment>
+  </SnackbarProvider>
 );
 
 export default App;

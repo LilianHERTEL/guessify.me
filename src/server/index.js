@@ -9,6 +9,10 @@ const app = express();
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose'); // Pris
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 if (process.env.NODE_ENV == 'production') {
   const privateKey = fs.readFileSync('/etc/letsencrypt/live/guessify.me/privkey.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/guessify.me/cert.pem', 'utf8');

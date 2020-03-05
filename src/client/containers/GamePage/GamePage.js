@@ -94,10 +94,10 @@ const GamePage = (props) => {
     isRendering = false;
   }
 
-  const connect = (username) => {
+  const connect = (username,lang,accountID) => {
 
     socket.on('connect', function () {
-      socket.emit("findGame", username)
+      socket.emit("findGame", username,lang,accountID)
     });
     socket.on('Unauthorized', function (data) {
       console.error(data)
@@ -197,7 +197,7 @@ const GamePage = (props) => {
       socket = openSocket('https://guessify.me/');
     else
       socket = openSocket('http://' + window.location.hostname + ':8880/');
-    connect(props.location.state.username);
+    connect(props.location.state.username,props.location.state.lang,props.location.state.accountID);
     return function cleanup () {
       console.log("Closing socket");
      socket.disconnect();

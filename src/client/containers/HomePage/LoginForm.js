@@ -10,14 +10,12 @@ import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
-import banner from '../../images/banner.png';
-import './style.css';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-
+import { useSnackbar } from 'material-ui-snackbar-provider'
 const LoginForm = (props) => {
     const [usernameM, setUsernameM] = useState('');
     const [passwordM, setPasswordM] = useState('');
-    
+    const snackBar = useSnackbar()
     const tryConnect = async () => {
         console.log(usernameM, passwordM)
         const response = await fetch('/api/auth/login', {
@@ -29,7 +27,7 @@ const LoginForm = (props) => {
         });
         if (response.ok) {
           var data = await response.json();
-          props.showAlert("Logined in successfully!","success")
+          snackBar.showMessage("Logged in")
           props.onLogin(data.msg)
         }
         else {
