@@ -31,7 +31,7 @@ const LoginForm = (props) => {
           props.onLogin(data.msg)
         }
         else {
-
+          snackBar.showMessage("Invalid crdentials. Please verify your credentials")
         }
       }
 
