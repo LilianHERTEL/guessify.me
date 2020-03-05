@@ -156,7 +156,6 @@ const GamePage = (props) => {
       setCurrentWord(data);
     });
     socket.on('wordToBeDrawn_Underscored', function (data) {
-      console.log("RECEIVED _ _ _");
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
@@ -167,9 +166,10 @@ const GamePage = (props) => {
       setDrawing(data.socketID == socket.id);
       //On vide la listPath à chaque fois 
       setListPath("");
+      pathsArray = [];
     });
     socket.on('drawCmd', async function (data) {
-      if (drawing) return;
+      if (isDrawing) return;
       pathsArray = [...pathsArray, data];
       setListPath(data);
       /* OLD MECANICS
@@ -184,14 +184,15 @@ const GamePage = (props) => {
         }
       });
       */
+      console.log("Received data : " + JSON.stringify(data));
       if (!isRendering)
         await loadSavedDataAsync();
       
     });
     socket.on('clearDrawing', () => {
-      console.log("CLEARING DrawingRenderArea");
+      console.log("CLEARING in DrawingRenderArea component");
       //setListPath("");
-      
+      pathsArray = [];
       if(drawingComponent.current) drawingComponent.current.clear();
     });
     socket.on('disconnect', function () { });

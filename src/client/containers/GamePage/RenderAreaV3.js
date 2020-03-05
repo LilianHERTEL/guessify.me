@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Box } from '@material-ui/core';
 
-import DrawingComponentv2 from './DrawingComponentV2';
+import DrawingComponentV2 from './DrawingComponentV2';
 
 const RenderAreaV3 = (props) => {
     const drawingZoneRef = React.useRef(null);
@@ -45,7 +45,7 @@ const RenderAreaV3 = (props) => {
     return (
         <Box height={svgBoxHeight}>
             <Paper>
-                <DrawingComponentv2 ref={canvasDraw => props.drawingRef.current=canvasDraw} disabled={true} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+                <DrawingComponentV2 ref={canvasDraw => props.drawingRef.current=canvasDraw} disabled={true} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
             </Paper>
         </Box>
     );

@@ -58,7 +58,6 @@ export default class DrawingComponentV2 extends PureComponent {
     canvasWidth: dimensionsPropTypes,
     canvasHeight: dimensionsPropTypes,
     disabled: PropTypes.bool,
-    imgSrc: PropTypes.string,
     saveData: PropTypes.string,
     immediateLoading: PropTypes.bool,
     hideInterface: PropTypes.bool
@@ -80,7 +79,6 @@ export default class DrawingComponentV2 extends PureComponent {
     canvasWidth: 400,
     canvasHeight: 400,
     disabled: false,
-    imgSrc: "",
     saveData: "",
     immediateLoading: false,
     hideInterface: false
@@ -96,6 +94,9 @@ export default class DrawingComponentV2 extends PureComponent {
 
     this.points = [];
     this.lines = [];
+
+    //Permet de stocker les identifiants des TimeOut lancés
+    this.timeoutsIds = [];
 
     this.mouseHasMoved = true;
     this.valuesChanged = true;
@@ -123,7 +124,6 @@ export default class DrawingComponentV2 extends PureComponent {
     );
     this.canvasObserver.observe(this.canvasContainer);
 
-    this.drawImage();
     this.loop();
 
     window.setTimeout(() => {
@@ -169,17 +169,6 @@ export default class DrawingComponentV2 extends PureComponent {
     this.canvasObserver.unobserve(this.canvasContainer);
   };
 
-  drawImage = () => {
-    if (!this.props.imgSrc) return;
-
-    // Load the image
-    this.image = new Image();
-    this.image.src = this.props.imgSrc;
-
-    // Draw the image once loaded
-    this.image.onload = () =>
-      drawImage({ ctx: this.ctx.grid, img: this.image });
-  };
 
   undo = () => {
     const lines = this.lines.slice(0, -1);
@@ -195,8 +184,8 @@ export default class DrawingComponentV2 extends PureComponent {
     //this.saveLine();
     let linesTmp = null;
     if(true){//this.lines.length == 0
-      console.log("####### LINE VIDE ###############");
-      console.log("workingpath : " + this.workingPath);
+      //console.log("####### LINE VIDE ###############");
+      //console.log("workingpath : " + this.workingPath);
       linesTmp = {points: this.workingPath,
                   brushColor: this.props.brushColor,
                   brushRadius: this.props.brushRadius};
@@ -226,8 +215,8 @@ export default class DrawingComponentV2 extends PureComponent {
     if (typeof saveData !== "string") {
       throw new Error("saveData needs to be of type string!");
     }
-    console.log("####### RECEPTION LIGNES ###############");
-    console.log(" : : " + saveData);
+    //console.log("####### RECEPTION LIGNES ###############");
+    //console.log(" : : " + saveData);
     const { lines, width, height,id } = JSON.parse(saveData);
 
     if (!lines || typeof lines.push !== "function") {
@@ -237,7 +226,7 @@ export default class DrawingComponentV2 extends PureComponent {
     if(doClear) this.clear();
     
     if(this.lastPoint == null) this.lastPoint = lines[0].points[lines[0].points.length -1];
-    if(id != null && id == this.currentWorkingPathID) lines[0].points.unshift(this.lastPoint);
+    if(id != null && id == this.currentWorkingPathID && lines[0].points[0] != undefined) lines[0].points.unshift(this.lastPoint);
     //console.log("old ID : " + this.currentWorkingPathID);
     this.currentWorkingPathID = id;
     //console.log("new ID : " + this.currentWorkingPathID);
@@ -299,13 +288,19 @@ export default class DrawingComponentV2 extends PureComponent {
       // Use timeout to draw
       for (let i = 1; i < points.length; i++) {
         curTime += timeoutGap;
-        window.setTimeout(() => {
-          this.drawPoints({
-            points: points.slice(0, i + 1),
-            brushColor,
-            brushRadius
-          });
-        }, curTime);
+        
+        (function(that,timeoutsIds){
+          var id = window.setTimeout(() => {
+            that.drawPoints({
+              points: points.slice(0, i + 1),
+              brushColor,
+              brushRadius
+            });
+            timeoutsIds.splice( timeoutsIds.indexOf(id), 1 );
+          }, curTime); 
+          timeoutsIds.push(id);
+        })(this,this.timeoutsIds);
+        
       }
 
       curTime += timeoutGap;
@@ -464,6 +459,9 @@ export default class DrawingComponentV2 extends PureComponent {
     let p1 = points[0];
     let p2 = points[1];
 
+    //il n'y a pas encore assez de points donc on return : 
+    //if(p2 == undefined) return;
+    
     this.ctx.temp.moveTo(p2.x, p2.y);
     this.ctx.temp.beginPath();
 
@@ -526,6 +524,10 @@ export default class DrawingComponentV2 extends PureComponent {
       this.canvas.temp.width,
       this.canvas.temp.height
     );
+    //On annule tous les Timeouts en cours qui allaient dessiner
+    this.timeoutsIds.forEach(element => {
+      window.clearTimeout(element);
+    });
   };
 
   loop = ({ once = false } = {}) => {
