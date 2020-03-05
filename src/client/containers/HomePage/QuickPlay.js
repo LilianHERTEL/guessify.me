@@ -27,7 +27,6 @@ const QuickPlay = (props) => {
       onChange={e => setUsernameAnonymous(e.target.value)}
       fullWidth
       autoComplete="fname"
-      onKeyDown={e => toGamePage(e)}
     />
     <FormControl>
         <InputLabel >Language</InputLabel>

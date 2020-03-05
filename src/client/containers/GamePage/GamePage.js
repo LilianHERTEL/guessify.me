@@ -9,7 +9,7 @@ import { Box, LinearProgress, Typography, Grid, withStyles, lighten, useTheme, u
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
-import RenderAreaV2 from './RenderAreaV2';
+import RenderAreaV3 from './RenderAreaV3';
 import { Redirect } from 'react-router-dom';
 import DrawerArea from './DrawerArea';
 import MyPath from './MyPath';
@@ -40,6 +40,9 @@ const GamePage = (props) => {
   //drawing rendering :
   const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  
+  const drawingComponent = React.useRef(null);
+
   const sockid = useRef(null);
   const startTimer = (time) => {
     if(interval != null)
@@ -194,12 +197,6 @@ const GamePage = (props) => {
       if (!isRendering)
         await loadSavedDataAsync();
       
-    });
-
-      if (!isRendering)
-        await displayPathsArray();
-      // else
-      //   //console.log("IS RENDERING : TRUE");
     });
     socket.on('clearDrawing', () => {
       console.log("CLEARING DrawingRenderArea");

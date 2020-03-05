@@ -4,7 +4,6 @@ import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
 import { estPointAZero, distanceBtw, svgPath, bezierCommand } from './BezierTools';
-import CanvasDraw from "react-canvas-draw";
 import DrawingComponentV2 from './DrawingComponentV2';
 
 
