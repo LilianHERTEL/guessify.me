@@ -37,7 +37,7 @@ const sendRequest = async (user) => {
     },
     body: JSON.stringify(user)
   });
-  if(!rep.ok)
+  if(rep.success == false)
   rep.json().then(data =>snackBar.showMessage(`Something went terribly wrong :/ \n ${data.msg}`) )
   setSuccess(true)
 }
