@@ -180,69 +180,40 @@ export default class DrawingComponentV2 extends PureComponent {
   };
 
   getSaveData = () => {
-    // Construct and return the stringified saveData object
-    //slice(this.avancement,this.lines.length)
-    //console.log("IN : " + JSON.stringify(this.lines));
-    //this.saveLine();
-    let linesTmp = null;
-    if(true){//this.lines.length == 0
-      //console.log("####### LINE VIDE ###############");
-      //console.log("workingpath : " + this.workingPath);
-      linesTmp = {points: this.workingPath,
-                  brushColor: this.props.brushColor,
-                  brushRadius: this.props.brushRadius};
-      
-      this.workingPath = [];
-
-      return JSON.stringify({
-        lines: [linesTmp],
-        width: this.props.canvasWidth,
-        height: this.props.canvasHeight,
-        id : this.currentWorkingPathID
-      });
-
-    }
-
-    var res = JSON.stringify({
-      lines: this.lines[this.lines.length-1],
+    let lineTmp = null;
+    lineTmp = {
+      points: (this.workingPath.length != 0) ? this.workingPath : [],
+      brushColor: this.props.brushColor,
+      brushRadius: this.props.brushRadius
+    };
+    this.workingPath = [];
+    return JSON.stringify({
+      lines: [lineTmp],
       width: this.props.canvasWidth,
-      height: this.props.canvasHeight
+      height: this.props.canvasHeight,
+      id : this.currentWorkingPathID
     });
-    this.avancement = this.lines.length;
-    return res;
-
   };
 
   loadSaveData = (saveData, immediate = this.props.immediateLoading, doClear = false) => {
     if (typeof saveData !== "string") {
       throw new Error("saveData needs to be of type string!");
     }
-    //console.log("####### RECEPTION LIGNES ###############");
-    //console.log(" : : " + saveData);
     const { lines, width, height,id } = JSON.parse(saveData);
-
     if (!lines || typeof lines.push !== "function") {
       throw new Error("saveData.lines needs to be an array!");
     }
-
     if(doClear) this.clear();
     
     if(this.lastPoint == null) this.lastPoint = lines[0].points[lines[0].points.length -1];
     if(id != null && id == this.currentWorkingPathID && lines[0].points[0] != undefined) lines[0].points.unshift(this.lastPoint);
-    //console.log("old ID : " + this.currentWorkingPathID);
     this.currentWorkingPathID = id;
-    //console.log("new ID : " + this.currentWorkingPathID);
     this.lastPoint = lines[0].points[lines[0].points.length -1];
 
-    if (
-      width === this.props.canvasWidth &&
-      height === this.props.canvasHeight
-    ) {
-      this.simulateDrawingLines({
-        lines,
-        immediate
-      });
-    } else {
+    if (width === this.props.canvasWidth && height === this.props.canvasHeight) {
+      this.simulateDrawingLines({lines, immediate});
+    } 
+    else {
       // we need to rescale the lines based on saved & current dimensions
       const scaleX = this.props.canvasWidth / width;
       const scaleY = this.props.canvasHeight / height;
@@ -269,7 +240,6 @@ export default class DrawingComponentV2 extends PureComponent {
     timeoutGap = 50;
     lines.forEach(line => {
       const { points, brushColor, brushRadius } = line;
-
       // Draw all at once if immediate flag is set, instead of using setTimeout
       if (immediate) {
         // Draw the points
@@ -278,7 +248,6 @@ export default class DrawingComponentV2 extends PureComponent {
           brushColor,
           brushRadius
         });
-
         // Save line with the drawn points
         this.points = points;
         this.saveLine({ brushColor, brushRadius });
@@ -289,19 +258,18 @@ export default class DrawingComponentV2 extends PureComponent {
       // Use timeout to draw
       for (let i = 1; i < points.length; i++) {
         curTime += timeoutGap;
-        
-        (function(that,timeoutsIds){
+        //le timeout est lancé par une function anonyme, permet de lui faire connaitre son id.
+        (function(that){
           var id = window.setTimeout(() => {
             that.drawPoints({
               points: points.slice(0, i + 1),
               brushColor,
               brushRadius
             });
-            timeoutsIds.splice( timeoutsIds.indexOf(id), 1 );
+            that.timeoutsIds.splice( that.timeoutsIds.indexOf(id), 1 );
           }, curTime); 
-          timeoutsIds.push(id);
-        })(this,this.timeoutsIds);
-        
+          that.timeoutsIds.push(id);
+        })(this);
       }
 
       curTime += timeoutGap;
@@ -314,15 +282,11 @@ export default class DrawingComponentV2 extends PureComponent {
   };
 
   triggerOnTouchStart = () => {
-    //console.log(" ontouchStart : " + !!this.props.isDrawing);
-
     this.props.isDrawing.current = true;
   }
+
   triggerOnTouchEnd = () => {
-    //console.log("444 ontouchEnd : " + !!this.props.isDrawing);
-    //console.log("RELEASE : " + !!this.props.release)
     if(this.props.release)this.props.release(null);
-    
     if(this.props.isDrawing) this.props.isDrawing.current = false;
   }
 
@@ -340,15 +304,12 @@ export default class DrawingComponentV2 extends PureComponent {
     this.handlePointerMove(x, y);
   };
 
-  
-
   handleTouchEnd = e => {
     this.handleMouseUp(e);
     this.triggerOnTouchEnd();
     const brush = this.lazy.getBrushCoordinates();
     this.lazy.update({ x: brush.x, y: brush.y }, { both: true });
     this.mouseHasMoved = true;
-    
   };
 
   handleMouseDown = e => {
@@ -395,17 +356,14 @@ export default class DrawingComponentV2 extends PureComponent {
 
   getPointerPos = e => {
     const rect = this.canvas.interface.getBoundingClientRect();
-
     // use cursor pos as default
     let clientX = e.clientX;
     let clientY = e.clientY;
-
     // use first touch if available
     if (e.changedTouches && e.changedTouches.length > 0) {
       clientX = e.changedTouches[0].clientX;
       clientY = e.changedTouches[0].clientY;
     }
-
     // return mouse/touch position inside canvas
     return {
       x: clientX - rect.left,
@@ -415,10 +373,8 @@ export default class DrawingComponentV2 extends PureComponent {
 
   handlePointerMove = (x, y) => {
     if (this.props.disabled) return;
-
     const hasChanged = this.lazy.update({ x, y });
     const isDisabled = !this.lazy.isEnabled();
-
     if (
       (this.isPressing && hasChanged && !this.isDrawing) ||
       (isDisabled && this.isPressing)
@@ -428,7 +384,6 @@ export default class DrawingComponentV2 extends PureComponent {
       this.points.push(this.lazy.brush.toObject());
       this.workingPath.push(this.lazy.brush.toObject());
     }
-
     if (this.isDrawing && (this.lazy.brushHasMoved() || isDisabled)) {
       // Add new point
       this.points.push(this.lazy.brush.toObject());
@@ -440,7 +395,6 @@ export default class DrawingComponentV2 extends PureComponent {
         brushRadius: this.props.brushRadius
       });
     }
-
     this.mouseHasMoved = true;
   };
 
@@ -459,9 +413,6 @@ export default class DrawingComponentV2 extends PureComponent {
 
     let p1 = points[0];
     let p2 = points[1];
-
-    //il n'y a pas encore assez de points donc on return : 
-    //if(p2 == undefined) return;
     
     this.ctx.temp.moveTo(p2.x, p2.y);
     this.ctx.temp.beginPath();
@@ -483,7 +434,6 @@ export default class DrawingComponentV2 extends PureComponent {
 
   saveLine = ({ brushColor, brushRadius } = {}) => {
     if (this.points.length < 2) return;
-
     // Save as new line
     this.lines.push({
       points: [...this.points],
