@@ -53,7 +53,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
     window.onresize = () => {
         const newWidth = document.getElementById('svgArea').clientWidth;
         const newHeight = newWidth / 1060 * 582;
-        setSvgBoxHeight(newHeight);
+        setSvgBoxHeight(newHeight); //TODO rename variables, because we are not using svg anymore
         setSvgBoxWidth(newWidth);
     }
 
@@ -65,12 +65,9 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
     React.useEffect(() => {
         if (socket == null) return;
         socket.on('clearDrawing', () => {
-            //console.log("CLEARING DrawingArea");
-            //setListPath([]); OLD MECANICS
             if(drawingZoneRef.current != null) drawingZoneRef.current.clear();
         });
     }, [socket]);
-    /************************************/
 
     React.useEffect(() => {
         timePassed.current;
@@ -102,13 +99,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
      * @param {event} e : l'événement de release de javascript 
      */
     function release(e){emitPathToServ(socket);}
-
-    function onMyTouchEnd(event){
-        isDrawing.current = false;
-        return false;
-    }
-
-    //onTouchStart={(e)=>onMyTouchEnd(e)}
+    
     return (
         <Box height={svgBoxHeight} mb={1}>
             <Paper className="fullHeight">
