@@ -28,9 +28,24 @@ const MemberAccountPage = (props) => {
 
   const classes = useStyles();
     return (
-        <Box>
-            HELLO WORLD
-        </Box>
+      <Container component="main" maxWidth="xs">
+        <Grid sm={12}>
+          <Grid item sm={6}>
+            <Box>
+              <Typography>Username: {}</Typography>
+              <Typography>Email: {}</Typography>
+              <Typography>Password: {}</Typography>
+            </Box>
+          </Grid>
+          <Grid item sm={6}>
+            <Box>
+              <Button>Change Username</Button>
+              <Button>Change Email</Button>
+              <Button>Change Password</Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
     );
 }
 

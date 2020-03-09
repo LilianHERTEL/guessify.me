@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import banner from '../../images/banner.png';
 import './style.css';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { Container, Divider } from '@material-ui/core';
 async function disconnect() {
     const response = await fetch('/api/auth/logout')
     if (response.ok) {
@@ -21,45 +22,55 @@ async function disconnect() {
     else {
     }
   }
+
 const UserView = ({user}) => {
+  console.log(user);
     return (
       <React.Fragment>
-        <Typography variant="h6" align="center">
-          Connected as {user.username}
-        </Typography>
-        <Link
-          to={{
-            pathname: "/game",
-            state: { username: user.username, accountID: user._id }
-          }}
-        >
-          <Button
-            id="guestPlayRedirectLink"
-            variant="contained"
-            size="medium"
-            color="primary"
-            fullWidth
-          >
-            Play
-          </Button>
-        </Link>
-        <Link
-          to={{
-            pathname: "/account",
-            state: { username: user.username, accountID: user._id }
-          }}
-        >
-          <Button
-            id="toAccountPageButton"
-            variant="contained"
-            size="medium"
-            color="primary"
-            fullWidth
-          >
-            My account
-          </Button>
-        </Link>
-        <Button onClick={disconnect}>Deconnexion</Button>
+        <Grid container sm={12} spacing={1}>
+          <Grid item sm={6}>
+            <Typography variant="h6" align="center">
+              Connected as {user.username}
+            </Typography>
+            <Link
+              to={{
+                pathname: "/game",
+                state: { username: user.username, accountID: user._id }
+              }}
+            >
+              <Button
+                id="guestPlayRedirectLink"
+                variant="contained"
+                size="medium"
+                color="primary"
+                fullWidth
+              >
+                Play
+              </Button>
+            </Link>
+            <Button onClick={disconnect}>Log out</Button>
+          </Grid>
+
+          <Grid item sm={6} container>
+            <Box display="flex" flexDirection="column">
+              <Typography variant="h6" align="center">
+                Account details
+              </Typography>
+              <Box display="flex">
+                <Box>
+                  <Typography>Username: {user.username}</Typography>
+                  <Typography>Email: {user.email}</Typography>
+                  <Typography>Password: {}</Typography>
+                </Box>
+                <Box textAlign="end">
+                  <Button>Change Username</Button>
+                  <Button>Change Email</Button>
+                  <Button>Change Password</Button>
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
       </React.Fragment>
     );
 }
