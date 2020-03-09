@@ -143,6 +143,7 @@ const GamePage = (props) => {
       setDrawing(data.socketID == socket.id);
       //On vide la liste de paths à chaque fois 
       pathsArray = [];
+      if(drawingComponent.current) drawingComponent.current.clear();
     });
     socket.on('drawCmd', async function (data) {
       if (isDrawing) return;
