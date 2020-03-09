@@ -87,6 +87,7 @@ class Lobby {
     this.currentDrawer.emit('wordToBeDrawn',this.currentWord);
     this.emitAll('announcement', 'You have 2 minutes to guess the word!');
     this.startTimer(120,this.goNextTurn,this);
+    this.drawing = []
   }
 
   /**

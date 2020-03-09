@@ -36,10 +36,10 @@ const sendRequest = async (user) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(user)
-  }).then(rep => rep.json());
-  if(!rep.success)
-  return snackBar.showMessage(`Something went terribly wrong :/ \n ${rep.msg}`)
-setSuccess(true)
+  });
+  if(rep.success == false)
+  rep.json().then(data =>snackBar.showMessage(`Something went terribly wrong :/ \n ${data.msg}`) )
+  setSuccess(true)
 }
 
 const onSignUpButtonClick = (event) => {
