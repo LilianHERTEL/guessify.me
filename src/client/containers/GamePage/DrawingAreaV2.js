@@ -103,7 +103,7 @@ const DrawingAreaV2 = ({ socket, brushSize, brushColor, brushMode, updateOldColo
     return (
         <Box height={svgBoxHeight} mb={1}>
             <Paper className="fullHeight">
-                <DrawingComponentV2 isDrawing={isDrawing} release={(e) => release(e)} ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+                <DrawingComponentV2 isDrawing={isDrawing} release={(e) => release(e)} ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} hideGrid={true} />
             </Paper>
         </Box>
     );

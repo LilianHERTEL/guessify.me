@@ -45,7 +45,7 @@ const RenderAreaV3 = (props) => {
     return (
         <Box height={svgBoxHeight}>
             <Paper>
-                <DrawingComponentV2 ref={canvasDraw => props.drawingRef.current=canvasDraw} disabled={true} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+                <DrawingComponentV2 ref={canvasDraw => props.drawingRef.current=canvasDraw} disabled={true} id="canvas-id" className="drawingRenderArea" canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} hideGrid={true} />
             </Paper>
         </Box>
     );
