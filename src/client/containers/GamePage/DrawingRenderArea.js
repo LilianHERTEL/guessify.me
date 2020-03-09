@@ -218,7 +218,15 @@ const DrawingRenderArea = ({ socket }) => {
     return (
         <Box mt={1} height={svgBoxHeight}>
             <Paper className="fullHeight">
-                <svg
+                <CanvasDraw ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
+            </Paper>
+        </Box>
+    );
+}
+
+
+/*
+<svg
                     id="mySvg"
                     className="drawingRenderArea"
                     viewBox={`0 0 ${1168} ${617.817}`}
@@ -231,9 +239,8 @@ const DrawingRenderArea = ({ socket }) => {
                         listPath.map((MyPath, index) => <path d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
                     }
                 </svg>
-            </Paper>
-        </Box>
-    );
-}
 
+
+
+*/
 export default DrawingRenderArea;

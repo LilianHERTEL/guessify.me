@@ -125,6 +125,7 @@ function LeaderBoard({ listPlayer, order, handleSocketClose }) {
     return b.pointsTotal - a.pointsTotal;
   }
 
+  
   /**
    * Settings popover utils
    */

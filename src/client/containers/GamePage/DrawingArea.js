@@ -4,6 +4,9 @@ import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MyPath from './MyPath';
 import { estPointAZero, distanceBtw, svgPath, bezierCommand } from './BezierTools';
+import DrawingComponentV2 from './DrawingComponentV2';
+
+
 var ancienTemps = Date.now();
 
 class Point { x = 0; y = 0; }
@@ -29,6 +32,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     const workingPath = React.useRef(new MyPath([], "#000000", 5));
     const isDrawing = React.useRef(false);
     const timePassed = React.useRef(0.0);
+    const drawingZoneRef = React.useRef(null);
 
 
     /****************************************************************************/
@@ -38,7 +42,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      * Used to initialize and update responsive svg area size (height)
      */
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
-
+    const [svgBoxWidth, setSvgBoxWidth] = React.useState(0);
     /**
      * (Hook version of "componentDidMount" lifecycle method)
      * **
@@ -52,6 +56,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         const w = document.getElementById('svgArea').clientWidth;
         const h = w / 1060 * 582;
         setSvgBoxHeight(h);
+        setSvgBoxWidth(w);
     }, []);
 
     /**
@@ -61,6 +66,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         const newWidth = document.getElementById('svgArea').clientWidth;
         const newHeight = newWidth / 1060 * 582;
         setSvgBoxHeight(newHeight);
+        setSvgBoxWidth(newWidth);
     }
     /****************************************************************************/
     /****************************************************************************/
@@ -84,10 +90,11 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     }, [socket]);
     /************************************/
 
-    var distanceMiniAvantCreation = 3;
+    var distanceMiniAvantCreation = 1;
     var distanceMaxAvantCreation = 0;
     let mouse = { x: 0, y: 0 };
-    var ecartTemps = 20;
+    var ecartTemps = 5;
+    var saveableCanvas = null;
 
     React.useEffect(() => {
         timePassed.current;
@@ -103,7 +110,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     function secondCheck(socket) {
 
         //console.log('This will run every second!');
-        if (!isDrawing.current) return;
+        //if (!isDrawing.current) return;
         emitPathToServ(socket);
     }
 
@@ -111,7 +118,7 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
      * Permet d'emettre ce que l'on a dessiner au serveur
      */
     function emitPathToServ(socket) {
-        if (workingPath.current === null || workingPath.current.points.length === 0) return;
+        //if (workingPath.current === null || workingPath.current.points.length === 0) return;
         //console.log("First emit : " + workingPath.current.points.length);
         var tmp = new Date(Date.now() - timePassed.current);
         workingPath.current.time = tmp.getTime() / 1000;
@@ -121,7 +128,9 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
         let promis = new Promise(function (resolve, reject) {
             //console.log("emit promise");
             console.log("EMITTING id : " + workingPath.current.id);
-            socket.emit('draw', workingPath.current);
+            //socket.emit('draw', workingPath.current);
+            //if(drawingZoneRef.current != null) console.log("DATA TO EMMIT : " + JSON.stringify(drawingZoneRef.current.getSaveData()));
+            if(drawingZoneRef.current != null) socket.emit('draw',drawingZoneRef.current.getSaveData());
         });
         workingPath.current = new MyPath([], (brushMode === 'Erase') ? '#FFFFFF' : brushColor, brushSize, 1, workingPath.current.id);
         
@@ -129,7 +138,8 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
 
     function onMouseMove(event) {
-        //console.log("OnMouseMove");
+        event.preventDefault();
+        event.stopPropagation();
         var svg = document.getElementById("mySvg");
         var pt = svg.createSVGPoint();
         pt.x = event.clientX;
@@ -154,6 +164,8 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
     }
 
     function onMouseDown(event) {
+        event.preventDefault();
+        event.stopPropagation();
         console.log("OnMouseDown");
         updateOldColors(); // adds the current color to color history
         isDrawing.current = true;
@@ -183,37 +195,60 @@ const DrawingArea = ({ socket, brushSize, brushColor, brushMode, updateOldColors
 
     function disableDrag(event) {
         event.preventDefault();
+        event.stopPropagation();
     }
 
-    return (
-        <Box height={svgBoxHeight} mb={1}>
-            <Paper className="fullHeight">
-                <svg
-                    id="mySvg"
-                    className="drawingArea"
+
+    function onMyTouchEnd(event){
+        return false;
+    }
+
+    /*
                     onTouchCancelCapture={(e) => onMouseUp(e)}
                     onTouchEndCapture={(e) => onMouseUp(e)}
                     onTouchStartCapture={(e) => onMouseDown(e)}
                     onTouchMoveCapture={(e) => onMouseMove(e)}
-                    onMouseMove={(e) => onMouseMove(e)}
-                    onMouseDown={(e) => onMouseDown(e)}
+
                     onMouseUp={(e) => onMouseUp(e)}
-                    onMouseLeave={(e) => onMouseLeave(e)}
-                    viewBox={`0 0 ${1060} ${582}`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlnsXlink="http://www.w3.org/1999/xlink"
-                    version="1.1"
-                    baseProfile="full"
-                    preserveAspectRatio="xMidYMid"
-                    onDragStart={disableDrag}>
-                    {
-                        listPath.map((MyPath, index) => <path onDragStart={disableDrag} d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
-                    }
-                    {mousep !== null ? <circle onDragStart={disableDrag} cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
-                </svg>
+                    onTouchMove={(e) => onMouseMove(e)}
+    */
+    return (
+        <Box height={svgBoxHeight} mb={1} onTouchStart={(e)=>onMyTouchEnd(e)}>
+            <Paper className="fullHeight" onTouchStart={(e)=>onMyTouchEnd(e)}>
+                <DrawingComponentV2 ref={canvasDraw => (drawingZoneRef.current = canvasDraw)} id="canvas-id" className="drawingArea" brushColor={brushColor} brushRadius={brushSize} canvasWidth={svgBoxWidth} canvasHeight={svgBoxHeight} />
             </Paper>
         </Box>
     );
 }
 
+/*
+<canvas 
+                    onTouchEnd={(e)=>onMyTouchEnd(e)}
+                    onTouchStart={(e)=>onMyTouchEnd(e)}
+                    onPointerUp ={(e) => onMouseUp(e)}
+                    onPointerStart ={(e) => onMouseDown(e)}
+                    onPointerMove ={(e) => onMouseMove(e)}
+                    onPointerDown ={(e) => onMouseDown(e)}
+                    onPointerLeave ={(e) => onMouseLeave(e)}
+                    onPointerOut = {(e)=>console.log("##ON POINTER OUT")}
+                >
+                    <svg
+                        id="mySvg"
+                        className="drawingArea"
+                        viewBox={`0 0 ${1060} ${582}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlnsXlink="http://www.w3.org/1999/xlink"
+                        version="1.1"
+                        baseProfile="full"
+                        preserveAspectRatio="xMidYMid"
+                        onDragStart={disableDrag}>
+                        {
+                            listPath.map((MyPath, index) => <path onDragStart={disableDrag} d={svgPath(MyPath.points, bezierCommand)} key={index} fill="none" stroke={MyPath.color} strokeWidth={MyPath.thickness} strokeLinecap="round"></path>)
+                        }
+                        {mousep !== null ? <circle onDragStart={disableDrag} cx={mousep.x} cy={mousep.y} r={brushSize / 2} fill="none" stroke="black"></circle> : null}
+                    </svg>
+                </canvas>
+
+
+*/
 export default DrawingArea;

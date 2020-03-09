@@ -1,17 +1,10 @@
 import React, { useRef, useEffect, useReducer } from 'react';
 import './style.css';
 import { Paper, Grid, Box, Container, LinearProgress, Typography, AppBar, Tabs, Tab, Divider, Switch, TextField, ListItemSecondaryAction } from '@material-ui/core';
-import MyPath from './MyPath';
-//import {controlPoint,line,bezierCommand,svgPath} from './BezierTools';
-//var BezierTools =  import('./BezierTools');
-var path;
-var ancienTemps = Date.now();
-var pathsArray = [];
+
 class Point { x = 0; y = 0; }
-var isRendering = false;
 
 const RenderAreaV2 = (props) => {
-
     /****************************************************************************/
     /****************************************************************************/
     /* SVG AREA SIZING UTILS
@@ -19,7 +12,6 @@ const RenderAreaV2 = (props) => {
      * Used to initialize and update responsive svg area size (height)
      */
     const [svgBoxHeight, setSvgBoxHeight] = React.useState(0);
-
     /**
      * (Hook version of "componentDidMount" lifecycle method)
      * **

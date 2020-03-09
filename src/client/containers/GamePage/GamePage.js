@@ -9,7 +9,7 @@ import { Box, LinearProgress, Typography, Grid, withStyles, lighten, useTheme, u
 import Chat from './Chat'
 import openSocket from 'socket.io-client';
 import Leaderboard from './LeaderBoardV2.js';
-import RenderAreaV2 from './RenderAreaV2';
+import RenderAreaV3 from './RenderAreaV3';
 import { Redirect } from 'react-router-dom';
 import DrawerArea from './DrawerArea';
 import MyPath from './MyPath';
@@ -37,9 +37,10 @@ const GamePage = (props) => {
   const [order, setOrder] = useState("...");
   const [currentWord, setCurrentWord] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
-  //drawing rendering :
-  const [listPath, setListPath] = React.useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  
+  const drawingComponent = React.useRef(null);
+
   const sockid = useRef(null);
   const startTimer = (time) => {
     if(interval != null)
@@ -65,32 +66,14 @@ const GamePage = (props) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
-  const fctQuiAjouteUnParUn = (myPath) => {
-
-    var { x, y } = myPath.points.shift();
-    setListPath(listpath => {
-      if (listpath.length === 0) return [];
-      var pathTMP = (listpath.find((path) => path.id === myPath.id));
-      if(pathTMP != undefined) pathTMP.points.push({ x, y });
-      return listpath;
-    });
-    forceUpdate();
-
-  }
-
-  const displayPathsArray = async () => {
+  const loadSavedDataAsync = async () =>{
     isRendering = true;
-    while (pathsArray.length > 0) {
-      let time = pathsArray[0].time;
-      let nbPoints = pathsArray[0].points.length;
-      for (var i = 0; i < nbPoints; i++) {
-        fctQuiAjouteUnParUn(pathsArray[0]);
-
-        await sleep((time * 1000) / nbPoints);
-
-      }
+    while(pathsArray.length > 0){
+      if(drawingComponent.current) drawingComponent.current.loadSaveData(pathsArray[0],false,false);
+      await sleep(500);
       pathsArray.shift();
     }
+    
     isRendering = false;
   }
 
@@ -147,11 +130,9 @@ const GamePage = (props) => {
     });
     socket.on('wordToBeDrawn', function (data) {
       setChat(chat => [...chat, (<Typography variant="body2" style={{color:"darkBlue"}} align="center" display="block">The word is <b>{data}</b>!</Typography>)])
-      //console.log("RECEIVED word");
       setCurrentWord(data);
     });
     socket.on('wordToBeDrawn_Underscored', function (data) {
-      //console.log("RECEIVED _ _ _");
       setCurrentWord(data);
     });
     socket.on('drawer', function (data) {
@@ -160,32 +141,19 @@ const GamePage = (props) => {
       setCurrentDrawerName(data.username);
       isDrawing = data.socketID == socket.id;
       setDrawing(data.socketID == socket.id);
-      //On vide la listPath à chaque fois 
-      setListPath([]);
+      //On vide la liste de paths à chaque fois 
+      pathsArray = [];
     });
     socket.on('drawCmd', async function (data) {
-      if (drawing) return;
+      if (isDrawing) return;
       pathsArray = [...pathsArray, data];
-      console.log("//////// VIEWER DATA : " + JSON.stringify(data.id));
-      setListPath(path => {
-        if (path.length == 0 || path[path.length - 1].id != data.id) {
-          //if (path.length != 0) console.log("adding new Path : " + path[path.length - 1].id + " : " + data.id);
-          return [...path, new MyPath([], data.color, data.thickness, data.time, data.id)];
-        }
-        else {
-          //console.log("NOT adding new Path : " + path[path.length - 1].id + " : " + data.id);
-          return [...path];
-        }
-      });
-
       if (!isRendering)
-        await displayPathsArray();
-      // else
-      //   //console.log("IS RENDERING : TRUE");
+        await loadSavedDataAsync();
+      
     });
     socket.on('clearDrawing', () => {
-      console.log("CLEARING DrawingRenderArea");
-      setListPath([]);
+      pathsArray = [];
+      if(drawingComponent.current) drawingComponent.current.clear();
     });
     socket.on('disconnect', function () { });
   }
@@ -284,7 +252,7 @@ const GamePage = (props) => {
               ) : (
                 // guesser view
                 <Box id="svgArea">
-                  <RenderAreaV2 listPath={listPath} />
+                  <RenderAreaV3 drawingRef={drawingComponent} />
                 </Box>
               )}
             </Box>
