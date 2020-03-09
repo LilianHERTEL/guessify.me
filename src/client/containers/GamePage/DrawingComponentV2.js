@@ -61,7 +61,7 @@ export default class DrawingComponentV2 extends PureComponent {
     saveData: PropTypes.string,
     immediateLoading: PropTypes.bool,
     hideInterface: PropTypes.bool,
-    isDrawing:PropTypes.bool
+    isDrawing:PropTypes.object
   };
 
   static defaultProps = {
@@ -83,7 +83,7 @@ export default class DrawingComponentV2 extends PureComponent {
     saveData: "",
     immediateLoading: false,
     hideInterface: false,
-    isDrawing : false
+    isDrawing : null
   };
 
   constructor(props) {
@@ -282,12 +282,12 @@ export default class DrawingComponentV2 extends PureComponent {
   };
 
   triggerOnTouchStart = () => {
-    this.props.isDrawing.current = true;
+    if(this.props.isDrawing != null) this.props.isDrawing.current = true;
   }
 
   triggerOnTouchEnd = () => {
     if(this.props.release)this.props.release(null);
-    if(this.props.isDrawing) this.props.isDrawing.current = false;
+    if(this.props.isDrawing != null) this.props.isDrawing.current = false;
   }
 
   handleTouchStart = e => {
