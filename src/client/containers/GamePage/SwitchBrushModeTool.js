@@ -36,7 +36,7 @@ function hexToRgb(hex) {
     * @param brushMode
     * @param setBrushMode Function
  */
-const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode, rgbBrushColor }) => {
+const SwitchBrushModeTool = ({ setBrushColor,brushColor, brushMode, setBrushMode, rgbBrushColor }) => {
 
     /**
      * Styling utils
@@ -53,11 +53,17 @@ const SwitchBrushModeTool = ({ brushColor, brushMode, setBrushMode, rgbBrushColo
     /** */
 
     const onDrawModeClick = () => {
-        if (brushMode !== 'Draw') setBrushMode('Draw');
+        if (brushMode !== 'Draw'){
+            setBrushMode('Draw');
+        }
     }
 
     const onEraseModeClick = () => {
-        if (brushMode !== 'Erase') setBrushMode('Erase');
+        if (brushMode !== 'Erase'){
+            setBrushMode('Erase');
+            //setBrushColor('#FFFFFF');
+        }
+        
     }
 
     return (
