@@ -17,6 +17,11 @@ const convertToJSON = (socket) => {
       pointsTotal: socket.pointsTotal
     }
   }
+
+
+  function getTimeLeft(timeout) {
+    return Math.ceil((timeout._idleStart + timeout._idleTimeout - Date.now()) / 1000);
+}
   
 class Lobby {
   /**
@@ -137,6 +142,8 @@ class Lobby {
    * @memberof Lobby
    */
   sendChat(player, msg) {
+    msg  = msg.substring(0, 30);
+    
     // Guessed player sending the answer or Drawing player typing anything
     if ((msg == this.currentWord && this.containsGuessedPlayer(player)) || player == this.currentDrawer) return player.emit('notAllowedToEnterAnswer');
 
@@ -144,8 +151,8 @@ class Lobby {
 
     // Testing similarity
     if (Algo.compareString(msg, this.currentWord) > 0.8 && msg != this.currentWord) player.emit('closeGuess');
-
-    if (msg == this.currentWord && !this.containsGuessedPlayer(player) && player != this.currentDrawer)
+    var word = msg.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    if (word == this.currentWord && !this.containsGuessedPlayer(player) && player != this.currentDrawer)
     {
       console.log(this.guessed)
       if(!this.guessed) this.shortenTime(15)
