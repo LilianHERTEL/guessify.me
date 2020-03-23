@@ -61,7 +61,8 @@ export default class DrawingComponentV2 extends PureComponent {
     saveData: PropTypes.string,
     immediateLoading: PropTypes.bool,
     hideInterface: PropTypes.bool,
-    isDrawing:PropTypes.object
+    isDrawing:PropTypes.object,
+    brushMode:PropTypes.string
   };
 
   static defaultProps = {
@@ -83,7 +84,8 @@ export default class DrawingComponentV2 extends PureComponent {
     saveData: "",
     immediateLoading: false,
     hideInterface: false,
-    isDrawing : null
+    isDrawing : null,
+    brushMode : "Draw"
   };
 
   constructor(props) {
@@ -108,6 +110,7 @@ export default class DrawingComponentV2 extends PureComponent {
     this.lastPoint = null;
     this.workingPath = {points : [], id : 0}; // stock juste les points et l'id de la workingPath
     this.currentWorkingPathID = 0;
+    this.brushMode = props.brushMode;
   }
 
   componentDidMount() {
@@ -183,7 +186,7 @@ export default class DrawingComponentV2 extends PureComponent {
     let lineTmp = null;
     lineTmp = {
       points: (this.workingPath.length != 0) ? this.workingPath : [],
-      brushColor: this.props.brushColor,
+      brushColor: (this.props.brushMode == "Draw")?this.props.brushColor:"#FFFFFF",
       brushRadius: this.props.brushRadius
     };
     this.workingPath = [];
@@ -401,7 +404,7 @@ export default class DrawingComponentV2 extends PureComponent {
   drawPoints = ({ points, brushColor, brushRadius }) => {
     this.ctx.temp.lineJoin = "round";
     this.ctx.temp.lineCap = "round";
-    this.ctx.temp.strokeStyle = brushColor;
+    this.ctx.temp.strokeStyle = (this.props.brushMode == "Draw")?brushColor:"#FFFFFF";  
 
     this.ctx.temp.clearRect(
       0,
@@ -437,7 +440,7 @@ export default class DrawingComponentV2 extends PureComponent {
     // Save as new line
     this.lines.push({
       points: [...this.points],
-      brushColor: brushColor || this.props.brushColor,
+      brushColor: (this.props.brushMode == "Draw")? brushColor || this.props.brushColor:"#FFFFFF",
       brushRadius: brushRadius || this.props.brushRadius
     });
 
